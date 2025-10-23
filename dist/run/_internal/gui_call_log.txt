@@ -1,0 +1,14 @@
+[17:57:06] === QEMU GUI Log started at 2025-10-22 17:57:06.765317 ===
+>>> load_config.py đã được gọi thành công!
+>>> sys.argv: ['D:\\code\\projet\\VQEMU\\dist\\run\\_internal\\load_config.py', 'D:\\code\\projet\\VQEMU\\dist\\run\\_internal\\config.json']
+[17:57:06] --- STEP: Đang đọc file config: D:\code\projet\VQEMU\dist\run\_internal\config.json ---
+[17:57:06] Đọc file config thành công!
+[17:57:06] --- STEP: Tạo lệnh QEMU ---
+👉 Lệnh QEMU được tạo:
+D:\code\projet\VQEMU\qemu\qemu-system-i386.exe -cpu 486 -m 1024 -smp 1 -boot menu=on
+🚀 QEMU started!
+📝 Log ghi tại: D:\code\projet\VQEMU\dist\run\_internal\qemu_log.txt
+>>> Running QEMU command...
+CMD: ['D:\\code\\projet\\VQEMU\\qemu\\qemu-system-i386.exe', '-cpu', '486', '-m', '1024', '-smp', '1', '-boot', 'menu=on']
+🚀 QEMU started asynchronously! (non-blocking)
+[17:57:06] QEMU chạy thành công!

@@ -1,0 +1,5 @@
+[17:57:06] === QEMU GUI Log started at 2025-10-22 17:57:06.765317 ===
+[17:57:06] --- STEP: Đang đọc file config: D:\code\projet\VQEMU\dist\run\_internal\config.json ---
+[17:57:06] Đọc file config thành công!
+[17:57:06] --- STEP: Tạo lệnh QEMU ---
+[17:57:06] QEMU chạy thành công!
