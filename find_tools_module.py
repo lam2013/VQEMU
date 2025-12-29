@@ -59,6 +59,34 @@ def find_qemu_system(arch="x86_64", start_file=__file__, max_up=6):
 
     return None
 
+def find_qemu_storage_daemon(start_file=__file__, max_up=6):
+    """
+    Tìm file qemu-storage-daemon.exe (hoặc qemu-storage-daemon trên Linux).
+    """
+    exe_name = "qemu-storage-daemon.exe" if sys.platform == "win32" else "qemu-storage-daemon"
+    start = Path(start_file).resolve()
+    start_dir = start.parent
+
+    roots = [start_dir] + list(start_dir.parents[:max_up])
+
+    for root in roots:
+        qemu_dir = root / "qemu"
+        if qemu_dir.exists():
+            candidate = qemu_dir / "build" / exe_name
+            if candidate.exists():
+                return candidate
+            for sub in sorted(qemu_dir.iterdir(), reverse=True):
+                if sub.is_dir() and sub.name.startswith("qemu-"):
+                    candidate = sub / "build" / exe_name
+                    if candidate.exists():
+                        return candidate
+
+    which = shutil.which(exe_name)
+    if which:
+        return Path(which)
+
+    return None
+
 
 def find_icon(name: str, start_file=__file__, max_up: int = 6):
     """

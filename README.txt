@@ -6,8 +6,7 @@ ___          __    ________        __________     ____         ____    ____     
     \_____/       \_________/\|   |__________|   |__|  \_____/  |__|   |____________|
 
 giới thiệu:
-    đây là phần mềm QEMU GUI được viết 100% bằng python và cũng là mã nguồn mở chuẩn GPLv3.
-phần mềm này được thực hiện trong 2 tháng.
+    đây là phần mềm QEMU GUI được viết 100% bằng python và cũng là mã nguồn mở chuẩn GPLv3 và được người việt thực hiện. phần mềm này được thực hiện trong 2 tháng.
 
 cách sắp xếp file/folder:
 {parent folder}
@@ -15,9 +14,6 @@ cách sắp xếp file/folder:
     |(nhánh folder)
     +---qemu
     +---logs
-    +---profile
-    +---dist
-    +---python
     |
     |(nhánh file)
     +---run.py
@@ -36,14 +32,14 @@ tính năng:
 +có giao diện đồ họa
 +khởi chạy được mọi loại qemu system
 +hỗ trợ tạo ổ đĩa ảo
-+tinh gọn json, log
-+sửa lỗi không chạy được load_config.py
-+tinh gọn run.py(giúp dễ đọc code)
++tính năng custom qemu
++tính năng snapshot
++tính năng FDA,FDB,FDC,FDD
 
-những thứ được cải thiện:
-+thêm tính năng custom qemu
-+thêm tính năng snapshot
-+thêm tính năng FDA,FDB,FDC,FDD
+những thứ được thêm và cải thiện:
++daemon storage
++cải tiến wifi
++thêm system w
 
 cách chạy:
 1. chạy thủ công(nếu bạn biết sơ về command):
@@ -87,6 +83,6 @@ nhà phát triển: VNCore lab(Nguyễn Trường Lâm)
 nhà phát hành: VNCore lab(Nguyễn Trường Lâm)
 email gửi yêu cầu fix bug/cho code để update: nguyenvannghia1952tg@gmail.com
 
-
+***2025 Vncore lab (alias of Nguyễn Trường Lâm)***
 
 *lưu ý: VQEMU chỉ dành cho windows. chỉ chạy đc windows 8,8.1,10,11 và tất cả đều là 64-bit

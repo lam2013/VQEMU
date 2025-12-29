@@ -17,8 +17,10 @@ name "i82559c", bus PCI, desc "Intel i82559C Ethernet"
 name "i82559er", bus PCI, desc "Intel i82559ER Ethernet"
 name "i82562", bus PCI, desc "Intel i82562 Ethernet"
 name "i82801", bus PCI, desc "Intel i82801 Ethernet"
-name "igb", bus PCI, desc "Intel 82576 Gigabit Ethernet Controller"
+name "ne2k_pci", bus PCI
 name "pcnet", bus PCI
+name "rtl8139", bus PCI
+name "tulip", bus PCI
 name "usb-net", bus usb-bus
 name "virtio-net-device", bus virtio-bus
 name "virtio-net-pci", bus PCI, alias "virtio-net"
@@ -28,15 +30,17 @@ name "vmxnet3", bus PCI, desc "VMWare Paravirtualized Ethernet v3"
 """
 
 # 1️⃣ Tách từng dòng, bỏ trống và comment
-if "name" in raw_text:
-    raw_text.replace("name", "")
-lines = raw_text.splitlines()
-
-cpu_names = []
-for line in lines:
-    line = line.strip()
-    if not line:
-        continue
+if "name " in raw_text:
+    names = re.findall(r'name\s+"([^"]+)"', raw_text)
+    formatted = ", ".join(f'"{n}"' for n in names)
+    print(f"[{formatted}],")
+else:
+    lines = raw_text.splitlines()
+    cpu_names = []
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
     # 2️⃣ Lấy cụm đầu tiên trước dấu space hoặc '#'
     match = re.match(r'^"?([A-Za-z0-9._+-]+)"?', line)
     if match:
@@ -44,6 +48,6 @@ for line in lines:
         if name not in cpu_names:
             cpu_names.append(name)
 
-# 3️⃣ Xuất ra dạng list Python
-formatted = ", ".join(f'"{n}"' for n in cpu_names)
-print(f"[{formatted}],")
+    # 3️⃣ Xuất ra dạng list Python
+    formatted = ", ".join(f'"{n}"' for n in cpu_names)
+    print(f"[{formatted}],")

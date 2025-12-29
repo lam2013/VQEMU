@@ -15,6 +15,10 @@ import threading
 from qemu_advanced_module import *
 import load_config
 
+# VNcore lab 2025 (alias of Nguyễn Trường Lâm)
+
+print("VNcore lab 2025 (alias of Nguyễn Trường Lâm)")
+
 try:
     if sys.stdout and hasattr(sys.stdout, "buffer"):
         sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
@@ -23,11 +27,6 @@ try:
 except Exception:
     pass
 
-def the_return_value_of_DL_class(name):
-    if not (name == "none"):
-        return name
-    else:
-        return "none"
 
 def force_delete_file_as_admin(file_path):
     if not os.path.exists(file_path):
@@ -41,18 +40,13 @@ def force_delete_file_as_admin(file_path):
         return False
 
 def get_config_path():
-    if getattr(sys, 'frozen', False):
-        # Running as compiled executable
-        base_path = Path(sys.executable).parent
-    else:
-        # Running from source
-        base_path = Path(__file__).resolve().parent
+    base_path = Path(__file__).resolve().parent
     return base_path / "config_VQEMU.json"
 
 def create_json():
     path = get_config_path()
     if not path.exists():
-        data = {"disks": {}, "config": {}, "profiles": {}, "snapshots": {}}
+        data = {"disks": {}, "config": {}, "profiles": {}, "snapshots": {}, "caches": {}, "config_DS": {}, "CCD": {}}
         try:
             with open(path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
@@ -68,11 +62,23 @@ def create_json():
     if "disks" not in data:
         data["disks"] = {}
         updated = True
-    if "configs" not in data:
-        data["configs"] = {}
+    if "CCD" not in data:
+        data["CCD"] = {}
+        updated = True
+    if "config" not in data:
+        data["config"] = {}
         updated = True
     if "profiles" not in data:
         data["profiles"] = {}
+        updated = True
+    if "snapshots" not in data:
+        data["snapshots"] = {}
+        updated = True
+    if "caches" not in data:
+        data["caches"] = {}
+        updated = True
+    if "config_DS" not in data:
+        data["config_DS"] = {}
         updated = True
     
     if updated:
@@ -81,11 +87,6 @@ def create_json():
                 json.dump(data, f, indent=4, ensure_ascii=False)
         except Exception:
             pass
-
-def check_json_file():
-    path = get_config_path()
-    if not path.exists():
-        create_json()
 
 def save_disk_path_json_file(name, path):
     try:
@@ -145,6 +146,17 @@ def load_disk_path_json_file():
     except Exception:
         return ["none"]
 
+def load_key_DS():
+    try:
+        with open(get_config_path(), "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:
+        data = {}
+    if "config_DS" not in data:
+        data["config_DS"] = {}
+    keys = data["config_DS"].keys()
+    return keys
+
 def can_write(folder):
     try:
         testfile = os.path.join(folder, ".__testwrite__")
@@ -155,11 +167,8 @@ def can_write(folder):
     except Exception:
         return False
 
-def disk_list_path():
-    return get_config_path()
-
-def load_disk_list():
-    return load_disk_path_json_file()
+def always_return_true():
+    return True
 
 class QG(QTabWidget):
     def __init__(self):
@@ -229,7 +238,24 @@ class QG(QTabWidget):
                 font-weight: bold;
             }
         """)
+        self.is_loading = False
+        self.save_timer = QTimer()
+        self.save_timer.setSingleShot(True)
+        self.save_timer.setInterval(500)  # Debounce 500ms
+        self.save_timer.timeout.connect(self._perform_save_snapshot)
         self.init_tabs()
+    
+    def update_system_qemu(self):
+        try:
+            if self.AQEW.isChecked():
+                self.K.clear()
+                self.K.addItems(sorted(list(QEMU_SYSTEM_W.keys())))
+            else:
+                self.K.clear()
+                self.K.addItems(sorted(list(QEMU_SYSTEMS.keys())))
+        except:
+                self.K.clear
+                self.K.addItems([])
 
     def get_qemu_exe(self):
         arch = self.K.currentText()
@@ -238,32 +264,7 @@ class QG(QTabWidget):
             raise FileNotFoundError(f"Không tìm thấy QEMU cho kiến trúc {arch}")
         return str(exe_path)
 
-    def add_disk_to_json(self, name, path):
-        if not get_config_path().exists():
-            create_json()
-        else:
-            name_disk = name
-            path_disk = path
-            string_json_tree = {
-                name_disk: {
-                    "name": name_disk,
-                    "path": path_disk,
-                }
-            }
-            with open(get_config_path(), "a", encoding="utf-8") as f:
-                json.dump(string_json_tree, f, ensure_ascii=False, indent=4)
 
-    def remove_disk_from_json(self, name):
-        cfg_path = get_config_path()
-        if not cfg_path.exists():
-            return
-        else:
-            with open(cfg_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            if "disks" in data and name in data["disks"]:
-                del data["disks"][name]
-            with open(cfg_path, "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False, indent=4)
 
     def add_cdrom_to_json(self, name, path):
         cfg_path = get_config_path()
@@ -283,25 +284,11 @@ class QG(QTabWidget):
                 "path": path_disk,
             }
         }
-        # This function seems to append to the file which is invalid JSON if not careful, 
-        # but following original logic's intent but using correct path. 
-        # Actually original logic was appending a dict to the file which is definitely wrong for a JSON file structure 
-        # if it's not being read and updated properly.
-        # However, to minimize risk I will just fix the path for now as requested.
-        # But wait, `json.dump` in 'a' mode is bad. 
-        # I'll stick to the pattern: read -> update -> write.
-        
-        # Re-reading to be safe
         try:
             with open(cfg_path, "r", encoding="utf-8") as f:
                 full_data = json.load(f)
         except:
             full_data = {}
-            
-        # The original code was weird, it loaded data but then dumped a new dict to append?
-        # I will assume the user wants to update the file.
-        # But since this function `add_cdrom_to_json` doesn't seem to be used in the main flow shown, 
-        # I will just fix the path references.
         
         with open(cfg_path, "a", encoding="utf-8") as f:
              json.dump(string_json_tree, f, ensure_ascii=False, indent=4)
@@ -354,53 +341,116 @@ class QG(QTabWidget):
     def init_tabs(self):
         vm_tab = QWidget()
         vm_layout = QVBoxLayout(vm_tab)
-        group_vm = QGroupBox("Cấu hình máy ảo")
-        layout_vm = QGridLayout(group_vm)
-        layout_vm.addWidget(QLabel("Kiến trúc:"), 0, 0)
-        self.K = QComboBox()
-        try:
-            archs = sorted(list(QEMU_SYSTEMS.keys()))
-        except Exception:
-            archs = []
         self.CCRQ = QCheckBox("tùy chọn lệnh chạy", self)
-        vm_layout.addWidget(self.CCRQ)
+        self.CCRQ.setEnabled(True)
         self.CCRQ.setChecked(False)
-        self.CCRQ.toggled.connect(self.update_custom_command_ui)
+        
         self.CCRQT = QLineEdit()
         self.CCRQT.setPlaceholderText("nhập lệnh chạy")
         self.CCRQT.setDisabled(True)
-        self.K.addItems(archs)
+
+        self.CCRQ.toggled.connect(self.update_custom_command_ui)
+        self.AQEW = QCheckBox("Qemu nâng cao", self)
+        self.AQEW.setEnabled(True)
+        self.AQEW.setChecked(False)
+        h_layout = QHBoxLayout()
+        h_layout.addWidget(self.CCRQ)
+        h_layout.addWidget(self.AQEW)
+        vm_layout.addLayout(h_layout)
+
+        group_vm = QGroupBox("Cấu hình máy ảo")
+        layout_vm = QGridLayout(group_vm)
+        layout_vm.addWidget(QLabel("Kiến trúc:"), 1, 0)
+        self.K = QComboBox()
+        try:
+            self.K.addItems(sorted(list(QEMU_SYSTEMS.keys())))
+        except:
+            pass
+        try:
+            self.AQEW.toggled.connect(self.update_system_qemu)
+        except Exception:
+            pass
         self.K.currentIndexChanged.connect(self.update_arch_dependent_widgets)
-        layout_vm.addWidget(self.K, 0, 1)
-        layout_vm.addWidget(QLabel("CPU:"), 1, 0)
+        layout_vm.addWidget(self.K, 1, 1)
+        layout_vm.addWidget(QLabel("CPU:"), 2, 0)
         self.CP = QComboBox()
-        layout_vm.addWidget(self.CP, 1, 1)
-        layout_vm.addWidget(QLabel("Số nhân CPU:"), 2, 0)
+        layout_vm.addWidget(self.CP, 2, 1)
+        layout_vm.addWidget(QLabel("Số nhân CPU:"), 3, 0)
         self.SC = QComboBox()
         self.SC.addItems([str(i) for i in range(1, 11)])
-        layout_vm.addWidget(self.SC, 2, 1)
-        layout_vm.addWidget(QLabel("RAM (MB):"), 3, 0)
+        layout_vm.addWidget(self.SC, 3, 1)
+        layout_vm.addWidget(QLabel("RAM (MB):"), 4, 0)
         self.RM = QSpinBox()
         self.RM.setRange(16, 32768)
         self.RM.setValue(1024)
-        layout_vm.addWidget(self.RM, 3, 1)
-        layout_vm.addWidget(QLabel("VGA:"), 4, 0)
+        layout_vm.addWidget(self.RM, 4, 1)
+        layout_vm.addWidget(QLabel("VGA:"), 5, 0)
         self.V = QComboBox()
-        layout_vm.addWidget(self.V, 4, 1)
-        self.update_arch_dependent_widgets()
-        layout_vm.addWidget(QLabel("Âm thanh:"), 5, 0)
+        layout_vm.addWidget(self.V, 5, 1)
+
+        layout_vm.addWidget(QLabel("Âm thanh:"), 6, 0)
         self.A = QComboBox()
         self.A.addItems(["None","ac97","es1370","hda","sb16"])
-        layout_vm.addWidget(self.A, 5, 1)
+        layout_vm.addWidget(self.A, 6, 1)
         self.group_vm = group_vm
         vm_layout.addWidget(group_vm)
         self.run = QPushButton("Khởi động máy ảo")
-        vm_layout.addWidget(self.run)
         vm_layout.addWidget(self.CCRQT)
-        self.addTab(vm_tab, "Máy ảo")
+        vm_layout.addWidget(self.run)
         self.addTab(vm_tab, "Máy ảo")
 
 
+        self.daemon_storage_tab = QWidget()
+        daemon_storage_layout = QVBoxLayout(self.daemon_storage_tab)
+        self.CDT = QCheckBox("dùng daemon storage")
+        group_DT = QGroupBox("Cấu hình daemon storage")
+        layout_DT = QGridLayout(group_DT)
+        self.CDT.setChecked(False)
+        self.CDT.setEnabled(True)
+        layout_DT.addWidget(self.CDT)
+        self.label1 = QLabel("tên ổ đĩa:")
+        layout_DT.addWidget(self.label1, 2, 0)
+        mini_layout_1 = QHBoxLayout()
+        self.HD = QComboBox()
+        check_list_disk_D = []
+        with open(get_config_path(), 'r', encoding="utf-8") as f:
+            data = json.load(f)
+        listdisk = data["disks"].keys()
+        self.HD.addItems(listdisk)
+        self.HD.clear()
+        check_list_disk = []
+        for i in listdisk:
+            check_list_disk.append(str(i))
+        for i in listdisk:
+            self.HD.addItem(str(i))
+        if self.HD.currentText() not in check_list_disk:
+            self.HD.clear()
+            for i in listdisk:
+                self.HD.addItem(str(i))
+        self.HD.setEnabled(False)
+        layout_DT.addWidget(self.HD, 3, 0)
+        layout_DT.addWidget(QLabel("tên process:"), 4, 0)
+        self.ENPDS = QLineEdit()
+        self.ENPDS.setPlaceholderText("nhập tên process cho DS")
+        self.ENPDS.setEnabled(False)
+        layout_DT.addWidget(self.ENPDS, 5, 0)
+        self.RHD = QPushButton("chạy daemon storage")
+        self.RHD.setEnabled(False)
+        layout_DT.addWidget(self.RHD, 6 , 0)
+        self.CDPDS = QCheckBox("kill DS process")
+        self.CDPDS.setChecked(False)
+        self.CDPDS.setEnabled(False)
+        mini_layout_1.addWidget(self.CDPDS)
+        self.CDPDS2 = QComboBox()
+        self.update_daemon_list_kill()
+        self.CDPDS2.setEnabled(False)
+        mini_layout_1.addWidget(self.CDPDS2)
+        self.BCTDPDS = QPushButton("kill process")
+        self.BCTDPDS.setEnabled(False)
+        mini_layout_1.addWidget(self.BCTDPDS)
+        layout_DT.addLayout(mini_layout_1, 7, 0)
+        daemon_storage_layout.addWidget(group_DT)
+        self.addTab(self.daemon_storage_tab, "Daemon storage")
 
         self.disk_tab = QWidget()
         disk_layout = QVBoxLayout(self.disk_tab)
@@ -503,11 +553,15 @@ class QG(QTabWidget):
         group_net = QGroupBox("Mạng")
         layout_net = QGridLayout(group_net)
         self.CN = QCheckBox("Bật mạng")
-        self.net_list = QEMU_SYSTEMS_WIFIS.get("model", [])
+        self.net_list = list(QEMU_SYSTEMS_WIFIS["model"].get(self.K.currentText(), []))
         self.LN = QComboBox()
         self.LN.addItems(self.net_list)
+        self.LN.setEnabled(False)
         self.KN = QComboBox()
-        self.KN.addItems(QEMU_SYSTEMS_WIFIS.get("connection", []))
+        self.KN.addItems(list(QEMU_SYSTEMS_WIFIS.get("connection", [])))
+        self.KN.setEnabled(False)
+
+# ... (implicitly keeping intermediate lines, but replace_file_content needs distinct chunks or one contiguous block. Since these are far apart, I should use multi_replace or 2 calls. The prompt says "Do NOT make multiple parallel calls to this tool". I will use multi_replace_file_content instead.)
         self.CPF = QCheckBox("Mở port forward")
         self.PF = QLineEdit()
         self.PF.setPlaceholderText("hostfwd=tcp::2222-:22")
@@ -520,6 +574,33 @@ class QG(QTabWidget):
         layout_net.addWidget(self.PF, 3, 1)
         net_layout.addWidget(group_net)
         self.addTab(self.net_tab, "Mạng")
+        self.update_arch_dependent_widgets()
+
+        adco_tab = QWidget()
+        adco_layout = QVBoxLayout(adco_tab)
+        group_adco = QGroupBox("cấu hình nâng cao")
+        layout_adco = QGridLayout(group_adco)
+        self.CAD = QCheckBox("Bật tùy chọn daemon storage")
+        self.CAD.setChecked(False)
+        layout_adco.addWidget(self.CAD, 0, 0)
+        self.DHD = QComboBox()
+        self.DHD.addItems(QEMU_IO_DAEMON_STORAGE)
+        self.DHD.setEnabled(False)
+        self.label2 = QLabel("IO daemon storage:")
+        layout_adco.addWidget(self.label2, 1, 0)
+        layout_adco.addWidget(self.DHD, 1, 1)
+        self.DSNTR = QComboBox()
+        with open(get_config_path(), 'r', encoding='utf-8') as f:
+            config = json.load(f)
+        list_key_DSTR = config['config_DS'].keys()
+        self.DSNTR.addItems(list_key_DSTR)
+        self.DSNTR.setEnabled(False)
+        layout_adco.addWidget(QLabel("daemon để chạy:"), 2, 0)
+        layout_adco.addWidget(self.DSNTR, 2, 1)
+        adco_layout.addWidget(group_adco)
+        
+        adco_layout.addWidget(group_adco)
+        self.addTab(adco_tab, "Cấu hình nâng cao")
 
         prof_tab = QWidget()
         prof_layout = QVBoxLayout(prof_tab)
@@ -553,6 +634,13 @@ class QG(QTabWidget):
         self.BDCD.clicked.connect(self.BDC)
         self.BDDD.clicked.connect(self.BDD)
 
+        self.CDT.toggled.connect(self.update_daemon_storage_ui)
+        self.CDPDS.toggled.connect(self.update_daemon_kill_process)
+        self.RHD.clicked.connect(self.update_daemon_list_kill)
+
+
+        self.CAD.toggled.connect(self.update_advanced_tab)
+
         self.BCD.clicked.connect(self.open_disk_dialog)
         self.CLD.clicked.connect(self.clear_disk_list)
         self.bi.clicked.connect(self.BI)
@@ -566,12 +654,15 @@ class QG(QTabWidget):
         self.btn_prof_load.clicked.connect(create_json)
         self.btn_prof_delete.clicked.connect(create_json)
         self.btn_prof_rename.clicked.connect(create_json)
-        
+
+
         # Initialize UI state
         self.update_custom_command_ui(self.CCRQ.isChecked())
         
         self.load_snapshot()
         self.connect_snapshot_signals()
+        self.update_disk_list()
+        self.update_daemon_list()
 
     def connect_snapshot_signals(self):
         # Connect all relevant widgets to save_snapshot
@@ -584,12 +675,25 @@ class QG(QTabWidget):
         self.A.currentIndexChanged.connect(self.save_snapshot)
         self.CCRQ.toggled.connect(self.save_snapshot)
         self.CCRQT.textChanged.connect(self.save_snapshot)
+        self.AQEW.toggled.connect(self.save_snapshot)
         
         # Disk Tab
         self.HDA.currentIndexChanged.connect(self.save_snapshot)
         self.HDB.currentIndexChanged.connect(self.save_snapshot)
         self.HDC.currentIndexChanged.connect(self.save_snapshot)
         self.HDD.currentIndexChanged.connect(self.save_snapshot)
+
+        #daemon storage tab
+        self.CDT.toggled.connect(self.save_snapshot)
+        self.HD.currentIndexChanged.connect(self.save_snapshot)
+        self.DHD.currentIndexChanged.connect(self.save_snapshot)
+        self.ENPDS.textChanged.connect(self.save_snapshot)
+        self.RHD.clicked.connect(self.save_snapshot)
+        self.RHD.clicked.connect(self.click_run_daemon)
+        self.CDPDS.toggled.connect(self.save_snapshot)
+        self.CDPDS2.currentIndexChanged.connect(self.save_snapshot)
+        self.BCTDPDS.clicked.connect(self.save_snapshot)
+        self.BCTDPDS.clicked.connect(self.click_kill_daemon)
         
         # Boot Tab
         self.CBI.toggled.connect(self.save_snapshot)
@@ -610,9 +714,19 @@ class QG(QTabWidget):
         self.CPF.toggled.connect(self.save_snapshot)
         self.PF.textChanged.connect(self.save_snapshot)
 
+        #advanced tab
+        self.CAD.toggled.connect(self.save_snapshot)
+        self.DSNTR.currentIndexChanged.connect(self.save_snapshot)
     def save_snapshot(self):
+        if self.is_loading:
+            return
+        self.save_timer.start()
+
+    def _perform_save_snapshot(self):
         try:
             cfg_path = get_config_path()
+            # No atomic write for now to keep it simple, but we debounce so it's safer.
+            # Ideally we should read-modify-write carefully.
             if not cfg_path.exists():
                 return
 
@@ -644,6 +758,33 @@ class QG(QTabWidget):
         except Exception:
             pass
 
+    def update_disk_list(self):
+        with open(get_config_path(), 'r', encoding="utf-8") as f:
+            data = json.load(f)
+        list_disk = ["none"]
+        list_disk.extend(sorted(data["disks"].keys()))
+        self.HDA.clear()
+        self.HDB.clear()
+        self.HDC.clear()
+        self.HDD.clear()
+        self.HD.clear()
+        self.HDA.addItems(list_disk)
+        self.HDB.addItems(list_disk)
+        self.HDC.addItems(list_disk)
+        self.HDD.addItems(list_disk)
+        self.HD.addItems(list_disk)
+        self.HD.removeItem(0)
+
+    def update_DSNTR(self):
+        self.DSNTR.clear()
+        try:
+            with open(get_config_path(), 'r', encoding="utf-8") as f:
+                data = json.load(f)
+            list_key_DSTR = list(data.get('config_DS', {}).keys())
+            self.DSNTR.addItems(sorted(list_key_DSTR))
+        except Exception:
+            pass
+
     def update_custom_command_ui(self, checked):
         # VM Tab
         self.group_vm.setEnabled(not checked)
@@ -651,11 +792,59 @@ class QG(QTabWidget):
         self.CCRQT.setReadOnly(not checked)
         if checked:
             self.CCRQT.setPlaceholderText("nhập lệnh chạy")
+        self.CCRQ.setEnabled(True)
             
         # Other Tabs
         self.disk_tab.setEnabled(not checked)
         self.boot_tab.setEnabled(not checked)
         self.net_tab.setEnabled(not checked)
+        self.daemon_storage_tab.setEnabled(not checked)
+
+    def update_daemon_list(self):
+        with open(get_config_path(), 'r', encoding="utf-8") as f:
+            data = json.load(f)
+        del data["caches"]
+        del data["config_DS"]
+        del data["CCD"]
+        data["caches"] = {}
+        data["config_DS"] = {}
+        data["CCD"] = {}
+        self.CDPDS2.clear()
+        self.DSNTR.clear()
+        with open(get_config_path(), 'w', encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+        self.update_DSNTR()
+        
+
+    def update_net_list_I(self):
+        list_net = QEMU_SYSTEMS_WIFIS.get("model", {}).get(self.K.currentText(), [])
+        self.LN.clear()
+        self.LN.addItem("none")
+        self.LN.addItems(sorted(list_net))
+
+    def update_daemon_storage_ui(self):
+        self.HD.setEnabled(self.CDT.isChecked())
+        self.RHD.setEnabled(self.CDT.isChecked())
+        self.CDPDS.setEnabled(self.CDT.isChecked())
+        self.ENPDS.setEnabled(self.CDT.isChecked())
+
+    def update_daemon_kill_process(self):
+        self.BCTDPDS.setEnabled(self.CDPDS.isChecked())
+        self.CDPDS2.setEnabled(self.CDPDS.isChecked())
+    
+    def update_daemon_list_kill(self):
+        try:
+            with open(get_config_path(), "r", encoding="utf-8") as f:
+                data = json.load(f)
+            self.CDPDS2.clear()
+            self.CDPDS2.addItems(data["caches"].keys())
+        except Exception:
+            pass
+
+    def update_advanced_tab(self):
+        self.DSNTR.setEnabled(self.CAD.isChecked())
+        self.DHD.setEnabled(self.CAD.isChecked())
+        
 
     def update_FDA(self):
         self.LEDA.setEnabled(self.CFDA.isChecked())
@@ -681,13 +870,18 @@ class QG(QTabWidget):
         self.CP.clear()
         if arch and arch in QEMU_SYSTEMS_CPUS:
             self.CP.addItems(QEMU_SYSTEMS_CPUS.get(arch, []))
+        if arch and arch in QEMU_SYSTEMS_CPUS_W:
+            self.CP.addItems(QEMU_SYSTEMS_CPUS_W.get(arch, []))
         else:
             self.CP.addItems(["host", "qemu32", "qemu64"]) if not self.CP.count() else None
         self.V.clear()
         if arch and arch in QEMU_SYSTEMS_VGAS:
             self.V.addItems(QEMU_SYSTEMS_VGAS.get(arch, []))
+        if arch and arch in QEMU_SYSTEMS_VGAS_W:
+            self.V.addItems(QEMU_SYSTEMS_VGAS_W.get(arch, []))
         else:
             self.V.addItems(["none", "std", "cirrus", "vmware", "qxl", "virtio"])
+        self.update_net_list_I()
 
     def profiles_dir(self):
         return get_config_path()
@@ -812,22 +1006,37 @@ class QG(QTabWidget):
                     "net_model": self.LN.currentText(),
                     "net_type": self.KN.currentText(),
                     "portfwd": self.PF.text().strip() if self.CPF.isChecked() else "",
+                    "AQEW": self.AQEW.isChecked(),
                     "enb_command_qemu": False,
-                    "command_qemu": ""
+                    "command_qemu": "",
+                    "daemon_storage": self.CDT.isChecked(),
+                    "daemon_storage_path": self.HD.currentText() if self.HD.currentText().lower() != "none" else "",
+                    "daemon_kill_process": self.CDPDS.isChecked(),
+                    "daemon_kill_process_name": self.CDPDS2.currentText() if self.CDPDS2.currentText().lower() != "none" or self.CDPDS2.currentText().lower() != "" else "none",
+                    "daemon_edit_name": self.ENPDS.text() if self.ENPDS.text().lower() != "" else "",
+                    "IO_daemon_storage": self.DHD.currentText(),
+                    "daemon_current": self.DSNTR.currentText(),
+                    "check_advanced_tab": self.CAD.isChecked()
                 }
         return config
 
     def apply_config(self, cfg):
+        self.is_loading = True
+        try:
+            return self._apply_config_internal(cfg)
+        finally:
+            self.is_loading = False
+
+    def _apply_config_internal(self, cfg):
         # Custom Command
         enb_cmd = cfg.get('enb_command_qemu', False)
         self.CCRQ.setChecked(enb_cmd)
         if enb_cmd:
             self.CCRQT.setText(cfg.get('command_qemu', ''))
-            return # If custom command is enabled, other settings might not matter or should be ignored? 
-                   # But user might want to see them. 
-                   # However, the original logic for get_current_config returns ONLY command if checked.
-                   # So apply_config should probably respect that.
-                   # But let's try to load other things if they exist, just in case.
+            return
+
+        AQEW = cfg.get('AQEW', False)
+        self.AQEW.setChecked(AQEW)
         
         # Arch
         arch = cfg.get('arch', '')
@@ -949,6 +1158,35 @@ class QG(QTabWidget):
             self.CPF.setChecked(False)
             self.PF.setText('')
 
+        # daemon storage
+        daemon_storage = cfg.get('daemon_storage', False)
+        self.CDT.setChecked(daemon_storage)
+        daemon_storage_path = cfg.get('daemon_storage_path', '')
+        if daemon_storage_path:
+            if self.HD.findText(daemon_storage_path) == -1:
+                self.HD.addItem(daemon_storage_path)
+            self.HD.setCurrentText(daemon_storage_path)
+        daemon_kill_process = cfg.get('daemon_kill_process', False)
+        self.CDPDS.setChecked(daemon_kill_process)
+        daemon_kill_process_CB = cfg.get('daemon_kill_process_name', '')
+        if daemon_kill_process_CB:
+            if self.CDPDS2.findText(daemon_kill_process_CB) == -1:
+                self.CDPDS2.addItem(daemon_kill_process_CB)
+            self.CDPDS2.setCurrentText(daemon_kill_process_CB)
+        daemon_edit_name = cfg.get('daemon_edit_name', '')
+        if daemon_edit_name:
+            self.ENPDS.setText(daemon_edit_name)
+        self.DHD.setCurrentText(cfg.get('IO_daemon_storage', ''))
+
+        # advanced tab
+        daemon_current = cfg.get('daemon_current', '')
+        if daemon_current:
+            if self.DSNTR.findText(daemon_current) == -1:
+                self.DSNTR.addItem(daemon_current)
+            self.DSNTR.setCurrentText(daemon_current)
+        check_advanced_tab = cfg.get('check_advanced_tab', False)
+        self.CAD.setChecked(check_advanced_tab)
+
 
     def _ui_profile_add(self):
         name, ok = QInputDialog.getText(self, "Thêm profile", "Tên profile:")
@@ -1004,6 +1242,7 @@ class QG(QTabWidget):
         dlg = DL()
         dlg.exec_()
         disks = load_disk_path_json_file()
+        self.update_disk_list()
         for cb in [self.HDA, self.HDB, self.HDC, self.HDD]:
             current_val = cb.currentText()
             cb.clear()
@@ -1067,26 +1306,117 @@ class QG(QTabWidget):
         except Exception as e:
             QMessageBox.critical(self, "Lỗi", str(e) + "\nHãy cài QEMU hoặc kiểm tra cấu hình.")
             return
+    
+    def run_daemon_storage(self):
+        create_json()
+        with open(get_config_path(), "r", encoding="utf-8") as f:
+            data = json.load(f)
+        idds = len(list(data["caches"].keys()))
+        name_ds_check = list(data["config_DS"].keys())
+        if self.CDT.isChecked() == False:
+            data["config"]["daemon_storage"] = False
+            return None
+        if self.DHD.currentText() == "":
+            QMessageBox.critical(self, "Lỗi", "Hãy chọn loại kết nối IO (IO daemon storage) trước.")
+            return None
+        if self.HD.currentText() == "" or self.HD.currentText() == "none":
+            QMessageBox.critical(self, "Lỗi", "Hãy chọn ổ cứng hoặc nạp ổ cứng qua tab ổ cứng để chạy")
+            return None 
+        else:
+            if self.CDT.isChecked():
+                addr_nbd_path = Path(__file__).resolve().parent
+                # Ensure forward slashes for QEMU options to avoid escaping issues on Windows
+                addr_nbd = addr_nbd_path.as_posix()
+                disk_path = self.HD.currentText() if self.HD.currentText() != "none" else ""
+                path_DS = Path(__file__).resolve().parent / "qemu" / "qemu-storage-daemon.exe"
+                # qemu-storage-daemon.exe is the standard name
+                cmd_ds = f"{path_DS} --nbd-server addr.type=inet,addr.host=127.0.0.1,addr.port=1000{idds} --blockdev driver=file,node-name=d{idds},filename={disk_path} --export type=nbd,id=ex0,node-name=d{idds},writable=on"
+                part_cmd_run_qemu = f"-blockdev export=d{idds},driver=nbd,server.type=inet,server.host=127.0.0.1,node-name=nbd{idds},server.port=1000{idds}"
+                
+                with open(get_config_path(), "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                if "config_DS" not in data:
+                    data["config_DS"] = {}
+                
+                name_ds = self.ENPDS.text()
+                data["config_DS"][name_ds] = {
+                        "cmd_ds": cmd_ds,
+                        "part_cmd_run_qemu": part_cmd_run_qemu,
+                        "id": idds,
+                        "node-name": f"d{idds}",
+                        "check_list": name_ds,
+                        "path_disk": self.HD.currentText(),
+                    }
+                data["CCD"][name_ds] = {
+                    "check_used" : True,
+                    "path_disk_used": self.HD.currentText(),
+                }
+                if name_ds == "":
+                    QMessageBox.critical(self, "Lỗi", "Tên ổ đĩa không được để trống.")
+                    return None
+                if name_ds in name_ds_check:
+                    name_ds_check_caches = list(data["caches"].keys())
+                    if name_ds in name_ds_check_caches:
+                        QMessageBox.critical(self, "Lỗi", "Tên ổ đĩa đã tồn tại.")
+                        return None
+                    else:
+                        pass
+                data["config_DS"][name_ds] = {
+                        "cmd_ds": cmd_ds,
+                        "part_cmd_run_qemu": part_cmd_run_qemu,
+                        "id": idds,
+                        "node-name": f"d{idds}",
+                        "check_list": name_ds,
+                        "path_disk": self.HD.currentText(),
+                    }
+                data["CCD"][name_ds] = {
+                    "check_used" : True,
+                    "path_disk_used": self.HD.currentText(),
+                }
+                
+                with open(get_config_path(), "w", encoding="utf-8") as f:
+                    json.dump(data, f, ensure_ascii=False, indent=4)
+                
+                return name_ds
+
+    def click_run_daemon(self):
+        name_ds = self.run_daemon_storage()
+        if name_ds:
+            load_config.run_daemon_storage_direct(get_config_path(), name_ds)
+            self.update_daemon_list_kill()
+            self.update_DSNTR()
+            QMessageBox.information(self, "Info", f"Đã chạy daemon: {name_ds}")
+
+    def click_kill_daemon(self):
+        key = self.CDPDS2.currentText()
+        if not key:
+             return
+        load_config.kill_daemon_storage_direct(get_config_path(), key)
+        self.update_daemon_list_kill()
+        QMessageBox.information(self, "Info", f"Đã kill daemon: {key}")
         try:
-            p = disk_list_path()
-            if p.exists():
-                try:
-                    p.unlink()
-                except Exception:
-                    pass
-        except Exception:
-            self.HDA.clear()
-            self.HDB.clear()
-            self.HDC.clear()
-            self.HDD.clear()
-            self.HDA.addItem("none")
-            self.HDB.addItem("none")
-            self.HDC.addItem("none")
-            self.HDD.addItem("none")
+            with open(get_config_path(), 'r', encoding="utf-8") as f:
+                data = json.load(f)
+            del data["caches"][key]
+            key = key.split(":")[0]
+            del data["config_DS"][key]
+            del data["CCD"][key]
+            self.CDPDS2.clear()
+            self.CDPDS2.addItems(load_key_DS())
+            self.DSNTR.clear()
+            self.DSNTR.addItems(load_key_DS())
+            with open(get_config_path(), 'w', encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+        except Exception as e:
+            print(e)
 
     def update_iso_enable(self, checked):
         self.LEI.setEnabled(checked)
         self.bi.setEnabled(checked)
+
+    def closeEvent(self, event):
+        load_config.kill_all_daemons(get_config_path())
+        event.accept()
 
 class DL(QDialog):
     def __init__(self):
@@ -1361,3 +1691,4 @@ if __name__ == "__main__":
     qg.show()
     sys.exit(app.exec_())
 #the command:pyinstaller --onedir --noconfirm --add-data "load_config.py;." --add-data "qemu;qemu" --add-data "log_module.py;." --add-data "find_tools_module.py;." --add-data "qemu_advanced_module.py;." run.py
+# 2025 Vncore lab (alias of Nguyễn Trường Lâm)
