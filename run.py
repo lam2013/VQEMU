@@ -1,4 +1,15 @@
-﻿import ctypes
+
+from PyQt5.QtWidgets import QSizePolicy
+from PyQt5.QtWidgets import QLineEdit
+from PyQt5.QtWidgets import QGridLayout
+from PyQt5.QtWidgets import QGroupBox
+import subprocess
+from find_tools_module import find_qemu_img
+from qemu_advanced_module import QEMU_DISK_SIZE_FORMAT
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QCheckBox
+import ctypes
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -8,6 +19,7 @@ import os
 import re
 import json
 import shutil
+import tempfile
 from find_tools_module import *
 from pathlib import Path
 import sys, io
@@ -15,15 +27,19 @@ import threading
 from qemu_advanced_module import *
 import load_config
 
-# VNcore lab 2025 (alias of Nguyễn Trường Lâm)
-
-print("VNcore lab 2025 (alias of Nguyễn Trường Lâm)")
-
 try:
     if sys.stdout and hasattr(sys.stdout, "buffer"):
-        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+        if getattr(sys.stdout, "encoding", "").lower().replace("-", "") != "utf8":
+            _old_stdout = sys.stdout
+            sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace", line_buffering=True)
+            _old_stdout.detach()  # Detach without closing the underlying buffer
+
     if sys.stderr and hasattr(sys.stderr, "buffer"):
-        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8")
+        if getattr(sys.stderr, "encoding", "").lower().replace("-", "") != "utf8":
+            _old_stderr = sys.stderr
+            sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace", line_buffering=True)
+            _old_stderr.detach()  # Detach without closing the underlying buffer
+
 except Exception:
     pass
 
@@ -40,13 +56,45 @@ def force_delete_file_as_admin(file_path):
         return False
 
 def get_config_path():
-    base_path = Path(__file__).resolve().parent
-    return base_path / "config_VQEMU.json"
+    def writable_base(path):
+        try:
+            path.mkdir(parents=True, exist_ok=True)
+            test_file = path / ".vqemu_write_test"
+            with open(test_file, "w", encoding="utf-8") as f:
+                f.write("\n")
+            test_file.unlink()
+            return True
+        except Exception:
+            return False
+
+    candidates = []
+    if sys.platform == "win32":
+        localappdata = os.environ.get('LOCALAPPDATA')
+        appdata = os.environ.get('APPDATA')
+        if localappdata:
+            candidates.append(Path(localappdata) / "VQEMU")
+        if appdata and appdata != localappdata:
+            candidates.append(Path(appdata) / "VQEMU")
+        candidates.append(Path.home() / "AppData" / "Local" / "VQEMU")
+        candidates.append(Path.home() / ".vqemu")
+    else:
+        candidates.append(Path.home() / ".vqemu")
+
+    for base_path in candidates:
+        if writable_base(base_path):
+            return base_path / "config_VQEMU.json"
+
+    fallback = Path(tempfile.gettempdir()) / "VQEMU"
+    try:
+        fallback.mkdir(parents=True, exist_ok=True)
+    except Exception:
+        pass
+    return fallback / "config_VQEMU.json"
 
 def create_json():
     path = get_config_path()
     if not path.exists():
-        data = {"disks": {}, "config": {}, "profiles": {}, "snapshots": {}, "caches": {}, "config_DS": {}, "CCD": {}}
+        data = {"disks": {}, "config": {}, "profiles": {}, "snapshots": {}, "caches": {}, "config_DS": {}, "CCD": {}, "display_options": {}}
         try:
             with open(path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
@@ -170,6 +218,253 @@ def can_write(folder):
 def always_return_true():
     return True
 
+class LogViewerDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Trình xem Log")
+        self.resize(800, 600)
+        
+        layout = QVBoxLayout(self)
+        
+        self.text_edit = QTextEdit()
+        self.text_edit.setReadOnly(True)
+        layout.addWidget(self.text_edit)
+        
+        btn_layout = QHBoxLayout()
+        
+        self.btn_refresh = QPushButton("Làm mới")
+        self.btn_refresh.clicked.connect(self.load_log)
+        btn_layout.addWidget(self.btn_refresh)
+        
+        self.btn_save = QPushButton("Lưu Log")
+        self.btn_save.clicked.connect(self.save_log)
+        btn_layout.addWidget(self.btn_save)
+        
+        self.btn_clear = QPushButton("Xóa Log")
+        self.btn_clear.clicked.connect(self.clear_log)
+        btn_layout.addWidget(self.btn_clear)
+        
+        self.btn_close = QPushButton("Đóng")
+        self.btn_close.clicked.connect(self.close)
+        btn_layout.addWidget(self.btn_close)
+        
+        layout.addLayout(btn_layout)
+        
+        self.log_file = self.get_latest_log()
+        self.load_log()
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.load_log)
+        self.timer.start(100) # Refresh every 2 seconds
+
+    def get_latest_log(self):
+        if sys.platform == "win32":
+            app_data = os.environ.get('LOCALAPPDATA') or os.environ.get('APPDATA') or os.path.expanduser('~')
+            log_dir = Path(app_data) / "VQEMU" / "logs"
+        else:
+            log_dir = Path.home() / ".vqemu" / "logs"
+            
+        if not log_dir.exists():
+            return None
+        logs = sorted(log_dir.glob("*.log"), key=os.path.getmtime, reverse=True)
+        return logs[0] if logs else None
+
+    def load_log(self):
+        self.log_file = self.get_latest_log()
+        if self.log_file and self.log_file.exists():
+            try:
+                with open(self.log_file, "r", encoding="utf-8") as f:
+                    content = f.read()
+                self.text_edit.setPlainText(content)
+                self.text_edit.moveCursor(QTextCursor.End)
+            except Exception as e:
+                self.text_edit.setPlainText(f"Error reading log: {e}")
+        else:
+            if sys.platform == "win32":
+                app_data = os.environ.get('LOCALAPPDATA') or os.environ.get('APPDATA') or os.path.expanduser('~')
+                log_dir = Path(app_data) / "VQEMU" / "logs"
+            else:
+                log_dir = Path.home() / ".vqemu" / "logs"
+            self.text_edit.setPlainText(f"No log file found in {log_dir}")
+
+    def save_log(self):
+        file_path, _ = QFileDialog.getSaveFileName(self, "Lưu File Log", "", "Log Files (*.log);;Text Files (*.txt)")
+        if file_path:
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(self.text_edit.toPlainText())
+            QMessageBox.information(self, "Thành công", "Đã lưu log thành công!")
+
+    def clear_log(self):
+        if self.log_file and self.log_file.exists():
+            reply = QMessageBox.question(self, "Xác nhận", "Bạn có chắc muốn xóa nội dung file log hiện tại?", QMessageBox.Yes | QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                with open(self.log_file, "w", encoding="utf-8") as f:
+                    f.write("")
+                self.load_log()
+
+class USBScanThread(QThread):
+    scan_finished = pyqtSignal(list)
+    scan_error = pyqtSignal(str)
+
+    def run(self):
+        cmd = 'Get-PnpDevice -PresentOnly | Where-Object { $_.InstanceId -match "^USB" } | Select-Object FriendlyName, InstanceId | ConvertTo-Json'
+        try:
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            
+            proc = subprocess.run(["powershell", "-Command", cmd], capture_output=True, text=True, startupinfo=startupinfo)
+            if proc.returncode == 0:
+                devices = json.loads(proc.stdout)
+                if not isinstance(devices, list):
+                    devices = [devices]
+                self.scan_finished.emit(devices)
+            else:
+                self.scan_error.emit(f"Process returned {proc.returncode}")
+        except Exception as e:
+            self.scan_error.emit(str(e))
+
+class USBManagerDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Quản lý thiết bị USB")
+        self.resize(600, 400)
+        
+        layout = QVBoxLayout(self)
+        
+        self.table = QTableWidget()
+        self.table.setColumnCount(4)
+        self.table.setHorizontalHeaderLabels(["Chọn", "Tên thiết bị", "Vendor ID", "Product ID"])
+        self.table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+        self.table.setStyleSheet("""
+            QTableWidget {
+                background-color: #2c313c;
+                color: #e0e0e0;
+                gridline-color: #444;
+                border: 1px solid #444;
+            }
+            QHeaderView::section {
+                background-color: #3b4252;
+                color: #fff;
+                padding: 5px;
+                border: 1px solid #444;
+            }
+            QTableWidget::item {
+                padding: 5px;
+            }
+            QTableCornerButton::section {
+                background-color: #3b4252;
+                border: 1px solid #444;
+            }
+            QCheckBox {
+                margin-left: 10px;
+            }
+        """)
+        layout.addWidget(self.table)
+        
+        btn_layout = QHBoxLayout()
+        self.btn_scan = QPushButton("Quét thiết bị")
+        self.btn_scan.clicked.connect(self.scan_devices)
+        btn_layout.addWidget(self.btn_scan)
+        
+        self.btn_close = QPushButton("Đóng")
+        self.btn_close.clicked.connect(self.close)
+        btn_layout.addWidget(self.btn_close)
+        
+        layout.addLayout(btn_layout)
+        
+        self.load_current_config()
+        self.scan_devices()
+
+    def load_current_config(self):
+        # Use parent's transient list instead of reading file again
+        parent = self.parent()
+        if parent and hasattr(parent, 'usb_passthrough_list'):
+            self.selected_devices = parent.usb_passthrough_list
+        else:
+            self.selected_devices = []
+
+    def on_checkbox_changed(self, state):
+        self.update_parent_list()
+        parent = self.parent()
+        if parent and hasattr(parent, 'save_timer'):
+            parent.save_timer.start()
+
+    def update_parent_list(self):
+        usb_list = []
+        for i in range(self.table.rowCount()):
+            widget = self.table.cellWidget(i, 0)
+            if widget and widget.layout().count() > 0:
+                chk = widget.layout().itemAt(0).widget()
+                
+                if chk.isChecked():
+                    vid = self.table.item(i, 2).text()
+                    pid = self.table.item(i, 3).text()
+                    name = self.table.item(i, 1).text()
+                    usb_list.append({
+                        "vendorid": vid,
+                        "productid": pid,
+                        "name": name
+                    })
+        
+        parent = self.parent()
+        if parent:
+            parent.usb_passthrough_list = usb_list
+
+    def scan_devices(self):
+        self.table.setRowCount(0)
+        self.btn_scan.setEnabled(False)
+        self.btn_scan.setText("Đang quét...")
+        
+        self.scan_thread = USBScanThread()
+        self.scan_thread.scan_finished.connect(self.on_scan_finished)
+        self.scan_thread.scan_error.connect(self.on_scan_error)
+        self.scan_thread.start()
+
+    def on_scan_finished(self, devices):
+        self.btn_scan.setEnabled(True)
+        self.btn_scan.setText("Quét thiết bị")
+        
+        row = 0
+        for dev in devices:
+            name = dev.get("FriendlyName", "Unknown")
+            instance_id = dev.get("InstanceId", "")
+            
+            # Regex to extract VID and PID
+            match_vid = re.search(r'VID_([0-9A-Fa-f]{4})', instance_id)
+            match_pid = re.search(r'PID_([0-9A-Fa-f]{4})', instance_id)
+            
+            if match_vid and match_pid:
+                vid = "0x" + match_vid.group(1).lower()
+                pid = "0x" + match_pid.group(1).lower()
+                
+                self.table.insertRow(row)
+                
+                chk = QCheckBox()
+                chk.stateChanged.connect(self.on_checkbox_changed)
+
+                for s_dev in self.selected_devices:
+                    if s_dev.get("vendorid") == vid and s_dev.get("productid") == pid:
+                        chk.setChecked(True)
+                        break
+                
+                chk_widget = QWidget()
+                chk_layout = QHBoxLayout(chk_widget)
+                chk_layout.addWidget(chk)
+                chk_layout.setAlignment(Qt.AlignCenter)
+                chk_layout.setContentsMargins(0,0,0,0)
+                
+                self.table.setCellWidget(row, 0, chk_widget)
+                self.table.setItem(row, 1, QTableWidgetItem(name))
+                self.table.setItem(row, 2, QTableWidgetItem(vid))
+                self.table.setItem(row, 3, QTableWidgetItem(pid))
+                row += 1
+
+    def on_scan_error(self, error):
+        self.btn_scan.setEnabled(True)
+        self.btn_scan.setText("Quét thiết bị")
+        QMessageBox.warning(self, "Lỗi quét USB", f"Không thể quét thiết bị: {error}")
+
+
+
 class QG(QTabWidget):
     def __init__(self):
         super().__init__()
@@ -211,11 +506,18 @@ class QG(QTabWidget):
                 font-size: 15px;
             }
             QGroupBox {
-                border: none;
+                border: 2px solid #3b4252;
                 border-radius: 8px;
-                margin-top: 10px;
+                margin-top: 20px;
                 background: #2c313c;
                 font-weight: bold;
+                font-size: 18px;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                subcontrol-position: top left;
+                padding: 0 10px;
+                color: #cacdcf;
             }
             QPushButton {
                 background: #3b4252;
@@ -231,11 +533,13 @@ class QG(QTabWidget):
                 background: #23272e;
                 border: 1px solid #444;
                 border-radius: 6px;
-                padding: 4px;
+                padding: 6px;
                 color: #e0e0e0;
+                min-height: 28px;
             }
             QLabel {
                 font-weight: bold;
+                margin-right: 5px;
             }
         """)
         self.is_loading = False
@@ -243,19 +547,43 @@ class QG(QTabWidget):
         self.save_timer.setSingleShot(True)
         self.save_timer.setInterval(500)  # Debounce 500ms
         self.save_timer.timeout.connect(self._perform_save_snapshot)
+        
+        # Load config once
+        try:
+            with open(get_config_path(), 'r', encoding='utf-8') as f:
+                self.cached_config = json.load(f)
+        except Exception:
+            self.cached_config = {"disks": {}, "config_DS": {}, "profiles": {}}
+            
         self.init_tabs()
     
+    def open_log_viewer(self):
+        if not hasattr(self, 'log_viewer_dialog') or not self.log_viewer_dialog.isVisible():
+            self.log_viewer_dialog = LogViewerDialog(self)
+            self.log_viewer_dialog.show()
+        else:
+            self.log_viewer_dialog.raise_()
+            self.log_viewer_dialog.activateWindow()
+
+    def open_usb_manager(self):
+        dlg = USBManagerDialog(self)
+        dlg.exec_()
+
     def update_system_qemu(self):
         try:
-            if self.AQEW.isChecked():
-                self.K.clear()
-                self.K.addItems(sorted(list(QEMU_SYSTEM_W.keys())))
-            else:
-                self.K.clear()
-                self.K.addItems(sorted(list(QEMU_SYSTEMS.keys())))
-        except:
-                self.K.clear
-                self.K.addItems([])
+            self.K.blockSignals(True)
+            current_idx = self.K.currentIndex()
+            add_w = self.AQEW.isChecked()
+            for i in range(self.K.count()):
+                text = self.K.itemText(i)
+                if add_w and not text.endswith("w"):
+                    self.K.setItemText(i, text + "w")
+                elif not add_w and text.endswith("w"):
+                    self.K.setItemText(i, text[:-1])
+            self.K.setCurrentIndex(current_idx)
+            self.K.blockSignals(False)
+        except Exception:
+            self.K.blockSignals(False)
 
     def get_qemu_exe(self):
         arch = self.K.currentText()
@@ -339,8 +667,11 @@ class QG(QTabWidget):
             json.dump(data, f, ensure_ascii=False, indent=4)
 
     def init_tabs(self):
-        vm_tab = QWidget()
-        vm_layout = QVBoxLayout(vm_tab)
+        
+        vm_scroll = QScrollArea()
+        vm_scroll.setWidgetResizable(True)
+        vm_content = QWidget()
+        vm_layout = QVBoxLayout(vm_content)
         self.CCRQ = QCheckBox("tùy chọn lệnh chạy", self)
         self.CCRQ.setEnabled(True)
         self.CCRQ.setChecked(False)
@@ -390,18 +721,80 @@ class QG(QTabWidget):
 
         layout_vm.addWidget(QLabel("Âm thanh:"), 6, 0)
         self.A = QComboBox()
-        self.A.addItems(["None","ac97","es1370","hda","sb16"])
+        self.update_audio_list()
+        
         layout_vm.addWidget(self.A, 6, 1)
+
+        self.MT = QComboBox()
+        self.update_machine_type()
+        layout_vm.addWidget(QLabel("machine type:"), 7,0)
+        layout_vm.addWidget(self.MT, 7,1)
+
+        # Feature 8: Acceleration
+        layout_vm.addWidget(QLabel("Tăng tốc (Accel):"), 8, 0)
+        
+        acc_widget = QWidget()
+        acc_layout = QHBoxLayout(acc_widget)
+        acc_layout.setContentsMargins(0,0,0,0)
+        
+        self.ACC = QComboBox()
+        self.ACC.addItems(["tcg", "whpx", "hax", "off"])
+        self.ACC.setToolTip("Chọn 'tcg' nếu không chắc chắn. 'whpx' yêu cầu Hyper-V/WHPX.")
+        
+        self.L_ACC_Status = QLabel("")
+        
+        acc_layout.addWidget(self.ACC)
+        acc_layout.addWidget(self.L_ACC_Status)
+        
+        layout_vm.addWidget(acc_widget, 8, 1)
+
+        self.ACC.currentIndexChanged.connect(self.validate_accelerator)
+
+        self.none_Watchdog = False  # khởi tạo trước khi dùng
+        self.WDD = QComboBox()
+        self.Checkbox_enable_watchdog_device = QCheckBox()
+        self.Checkbox_enable_watchdog_device.setChecked(False)
+        self.Checkbox_enable_watchdog_device.setText("bật watchdog device")
+        layout_vm.addWidget(QLabel("Watchdog:"), 9, 0)
+        layout_vm.addWidget(self.WDD, 9, 1)
+        layout_vm.addWidget(self.Checkbox_enable_watchdog_device, 9, 2)
+        self.K.currentIndexChanged.connect(self.update_watchdog_list)
+        self.AQEW.toggled.connect(self.update_watchdog_list)
+        self.Checkbox_enable_watchdog_device.toggled.connect(self.update_watchdog)
+        self.WDD.currentIndexChanged.connect(self.update_watcdog_action)
+        
+
         self.group_vm = group_vm
         vm_layout.addWidget(group_vm)
         self.run = QPushButton("Khởi động máy ảo")
+        
+        self.btn_view_log = QPushButton("")
+        self.btn_view_log.setToolTip("Xem Log")
+        log_icon_path = find_icon("log_icon_VEQMU.png")
+        if log_icon_path:
+             self.btn_view_log.setIcon(QIcon(str(log_icon_path)))
+        else:
+             self.btn_view_log.setText("Xem Log")
+        self.btn_view_log.clicked.connect(self.open_log_viewer)
+        
+        self.btn_usb_manager = QPushButton("Quản lý USB")
+        self.btn_usb_manager.clicked.connect(self.open_usb_manager)
+
+        run_layout = QHBoxLayout()
+        run_layout.addWidget(self.run)
+        run_layout.addWidget(self.btn_view_log)
+        run_layout.addWidget(self.btn_usb_manager)
+        
         vm_layout.addWidget(self.CCRQT)
-        vm_layout.addWidget(self.run)
-        self.addTab(vm_tab, "Máy ảo")
+        vm_layout.addLayout(run_layout)
+        vm_scroll.setWidget(vm_content)
+        self.addTab(vm_scroll, "Máy ảo")
 
 
-        self.daemon_storage_tab = QWidget()
-        daemon_storage_layout = QVBoxLayout(self.daemon_storage_tab)
+        self.daemon_storage_scroll = QScrollArea()
+        self.daemon_storage_scroll.setWidgetResizable(True)
+        self.daemon_storage_content = QWidget()
+        daemon_storage_layout = QVBoxLayout(self.daemon_storage_content)
         self.CDT = QCheckBox("dùng daemon storage")
         group_DT = QGroupBox("Cấu hình daemon storage")
         layout_DT = QGridLayout(group_DT)
@@ -413,9 +806,8 @@ class QG(QTabWidget):
         mini_layout_1 = QHBoxLayout()
         self.HD = QComboBox()
         check_list_disk_D = []
-        with open(get_config_path(), 'r', encoding="utf-8") as f:
-            data = json.load(f)
-        listdisk = data["disks"].keys()
+        # Use cached config
+        listdisk = self.cached_config.get("disks", {}).keys()
         self.HD.addItems(listdisk)
         self.HD.clear()
         check_list_disk = []
@@ -436,8 +828,8 @@ class QG(QTabWidget):
         layout_DT.addWidget(self.ENPDS, 5, 0)
         self.RHD = QPushButton("chạy daemon storage")
         self.RHD.setEnabled(False)
-        layout_DT.addWidget(self.RHD, 6 , 0)
-        self.CDPDS = QCheckBox("kill DS process")
+        layout_DT.addWidget(self.RHD, 6, 0)
+        self.CDPDS = QCheckBox("Dừng tiến trình DS")
         self.CDPDS.setChecked(False)
         self.CDPDS.setEnabled(False)
         mini_layout_1.addWidget(self.CDPDS)
@@ -445,15 +837,32 @@ class QG(QTabWidget):
         self.update_daemon_list_kill()
         self.CDPDS2.setEnabled(False)
         mini_layout_1.addWidget(self.CDPDS2)
-        self.BCTDPDS = QPushButton("kill process")
+        self.BCTDPDS = QPushButton("Dừng tiến trình")
         self.BCTDPDS.setEnabled(False)
         mini_layout_1.addWidget(self.BCTDPDS)
         layout_DT.addLayout(mini_layout_1, 7, 0)
+        
+        # Feature 9: Daemon Status Table
+        layout_DT.addWidget(QLabel("Trạng thái Daemon:"), 8, 0)
+        self.table_daemon_status = QTableWidget()
+        self.table_daemon_status.setColumnCount(4)
+        self.table_daemon_status.setHorizontalHeaderLabels(["Tên", "PID", "Trạng thái", "Thời gian chạy"])
+        self.table_daemon_status.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+        self.table_daemon_status.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table_daemon_status.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.table_daemon_status.setStyleSheet("QTableWidget { background-color: #2c313c; color: white; border: 1px solid #444; } QHeaderView::section { background-color: #3b4252; color: white; border: 1px solid #444; }")
+        layout_DT.addWidget(self.table_daemon_status, 9, 0)
+        
+        self.btn_refresh_daemon = QPushButton("Cập nhật trạng thái")
+        layout_DT.addWidget(self.btn_refresh_daemon, 10, 0)
         daemon_storage_layout.addWidget(group_DT)
-        self.addTab(self.daemon_storage_tab, "Daemon storage")
+        self.daemon_storage_scroll.setWidget(self.daemon_storage_content)
+        self.addTab(self.daemon_storage_scroll, "Daemon storage")
 
-        self.disk_tab = QWidget()
-        disk_layout = QVBoxLayout(self.disk_tab)
+        self.disk_scroll = QScrollArea()
+        self.disk_scroll.setWidgetResizable(True)
+        self.disk_content = QWidget()
+        disk_layout = QVBoxLayout(self.disk_content)
         group_disk = QGroupBox("Quản lý ổ đĩa")
         layout_disk = QGridLayout(group_disk)
         layout_disk.addWidget(QLabel("HDA:"), 0, 0)
@@ -471,9 +880,11 @@ class QG(QTabWidget):
         self.BCD = QPushButton("Thêm/Tạo/Xóa ổ đĩa")
         layout_disk.addWidget(self.BCD, 4, 0, 1, 2)
         self.CLD = QPushButton("Xóa danh sách ổ đĩa")
+        self.CLD = QPushButton("Xóa danh sách ổ đĩa")
         layout_disk.addWidget(self.CLD, 5, 0, 1, 2)
         disk_layout.addWidget(group_disk)
-        self.addTab(self.disk_tab, "Ổ đĩa")
+        self.disk_scroll.setWidget(self.disk_content)
+        self.addTab(self.disk_scroll, "Ổ đĩa")
         check_list_disk = []
         for i in load_disk_path_json_file():
             check_list_disk.append(str(i))
@@ -498,9 +909,12 @@ class QG(QTabWidget):
             self.HDD.clear()
             for i in load_disk_path_json_file():
                 self.HDD.addItem(str(i))
+        self.check_disk_available()
 
-        self.boot_tab = QWidget()
-        boot_layout = QVBoxLayout(self.boot_tab)
+        self.boot_scroll = QScrollArea()
+        self.boot_scroll.setWidgetResizable(True)
+        self.boot_content = QWidget()
+        boot_layout = QVBoxLayout(self.boot_content)
         group_boot = QGroupBox("Khởi động")
         layout_boot = QGridLayout(group_boot)
         self.CBI = QCheckBox("Dùng ISO")
@@ -527,6 +941,11 @@ class QG(QTabWidget):
         self.LEDD.setPlaceholderText("Đường dẫn file floppy D")
         self.BDDD = QPushButton("Chọn file floppy D")
         self.BDDD.setEnabled(False)
+        self.CB_BIOS = QCheckBox("Dùng BIOS")
+        self.LE_BIOS = QLineEdit()
+        self.LE_BIOS.setPlaceholderText("Đường dẫn file BIOS")
+        self.BIOS = QPushButton("Chọn file BIOS")
+        self.BIOS.setEnabled(False)
         layout_boot.addWidget(self.CBI, 0, 0)
         layout_boot.addWidget(self.LEI, 0, 1)
         layout_boot.addWidget(self.bi, 0, 2)
@@ -536,20 +955,41 @@ class QG(QTabWidget):
         layout_boot.addWidget(self.CFDB, 2, 0)
         layout_boot.addWidget(self.LEDB, 2, 1)
         layout_boot.addWidget(self.BDBD, 2, 2)
+        layout_boot.addWidget(self.CFDC, 3, 0)
         layout_boot.addWidget(self.LEDC, 3, 1)
         layout_boot.addWidget(self.BDCD, 3, 2)
         layout_boot.addWidget(self.LEDD, 4, 1)
         layout_boot.addWidget(self.BDDD, 4, 2)
-        layout_boot.addWidget(self.CFDC, 3, 0)
         layout_boot.addWidget(self.CFDD, 4, 0)
+        
+        # Custom BIOS (User added manually + my addition cleanup)
+        # Note: self.CB_BIOS, self.LE_BIOS, self.BIOS are defined above by user.
+        layout_boot.addWidget(self.CB_BIOS, 5, 0)
+        layout_boot.addWidget(self.LE_BIOS, 5, 1)
+        layout_boot.addWidget(self.BIOS, 5, 2)
+        
+        # Boot Order (Adding this as user may have missed it or I need to re-add)
+        layout_boot.addWidget(QLabel("Boot Order:"), 6, 0)
+        self.BOOT_ORDER = QComboBox()
+        self.BOOT_ORDER.addItems(["Default", "CD-ROM -> HDD (-boot d c)", "HDD -> CD-ROM (-boot c d)", "HDD Only (-boot c)", "CD-ROM Only (-boot d)", "Floppy -> HDD (-boot a c)", "Network (-boot n)"])
+        layout_boot.addWidget(self.BOOT_ORDER, 6, 1)
+        self.BOOT_MENU = QCheckBox("Boot Menu")
+        layout_boot.addWidget(self.BOOT_MENU, 6, 2)
+
+        self.CB_BIOS.toggled.connect(lambda checked: (self.LE_BIOS.setEnabled(checked), self.BIOS.setEnabled(checked)))
+        self.BIOS.clicked.connect(self.browse_bios)
+
         boot_layout.addWidget(group_boot)
-        self.addTab(self.boot_tab, "Khởi động")
+        self.boot_scroll.setWidget(self.boot_content)
+        self.addTab(self.boot_scroll, "Khởi động")
 
         self.CBI.toggled.connect(self.update_iso_enable)
         self.update_iso_enable(self.CBI.isChecked())
 
-        self.net_tab = QWidget()
-        net_layout = QVBoxLayout(self.net_tab)
+        self.net_scroll = QScrollArea()
+        self.net_scroll.setWidgetResizable(True)
+        self.net_content = QWidget()
+        net_layout = QVBoxLayout(self.net_content)
         group_net = QGroupBox("Mạng")
         layout_net = QGridLayout(group_net)
         self.CN = QCheckBox("Bật mạng")
@@ -560,8 +1000,6 @@ class QG(QTabWidget):
         self.KN = QComboBox()
         self.KN.addItems(list(QEMU_SYSTEMS_WIFIS.get("connection", [])))
         self.KN.setEnabled(False)
-
-# ... (implicitly keeping intermediate lines, but replace_file_content needs distinct chunks or one contiguous block. Since these are far apart, I should use multi_replace or 2 calls. The prompt says "Do NOT make multiple parallel calls to this tool". I will use multi_replace_file_content instead.)
         self.CPF = QCheckBox("Mở port forward")
         self.PF = QLineEdit()
         self.PF.setPlaceholderText("hostfwd=tcp::2222-:22")
@@ -573,37 +1011,210 @@ class QG(QTabWidget):
         layout_net.addWidget(self.CPF, 3, 0)
         layout_net.addWidget(self.PF, 3, 1)
         net_layout.addWidget(group_net)
-        self.addTab(self.net_tab, "Mạng")
+        self.net_scroll.setWidget(self.net_content)
+        self.addTab(self.net_scroll, "Mạng")
         self.update_arch_dependent_widgets()
 
-        adco_tab = QWidget()
-        adco_layout = QVBoxLayout(adco_tab)
+        adco_scroll = QScrollArea()
+        adco_scroll.setWidgetResizable(True)
+        adco_content = QWidget()
+        adco_layout = QVBoxLayout(adco_content)
         group_adco = QGroupBox("cấu hình nâng cao")
         layout_adco = QGridLayout(group_adco)
         self.CAD = QCheckBox("Bật tùy chọn daemon storage")
         self.CAD.setChecked(False)
         layout_adco.addWidget(self.CAD, 0, 0)
         self.DHD = QComboBox()
-        self.DHD.addItems(QEMU_IO_DAEMON_STORAGE)
+        list_io_ds = QEMU_IO_DAEMON_STORAGE.get(self.K.currentText(), ["none"])
+        self.DHD.addItems(list_io_ds)
         self.DHD.setEnabled(False)
         self.label2 = QLabel("IO daemon storage:")
         layout_adco.addWidget(self.label2, 1, 0)
         layout_adco.addWidget(self.DHD, 1, 1)
         self.DSNTR = QComboBox()
-        with open(get_config_path(), 'r', encoding='utf-8') as f:
-            config = json.load(f)
-        list_key_DSTR = config['config_DS'].keys()
+        self.DSNTR = QComboBox()
+        # Use cached config
+        list_key_DSTR = self.cached_config.get("config_DS", {}).keys()
         self.DSNTR.addItems(list_key_DSTR)
         self.DSNTR.setEnabled(False)
         layout_adco.addWidget(QLabel("daemon để chạy:"), 2, 0)
         layout_adco.addWidget(self.DSNTR, 2, 1)
         adco_layout.addWidget(group_adco)
-        
-        adco_layout.addWidget(group_adco)
-        self.addTab(adco_tab, "Cấu hình nâng cao")
 
-        prof_tab = QWidget()
-        prof_layout = QVBoxLayout(prof_tab)
+        # Feature 7: Shared Folder
+        group_sf = QGroupBox("Shared Folder (Thư mục chia sẻ)")
+        layout_sf = QGridLayout(group_sf)
+        self.CB_SF = QCheckBox("Bật chia sẻ thư mục")
+        self.CB_SF.setChecked(False)
+        layout_sf.addWidget(self.CB_SF, 0, 0, 1, 3)
+        
+        layout_sf.addWidget(QLabel("Đường dẫn host:"), 1, 0)
+        self.LE_SF_Path = QLineEdit()
+        layout_sf.addWidget(self.LE_SF_Path, 1, 1)
+        self.BTN_SF_Browse = QPushButton("Chọn...")
+        layout_sf.addWidget(self.BTN_SF_Browse, 1, 2)
+        
+        layout_sf.addWidget(QLabel("Mount Tag:"), 2, 0)
+        self.LE_SF_Tag = QLineEdit("shared")
+        layout_sf.addWidget(self.LE_SF_Tag, 2, 1)
+        
+        adco_layout.addWidget(group_sf)
+
+        # Feature 10: Guest Agent
+        group_ga = QGroupBox("Tích hợp Guest Agent")
+        layout_ga = QGridLayout(group_ga)
+        self.CB_GuestAgent = QCheckBox("Bật QEMU Guest Agent (Tắt/Khởi động lại, Clipboard)")
+        self.CB_GuestAgent.setChecked(False)
+        self.CB_GuestAgent.setToolTip("Hỗ trợ QEMU Guest Agent để giao tiếp với Host.\nCần cài đặt driver virtio-serial và agent trong máy ảo.\nLệnh kích hoạt: -device virtio-serial -device virtserialport,chardev=qga0,name=org.qemu.guest_agent.0...")
+        layout_ga.addWidget(self.CB_GuestAgent, 0, 0)
+
+        adco_layout.addWidget(group_ga)
+
+        # Feature 11: -readconfig
+        group_rc = QGroupBox("Read Config")
+        layout_rc = QGridLayout(group_rc)
+        self.CB_RC = QCheckBox("Bật readconfig")
+        self.CB_RC.setChecked(False)
+        self.path_rc = QPlainTextEdit()
+        self.path_rc.setPlaceholderText("Đường dẫn file config")
+        self.path_rc.setEnabled(False)
+        self.CB_RC.toggled.connect(self.update_readconfig_ui)
+        layout_rc.addWidget(self.CB_RC, 0, 0)
+        layout_rc.addWidget(self.path_rc, 0, 1)
+
+        # Feature 12: -sandbox
+        group_sb = QGroupBox("Sandbox")
+        layout_sb = QGridLayout(group_sb)
+        self.CB_SB = QCheckBox("Bật sandbox (lưu ý: sandbox chí hỗ trợ cho linux)")
+        self.CB_SB.setChecked(False)
+        layout_sb.addWidget(self.CB_SB)
+        self.SB_seccomp_mode = QComboBox()
+        self.SB_seccomp_mode.addItems(["on", "off"])
+        self.SB_seccomp_mode.setEnabled(False)
+        layout_sb.addWidget(QLabel("seccomp mode: "))
+        layout_sb.addWidget(self.SB_seccomp_mode)
+        self.SB_obsolete = QComboBox()
+        self.SB_obsolete.addItems(["allow", "deny", "none"])
+        self.SB_obsolete.setEnabled(False)
+        layout_sb.addWidget(QLabel("obsolete:"))
+        layout_sb.addWidget(self.SB_obsolete)
+        self.SB_elevateprivileges = QComboBox()
+        self.SB_elevateprivileges.addItems(["allow", "deny", "children", "none"])
+        self.SB_elevateprivileges.setEnabled(False)
+        layout_sb.addWidget(QLabel("elevateprivileges:"))
+        layout_sb.addWidget(self.SB_elevateprivileges)
+        self.SB_spawn = QComboBox()
+        self.SB_spawn.addItems(["allow", "deny", "none"])
+        self.SB_spawn.setEnabled(False)
+        layout_sb.addWidget(QLabel("spawn: "))
+        layout_sb.addWidget(self.SB_spawn)
+        self.SB_resourcecontrol = QComboBox()
+        self.SB_resourcecontrol.addItems(["allow", "deny", "none"])
+        self.SB_resourcecontrol.setEnabled(False)
+        layout_sb.addWidget(QLabel("resourcecontrol: "))
+        layout_sb.addWidget(self.SB_resourcecontrol)
+        
+        adco_layout.addWidget(group_rc)
+
+        # Feature 14: -watchdog-action
+        wac_group = QGroupBox("Watchdog Action")
+        wac_layout = QGridLayout(wac_group)
+        self.WAC = QComboBox()
+        self.WAC.addItems(["reset","shutdown","poweroff","inject-nmi","pause","debug","none"])
+        wac_layout.addWidget(QLabel("watchdog action: "))
+        wac_layout.addWidget(self.WAC)
+        adco_layout.addWidget(wac_group)
+
+        adco_layout.addWidget(group_sb)
+        self.CB_SB.toggled.connect(self.update_ui_SB)
+
+        #Feature 15: -nographics
+        NGG = QGroupBox("nographics")
+        layout_NGG = QGridLayout(NGG)
+        self.CB_NGG = QCheckBox("Bật nographics (chạy QEMU mà không cần giao diện đồ họa, chỉ dùng terminal)")
+        self.CB_NGG.setChecked(False)
+        layout_NGG.addWidget(self.CB_NGG)
+        adco_layout.addWidget(NGG)
+        
+        #Feature 16: display options
+        display_group = QGroupBox("tùy chọn display")
+        self.display_layout = QGridLayout(display_group)
+        self.CB_Display = QCheckBox("Bật tùy chọn display")
+        self.CB_Display.setChecked(False)
+        self.display_layout.addWidget(self.CB_Display, 0, 0)
+        self.Mode_of_display = QComboBox()
+        self.Mode_of_display.addItems(["sdl", "gtk", "spice-app", "curses", "egl-headless", "dbus", "none"])
+        self.Mode_of_display.setEnabled(False)
+        self.CB_Display.toggled.connect(self.update_display_options_ui)
+        self.display_layout.addWidget(QLabel("Mode of display:"), 1, 0)
+        self.display_layout.addWidget(self.Mode_of_display, 1, 1)
+        self.update_option_diplay() # Initialize display options UI
+        self.CB_Display.toggled.connect(self.update_option_diplay)
+        self.Mode_of_display.currentTextChanged.connect(self.update_option_diplay)
+        self.update_UI_display_options()
+        self.CB_Display.toggled.connect(self.update_UI_display_options)
+        self.Mode_of_display.currentTextChanged.connect(self.update_UI_display_options)
+        adco_layout.addWidget(display_group)
+
+        #Feature 17: spice
+        spice_display_group = QGroupBox("tùy chọn spice")
+        self.spice_layout = QGridLayout(spice_display_group)
+        self.CB_Spice = QCheckBox("bật/tắt tùy chọn spice")
+        self.CB_Spice.setChecked(False)
+        self.spice_layout.addWidget(self.CB_Spice, 0 ,0)
+        self.Mode_of_spice = QComboBox()
+        self.Mode_of_spice.addItems(["cơ bản", "nâng cao"])
+        self.Mode_of_spice.setEnabled(False)
+        self.spice_layout.addWidget(self.Mode_of_spice)
+        self.layout_option_spice = QVBoxLayout()
+        adco_layout.addWidget(spice_display_group)
+        self.update_option_display_spice()
+        self.CB_Spice.toggled.connect(self.update_option_display_spice)
+        self.Mode_of_spice.currentIndexChanged.connect(self.update_option_display_spice)
+        self.Mode_of_spice.currentIndexChanged.connect(self.update_CB_Spice)
+        self.CB_Spice.toggled.connect(self.update_Mode_of_spice_UI)
+        self.CB_Spice.toggled.connect(self.update_CB_Spice)
+        adco_layout.addWidget(spice_display_group)
+
+        #i38 advanced options
+
+        i386_advanced_optons_group = QGroupBox("i386 advanced options")
+        self.i386_advanced_options_layout = QGridLayout(i386_advanced_optons_group)
+        self.i386_advanced_options_layout.addWidget(QLabel("tùy chọn đặc biệt của i386:"))
+        self.win2k_hack = QCheckBox("bật win2k-hack")
+        self.i386_advanced_options_layout.addWidget(QLabel("win2k_hack"))
+        self.i386_advanced_options_layout.addWidget(self.win2k_hack)
+        self.no_fd_bootcheck = QCheckBox("bật no-fd-bootcheck")
+        self.i386_advanced_options_layout.addWidget(QLabel("no-fd-bootcheck"))
+        self.i386_advanced_options_layout.addWidget(self.no_fd_bootcheck)
+        self.K.currentIndexChanged.connect(self.update_i386_advanced_optons)
+        self.update_i386_advanced_optons()
+
+        adco_layout.addWidget(i386_advanced_optons_group)
+
+        #keyboard layout
+
+        keyboard_layout_group = QGroupBox("keyboard layout")
+        self.kll = QGridLayout(keyboard_layout_group)
+        self.kll.addWidget(QLabel("keyboard layout option"))
+        self.keyboardlayoutcheckbox = QCheckBox()
+        self.keyboardlayoutcheckbox.setText("bật keyboard layout")
+        self.keyboardlayoutlineedit = QLineEdit()
+        self.keyboardlayoutlineedit.setPlaceholderText("VD: en, fr, vn,...")
+        self.keyboardlayoutlineedit.setEnabled(False)
+        self.keyboardlayoutcheckbox.toggled.connect(lambda: self.keyboardlayoutlineedit.setEnabled(self.keyboardlayoutcheckbox.isChecked()))
+        self.kll.addWidget(self.keyboardlayoutcheckbox)
+        self.kll.addWidget(self.keyboardlayoutlineedit)
+        adco_layout.addWidget(keyboard_layout_group)
+
+        adco_scroll.setWidget(adco_content)
+        self.adco_scroll = adco_scroll
+        self.addTab(adco_scroll, "Cấu hình nâng cao")
+
+        self.prof_scroll = QScrollArea()
+        self.prof_scroll.setWidgetResizable(True)
+        self.prof_content = QWidget()
+        prof_layout = QVBoxLayout(self.prof_content)
         group_prof = QGroupBox("Profiles / Cấu hình")
         layout_prof = QGridLayout(group_prof)
         self.profile_list = QListWidget()
@@ -617,7 +1228,8 @@ class QG(QTabWidget):
         layout_prof.addWidget(self.btn_prof_delete, 2, 2)
         layout_prof.addWidget(self.btn_prof_rename, 3, 2)
         prof_layout.addWidget(group_prof)
-        self.addTab(prof_tab, "Cấu hình")
+        self.prof_scroll.setWidget(self.prof_content)
+        self.addTab(self.prof_scroll, "Cấu hình")
 
         self.btn_prof_add.clicked.connect(self._ui_profile_add)
         self.btn_prof_load.clicked.connect(self._ui_profile_load)
@@ -640,6 +1252,10 @@ class QG(QTabWidget):
 
 
         self.CAD.toggled.connect(self.update_advanced_tab)
+        
+        self.CB_SF.toggled.connect(self.update_sf_ui)
+        self.BTN_SF_Browse.clicked.connect(self.browse_shared_folder)
+        self.update_sf_ui() # Initialize state
 
         self.BCD.clicked.connect(self.open_disk_dialog)
         self.CLD.clicked.connect(self.clear_disk_list)
@@ -654,6 +1270,8 @@ class QG(QTabWidget):
         self.btn_prof_load.clicked.connect(create_json)
         self.btn_prof_delete.clicked.connect(create_json)
         self.btn_prof_rename.clicked.connect(create_json)
+        self.AQEW.toggled.connect(self.update_io_ds)
+        self.K.currentIndexChanged.connect(self.update_io_ds)
 
 
         # Initialize UI state
@@ -663,6 +1281,1068 @@ class QG(QTabWidget):
         self.connect_snapshot_signals()
         self.update_disk_list()
         self.update_daemon_list()
+        self.KeyPressEvent()
+        qtime_Check_disk = QTimer()
+        qtime_Check_disk.setSingleShot(True)
+        qtime_Check_disk.setInterval(100)
+        qtime_Check_disk.timeout.connect(self.check_disk_available)
+        qtime_Check_disk.start()
+
+    def update_i386_advanced_optons(self):
+        if self.K.currentText() == "i386":
+            self.win2k_hack.setEnabled(True)
+            self.no_fd_bootcheck.setEnabled(True)
+        else:
+            self.win2k_hack.setEnabled(False)
+            self.no_fd_bootcheck.setEnabled(False)
+
+    def update_readconfig_ui(self):
+        checked = self.CB_RC.isChecked()
+        self.path_rc.setEnabled(checked)
+
+    def update_Mode_of_spice_UI(self):
+        self.Mode_of_spice.setEnabled(self.CB_Spice.isChecked())
+
+    def update_watcdog_action(self):
+        self.none_Watchdog = False
+        if self.WDD.currentText() == "none" or not self.WDD.isEnabled():
+            self.WAC.setEnabled(False)
+            self.none_Watchdog = True
+        else:
+            self.WAC.setEnabled(True)
+
+    def update_watchdog(self):
+        check = self.Checkbox_enable_watchdog_device.isChecked()
+        self.WDD.setEnabled(check)
+        self.WAC.setEnabled(check)
+        self.update_watcdog_action()
+
+    def update_display_options_ui(self):
+        checked = self.CB_Display.isChecked()
+        self.Mode_of_display.setEnabled(checked)
+
+    def update_UI_spice_options(self):
+        enabled = self.CB_Spice.isChecked()
+        if not enabled:
+            self.clean_layout_option_spice()
+        if enabled:
+            if self.Mode_of_spice.currentText() == "cơ bản":
+                self.CB_option1_port_spice.setEnabled(True)
+                self.CB_option2_tls_port_spice.setEnabled(True)
+                self.option3_ipv4_spice.setEnabled(True)
+                self.option4_ipv6_spice.setEnabled(True)
+                self.option5_disable_ticketing_spice.setEnabled(True)
+                self.CB_option6_secret_password_spice.setEnabled(True)
+                self.option7_disable_copy_paste_spice.setEnabled(True)
+                self.option8_agent_mouse_spice.setEnabled(True)
+
+    def update_port_spice(self):
+        self.option1_port_spice.setEnabled(self.CB_option1_port_spice.isChecked())
+    
+    def update_tls_port_spice(self):
+        self.option2_tls_port_spice.setEnabled(self.CB_option2_tls_port_spice.isChecked())
+
+    def update_secret_password_spice(self):
+        self.option6_secret_password_spice.setEnabled(self.CB_option6_secret_password_spice.isChecked())    
+
+    def update_option_display_spice(self):
+        if hasattr(self, 'layout_option_spice') and self.layout_option_spice is not None:
+            self.clean_layout_option_spice()
+            try:
+                for i in range(self.spice_layout.count()):
+                    item = self.spice_layout.itemAt(i)
+                    if item and item.layout() is self.layout_option_spice:
+                        self.spice_layout.removeItem(item)
+                        break
+            except:
+                pass
+        self.option1_layout_spice_basic = QHBoxLayout()
+        self.option1_port_spice = QLineEdit()
+        self.option1_port_spice.setPlaceholderText("VD: 5900")
+        self.option1_port_spice.setEnabled(False)
+        self.CB_option1_port_spice = QCheckBox("Bật port")
+        self.CB_option1_port_spice.setChecked(False)
+        self.CB_option1_port_spice.setEnabled(False) #UI
+        self.CB_option1_port_spice.toggled.connect(self.update_port_spice)
+        self.option1_layout_spice_basic.addWidget(QLabel("Port:"))
+        self.option1_layout_spice_basic.addWidget(self.option1_port_spice)
+        self.option1_layout_spice_basic.addWidget(self.CB_option1_port_spice)
+        self.option2_layout_spice_basic = QHBoxLayout()
+        self.option2_tls_port_spice = QLineEdit()
+        self.option2_tls_port_spice.setPlaceholderText("VD: 5901")
+        self.option2_tls_port_spice.setEnabled(False)
+        self.CB_option2_tls_port_spice = QCheckBox("Bật TLS port")
+        self.CB_option2_tls_port_spice.setChecked(False)
+        self.CB_option2_tls_port_spice.setEnabled(False) #UI
+        self.CB_option2_tls_port_spice.toggled.connect(self.update_tls_port_spice)
+        self.option2_layout_spice_basic.addWidget(QLabel("TLS Port:"))
+        self.option2_layout_spice_basic.addWidget(self.option2_tls_port_spice)
+        self.option2_layout_spice_basic.addWidget(self.CB_option2_tls_port_spice)
+        self.option3_layout_spice_basic = QHBoxLayout()
+        self.option3_ipv4_spice = QCheckBox("cho phép kết nối IPv4")
+        self.option3_ipv4_spice.setChecked(False)
+        self.option3_ipv4_spice.setEnabled(False) #UI
+        self.option3_layout_spice_basic.addWidget(self.option3_ipv4_spice)
+        self.option4_layout_spice_basic = QHBoxLayout()
+        self.option4_ipv6_spice = QCheckBox("cho phép kết nối IPv6")
+        self.option4_ipv6_spice.setChecked(False)
+        self.option4_ipv6_spice.setEnabled(False) #UI
+        self.option4_layout_spice_basic.addWidget(self.option4_ipv6_spice)
+        self.option5_layout_spice_basic = QHBoxLayout()
+        self.option5_disable_ticketing_spice = QCheckBox("vô hiệu hóa ticketing")
+        self.option5_disable_ticketing_spice.setChecked(False)
+        self.option5_disable_ticketing_spice.setEnabled(False) #UI
+        self.option5_layout_spice_basic.addWidget(self.option5_disable_ticketing_spice)
+        self.option6_layout_spice_basic = QHBoxLayout()
+        self.option6_secret_password_spice = QLineEdit()
+        self.option6_secret_password_spice.setPlaceholderText("Đặt mật khẩu cho kết nối spice")
+        self.option6_secret_password_spice.setEnabled(False)
+        self.CB_option6_secret_password_spice = QCheckBox("Bật mật khẩu")
+        self.CB_option6_secret_password_spice.setChecked(False)
+        self.CB_option6_secret_password_spice.setEnabled(False) #UI
+        self.CB_option6_secret_password_spice.toggled.connect(self.update_secret_password_spice)
+        self.option6_layout_spice_basic.addWidget(self.CB_option6_secret_password_spice)
+        self.option6_layout_spice_basic.addWidget(self.option6_secret_password_spice)
+        self.option7_layout_spice_basic = QHBoxLayout()
+        self.option7_disable_copy_paste_spice = QCheckBox("vô hiệu hóa copy-paste")
+        self.option7_disable_copy_paste_spice.setChecked(False)
+        self.option7_disable_copy_paste_spice.setEnabled(False) #UI
+        self.option7_layout_spice_basic.addWidget(self.option7_disable_copy_paste_spice)
+        self.option8_layout_spice_basic = QHBoxLayout()
+        self.option8_agent_mouse_spice = QCheckBox("bật agent mouse")
+        self.option8_agent_mouse_spice.setChecked(False)
+        self.option8_agent_mouse_spice.setEnabled(False) #UI
+        self.option8_layout_spice_basic.addWidget(self.option8_agent_mouse_spice)
+        if self.Mode_of_spice.currentText() == "cơ bản":
+            self.clean_layout_option_spice()
+            self.layout_option_spice_basic = QVBoxLayout()
+            self.layout_option_spice_basic.addLayout(self.option1_layout_spice_basic)
+            self.layout_option_spice_basic.addLayout(self.option2_layout_spice_basic)
+            self.layout_option_spice_basic.addLayout(self.option3_layout_spice_basic)
+            self.layout_option_spice_basic.addLayout(self.option4_layout_spice_basic)
+            self.layout_option_spice_basic.addLayout(self.option5_layout_spice_basic)
+            self.layout_option_spice_basic.addLayout(self.option6_layout_spice_basic)
+            self.layout_option_spice_basic.addLayout(self.option7_layout_spice_basic)
+            self.layout_option_spice_basic.addLayout(self.option8_layout_spice_basic)
+            self.spice_layout.addLayout(self.layout_option_spice_basic, 2, 0, 1, 2)
+        if self.Mode_of_spice.currentText() == "nâng cao":
+            self.clean_layout_option_spice()
+            self.layout_option_spice_advanced = QVBoxLayout()
+            self.layout_option_spice_advanced.addLayout(self.option1_layout_spice_basic)
+            self.layout_option_spice_advanced.addLayout(self.option2_layout_spice_basic)
+            self.layout_option_spice_advanced.addLayout(self.option3_layout_spice_basic)
+            self.layout_option_spice_advanced.addLayout(self.option4_layout_spice_basic)
+            self.layout_option_spice_advanced.addLayout(self.option5_layout_spice_basic)
+            self.layout_option_spice_advanced.addLayout(self.option6_layout_spice_basic)
+            self.layout_option_spice_advanced.addLayout(self.option7_layout_spice_basic)
+            self.layout_option_spice_advanced.addLayout(self.option8_layout_spice_basic)
+            self.layout_option1_spice_advanced = QHBoxLayout()
+            self.option1_x509_dir = QLineEdit()
+            self.option1_x509_dir.setPlaceholderText("Đường dẫn thư mục chứa chứng chỉ x509")
+            self.option1_x509_dir.setEnabled(False)
+            self.CB_option1_x509_dir = QCheckBox("Bật chứng chỉ x509")
+            self.CB_option1_x509_dir.setChecked(False)
+            self.CB_option1_x509_dir.setEnabled(False) #UIX
+            self.CB_option1_x509_dir.toggled.connect(self.update_x509_dir)
+            self.layout_option1_spice_advanced.addWidget(QLabel("Thư mục x509:"))
+            self.layout_option1_spice_advanced.addWidget(self.option1_x509_dir)
+            self.layout_option1_spice_advanced.addWidget(self.CB_option1_x509_dir)
+            self.layout_option_spice_advanced.addLayout(self.layout_option1_spice_advanced)
+            self.layout_option2_spice_advanced = QHBoxLayout()
+            self.option2_x509_key_file = QLineEdit()
+            self.option2_x509_key_file.setPlaceholderText("Đường dẫn file khóa riêng x509")
+            self.option2_x509_key_file.setEnabled(False)
+            self.CB_option2_x509_key_file = QCheckBox("Bật khóa riêng x509")
+            self.CB_option2_x509_key_file.setChecked(False)
+            self.CB_option2_x509_key_file.setEnabled(False) #UIX
+            self.CB_option2_x509_key_file.toggled.connect(self.update_x509_key_file)
+            self.layout_option2_spice_advanced.addWidget(QLabel("Khóa riêng x509:"))
+            self.layout_option2_spice_advanced.addWidget(self.option2_x509_key_file)
+            self.layout_option2_spice_advanced.addWidget(self.CB_option2_x509_key_file)
+            self.layout_option_spice_advanced.addLayout(self.layout_option2_spice_advanced)
+            self.layout_option3_spice_advanced = QHBoxLayout()
+            self.option3_x509_key_password = QLineEdit()
+            self.option3_x509_key_password.setPlaceholderText("Mật khẩu khóa riêng x509")
+            self.option3_x509_key_password.setEnabled(False)
+            self.CB_option3_x509_key_password = QCheckBox("Bật mật khẩu khóa riêng x509")
+            self.CB_option3_x509_key_password.setChecked(False)
+            self.CB_option3_x509_key_password.setEnabled(False) #UIX
+            self.CB_option3_x509_key_password.toggled.connect(self.update_x509_key_password)
+            self.layout_option3_spice_advanced.addWidget(QLabel("Mật khẩu khóa riêng x509:"))
+            self.layout_option3_spice_advanced.addWidget(self.option3_x509_key_password)
+            self.layout_option3_spice_advanced.addWidget(self.CB_option3_x509_key_password)
+            self.layout_option_spice_advanced.addLayout(self.layout_option3_spice_advanced)
+            self.layout_option4_spice_advanced = QHBoxLayout()
+            self.option4_x509_cert_file = QLineEdit()
+            self.option4_x509_cert_file.setPlaceholderText("Đường dẫn file chứng chỉ x509")
+            self.option4_x509_cert_file.setEnabled(False)
+            self.CB_option4_x509_cert_file = QCheckBox("Bật chứng chỉ x509")
+            self.CB_option4_x509_cert_file.setChecked(False)
+            self.CB_option4_x509_cert_file.setEnabled(False) #UIX
+            self.CB_option4_x509_cert_file.toggled.connect(self.update_x509_cert_file)
+            self.layout_option4_spice_advanced.addWidget(QLabel("Chứng chỉ x509:"))
+            self.layout_option4_spice_advanced.addWidget(self.option4_x509_cert_file)
+            self.layout_option4_spice_advanced.addWidget(self.CB_option4_x509_cert_file)
+            self.layout_option_spice_advanced.addLayout(self.layout_option4_spice_advanced)
+            self.layout_option5_spice_advanced = QHBoxLayout()
+            self.option6_x509_cacert_file = QLineEdit()
+            self.option6_x509_cacert_file.setPlaceholderText("Đường dẫn file chứng chỉ CA x509")
+            self.option6_x509_cacert_file.setEnabled(False)
+            self.CB_option6_x509_cacert_file = QCheckBox("Bật chứng chỉ CA x509")
+            self.CB_option6_x509_cacert_file.setChecked(False)
+            self.CB_option6_x509_cacert_file.setEnabled(False) #UIX
+            self.CB_option6_x509_cacert_file.toggled.connect(self.update_x509_cacert_file)
+            self.layout_option5_spice_advanced.addWidget(QLabel("Chứng chỉ CA x509:"))
+            self.layout_option5_spice_advanced.addWidget(self.option6_x509_cacert_file)
+            self.layout_option5_spice_advanced.addWidget(self.CB_option6_x509_cacert_file)
+            self.layout_option_spice_advanced.addLayout(self.layout_option5_spice_advanced)
+            self.layout_option6_spice_advanced = QHBoxLayout()
+            self.option6_addr_spice = QLineEdit()
+            self.option6_addr_spice.setPlaceholderText("Địa chỉ bind của spice (VD: 127.0.0.1:5900)")
+            self.option6_addr_spice.setEnabled(False)
+            self.CB_option6_addr_spice = QCheckBox("Bật địa chỉ bind của spice")
+            self.CB_option6_addr_spice.setChecked(False)
+            self.CB_option6_addr_spice.setEnabled(False) #UIX
+            self.CB_option6_addr_spice.toggled.connect(self.update_addr_spice)
+            self.layout_option6_spice_advanced.addWidget(QLabel("Địa chỉ bind của spice:"))
+            self.layout_option6_spice_advanced.addWidget(self.option6_addr_spice)
+            self.layout_option6_spice_advanced.addWidget(self.CB_option6_addr_spice)
+            self.layout_option_spice_advanced.addLayout(self.layout_option6_spice_advanced)
+            self.layout_option7_spice_advanced = QHBoxLayout()
+            self.option7_x509_dh_key_file = QLineEdit()
+            self.option7_x509_dh_key_file.setPlaceholderText("Đường dẫn file khóa Diffie-Hellman")
+            self.option7_x509_dh_key_file.setEnabled(False)
+            self.CB_option7_x509_dh_key_file = QCheckBox("Bật khóa Diffie-Hellman")
+            self.CB_option7_x509_dh_key_file.setChecked(False)
+            self.CB_option7_x509_dh_key_file.setEnabled(False) #UI
+            self.CB_option7_x509_dh_key_file.toggled.connect(self.update_x509_dh_key_file)
+            self.layout_option7_spice_advanced.addWidget(QLabel("Khóa Diffie-Hellman:"))
+            self.layout_option7_spice_advanced.addWidget(self.option7_x509_dh_key_file)
+            self.layout_option7_spice_advanced.addWidget(self.CB_option7_x509_dh_key_file)
+            self.layout_option_spice_advanced.addLayout(self.layout_option7_spice_advanced)
+            self.layout_option7_spice_advanced = QHBoxLayout()
+            self.option7_unix = QCheckBox("Bật Unix")
+            self.option7_unix.setChecked(False)
+            self.option7_unix.setEnabled(False) #UI
+            self.layout_option7_spice_advanced.addWidget(self.option7_unix)
+            self.layout_option_spice_advanced.addLayout(self.layout_option7_spice_advanced)
+            self.layout_option8_spice_advanced = QHBoxLayout()
+            self.option8_tls_cipher = QLineEdit()
+            self.option8_tls_cipher.setPlaceholderText("Ciphers TLS tùy chỉnh (VD: HIGH:!aNULL:!MD5)")
+            self.option8_tls_cipher.setEnabled(False)
+            self.option8_CB_tls_cipher = QCheckBox("Bật ciphers TLS tùy chỉnh")
+            self.option8_CB_tls_cipher.setChecked(False)
+            self.option8_CB_tls_cipher.setEnabled(False) #UI
+            self.option8_CB_tls_cipher.toggled.connect(self.update_tls_cipher)
+            self.layout_option8_spice_advanced.addWidget(QLabel("Ciphers TLS:"))
+            self.layout_option8_spice_advanced.addWidget(self.option8_tls_cipher)
+            self.layout_option8_spice_advanced.addWidget(self.option8_CB_tls_cipher)
+            self.layout_option_spice_advanced.addLayout(self.layout_option8_spice_advanced)
+            self.layout_option9_spice_advanced = QHBoxLayout()
+            self.option9_tls_channel = QComboBox()
+            self.option9_tls_channel.addItems(["main", "display","cursor", "input", "playback", "record"])
+            self.CB_option9_tls_channel = QCheckBox("Bật kênh TLS tùy chỉnh")
+            self.CB_option9_tls_channel.setChecked(False)
+            self.CB_option9_tls_channel.setEnabled(False) #UI
+            self.CB_option9_tls_channel.toggled.connect(self.update_tls_channel)
+            self.layout_option9_spice_advanced.addWidget(QLabel("Kênh TLS:"))
+            self.layout_option9_spice_advanced.addWidget(self.option9_tls_channel)
+            self.layout_option9_spice_advanced.addWidget(self.CB_option9_tls_channel)
+            self.layout_option_spice_advanced.addLayout(self.layout_option9_spice_advanced)
+            self.layout_option10_spice_advanced = QHBoxLayout()
+            self.option10_plaintext_channel = QComboBox()
+            self.option10_plaintext_channel.addItems(["main", "display","cursor", "input", "playback", "record"])
+            self.option10_plaintext_channel.setEnabled(False)
+            self.CB_option10_plaintext_channel = QCheckBox("Bật kênh plaintext tùy chỉnh")
+            self.CB_option10_plaintext_channel.setChecked(False)
+            self.CB_option10_plaintext_channel.setEnabled(False) #UI
+            self.CB_option10_plaintext_channel.toggled.connect(self.update_plaintext_channel)
+            self.layout_option10_spice_advanced.addWidget(QLabel("Kênh Plaintext:"))
+            self.layout_option10_spice_advanced.addWidget(self.option10_plaintext_channel)
+            self.layout_option10_spice_advanced.addWidget(self.CB_option10_plaintext_channel)
+            self.layout_option_spice_advanced.addLayout(self.layout_option10_spice_advanced)
+            self.layout_option11_spice_advanced = QHBoxLayout()
+            self.option11_sasl = QCheckBox("Bật SASL")
+            self.option11_sasl.setChecked(False)
+            self.option11_sasl.setEnabled(False) #UI
+            self.layout_option11_spice_advanced.addWidget(self.option11_sasl)
+            self.layout_option_spice_advanced.addLayout(self.layout_option11_spice_advanced)
+            self.layout_option12_spice_advanced = QHBoxLayout()
+            self.option12_image_compression = QComboBox()
+            self.option12_image_compression.addItems(["auto_glz", "auto_lz", "quic", "glz", "lz", "off"])
+            self.option12_CB_image_compression = QCheckBox("Bật nén hình ảnh")
+            self.option12_CB_image_compression.setChecked(False)
+            self.option12_CB_image_compression.setEnabled(False) #UI
+            self.option12_CB_image_compression.toggled.connect(self.update_image_compression)
+            self.layout_option12_spice_advanced.addWidget(QLabel("Nén hình ảnh:"))
+            self.layout_option12_spice_advanced.addWidget(self.option12_image_compression)
+            self.layout_option12_spice_advanced.addWidget(self.option12_CB_image_compression)
+            self.layout_option_spice_advanced.addLayout(self.layout_option12_spice_advanced)
+            self.layout_option13_spice_advenced = QHBoxLayout()
+            self.option13_jpeg_wan_compression = QComboBox()
+            self.option13_jpeg_wan_compression.addItems(["auto", "never", "always"])
+            self.option13_CB_jpeg_wan_compression = QCheckBox("Bật nén JPEG WAN")
+            self.option13_CB_jpeg_wan_compression.setChecked(False)
+            self.option13_CB_jpeg_wan_compression.setEnabled(False) #UI
+            self.option13_CB_jpeg_wan_compression.toggled.connect(self.update_jpeg_wan_compression)
+            self.layout_option13_spice_advenced.addWidget(QLabel("Nén JPEG WAN:"))
+            self.layout_option13_spice_advenced.addWidget(self.option13_jpeg_wan_compression)
+            self.layout_option13_spice_advenced.addWidget(self.option13_CB_jpeg_wan_compression)
+            self.layout_option_spice_advanced.addLayout(self.layout_option13_spice_advenced)
+            self.layout_option14_spice_advanced = QHBoxLayout()
+            self.option14_zlib_glz_wan_compression = QComboBox()
+            self.option14_zlib_glz_wan_compression.addItems(["auto", "never", "always"])
+            self.option14_CB_zlib_glz_wan_compression = QCheckBox("Bật nén ZLIB/GLZ WAN")
+            self.option14_CB_zlib_glz_wan_compression.setChecked(False)
+            self.option14_CB_zlib_glz_wan_compression.setEnabled(False) #UI
+            self.option14_CB_zlib_glz_wan_compression.toggled.connect(self.update_zlib_glz_wan_compression)
+            self.layout_option14_spice_advanced.addWidget(QLabel("Nén ZLIB/GLZ WAN:"))
+            self.layout_option14_spice_advanced.addWidget(self.option14_zlib_glz_wan_compression)
+            self.layout_option14_spice_advanced.addWidget(self.option14_CB_zlib_glz_wan_compression)
+            self.layout_option_spice_advanced.addLayout(self.layout_option14_spice_advanced)
+            self.layout_option15_spice_aadvanced = QHBoxLayout()
+            self.option15_streaming_video = QComboBox()
+            self.option15_streaming_video.addItems(["off", "all", "filter"])
+            self.option15_streaming_video.setEnabled(False)
+            self.option15_CB_streaming_video = QCheckBox("Bật streaming video")
+            self.option15_CB_streaming_video.setChecked(False)
+            self.option15_CB_streaming_video.setEnabled(False) #UI
+            self.option15_CB_streaming_video.toggled.connect(self.update_streaming_video)
+            self.layout_option15_spice_aadvanced.addWidget(QLabel("Streaming video:"))
+            self.layout_option15_spice_aadvanced.addWidget(self.option15_streaming_video)
+            self.layout_option15_spice_aadvanced.addWidget(self.option15_CB_streaming_video)
+            self.layout_option_spice_advanced.addLayout(self.layout_option15_spice_aadvanced)
+            self.layout_option16_spice_advanced = QHBoxLayout()
+            self.option16_disable_agent_file_xfer = QCheckBox("vô hiệu hóa chuyển file qua agent")
+            self.option16_disable_agent_file_xfer.setChecked(False)
+            self.option16_disable_agent_file_xfer.setEnabled(False) #UI
+            self.layout_option16_spice_advanced.addWidget(self.option16_disable_agent_file_xfer)
+            self.layout_option_spice_advanced.addLayout(self.layout_option16_spice_advanced)
+            self.layout_option17_spice_advanced = QHBoxLayout()
+            self.option17_playback_compression = QCheckBox()
+            self.option17_playback_compression.setText("Bật nén playback")
+            self.option17_playback_compression.setChecked(False)
+            self.option17_playback_compression.setEnabled(False) #UI
+            self.layout_option17_spice_advanced.addWidget(self.option17_playback_compression)
+            self.layout_option_spice_advanced.addLayout(self.layout_option17_spice_advanced)
+            self.layout_option18_spice_advanced = QHBoxLayout()
+            self.option18_seamless_migration = QCheckBox("Bật seamless migration")
+            self.option18_seamless_migration.setChecked(False)
+            self.option18_seamless_migration.setEnabled(False) #UI
+            self.layout_option18_spice_advanced.addWidget(self.option18_seamless_migration)
+            self.layout_option_spice_advanced.addLayout(self.layout_option18_spice_advanced)
+            self.layout_option19_spice_advanced = QHBoxLayout()
+            self.option19_video_codec = QLineEdit()
+            self.option19_video_codec.setPlaceholderText("Codec video tùy chỉnh (VD: h264)")
+            self.option19_video_codec.setEnabled(False)
+            self.CB_option19_video_codec = QCheckBox("Bật codec video tùy chỉnh")
+            self.CB_option19_video_codec.setChecked(False)
+            self.CB_option19_video_codec.setEnabled(False) #UI
+            self.CB_option19_video_codec.toggled.connect(self.update_video_codec)
+            self.layout_option19_spice_advanced.addWidget(QLabel("Codec video:"))
+            self.layout_option19_spice_advanced.addWidget(self.option19_video_codec)
+            self.layout_option19_spice_advanced.addWidget(self.CB_option19_video_codec)
+            self.layout_option_spice_advanced.addLayout(self.layout_option19_spice_advanced)
+            self.layout_option20_spice_advanced = QHBoxLayout()
+            self.option20_max_refresh_rate = QSpinBox()
+            self.option20_max_refresh_rate.setRange(0, 99999)
+            self.option20_max_refresh_rate.setValue(100)
+            self.option20_max_refresh_rate.setEnabled(False)
+            self.CB_option20_max_refresh_rate = QCheckBox("Bật tốc độ refresh tối đa")
+            self.CB_option20_max_refresh_rate.setChecked(False)
+            self.CB_option20_max_refresh_rate.setEnabled(False) #UI
+            self.CB_option20_max_refresh_rate.toggled.connect(self.update_max_refresh_rate)
+            self.layout_option20_spice_advanced.addWidget(QLabel("Tốc độ refresh tối đa:"))
+            self.layout_option20_spice_advanced.addWidget(self.option20_max_refresh_rate)
+            self.layout_option20_spice_advanced.addWidget(self.CB_option20_max_refresh_rate)
+            self.layout_option_spice_advanced.addLayout(self.layout_option20_spice_advanced)
+            self.layout_option21_spice_advanced = QHBoxLayout()
+            self.option21_gl = QCheckBox("Bật GL")
+            self.option21_gl.setChecked(False)
+            self.option21_gl.setEnabled(False) #UI
+            self.layout_option21_spice_advanced.addWidget(self.option21_gl)
+            self.layout_option_spice_advanced.addLayout(self.layout_option21_spice_advanced)
+            self.layout_option22_spice_advanced = QHBoxLayout()
+            self.option22_render_node = QLineEdit()
+            self.option22_render_node.setPlaceholderText("Render node tùy chỉnh (VD: /dev/dri/renderD128)")
+            self.option22_render_node.setEnabled(False)
+            self.CB_option22_render_node = QCheckBox("Bật render node tùy chỉnh")
+            self.CB_option22_render_node.setChecked(False)
+            self.CB_option22_render_node.setEnabled(False) #UI
+            self.CB_option22_render_node.toggled.connect(self.update_render_node)
+            self.layout_option22_spice_advanced.addWidget(QLabel("Render node:"))
+            self.layout_option22_spice_advanced.addWidget(self.option22_render_node)
+            self.layout_option22_spice_advanced.addWidget(self.CB_option22_render_node)
+            self.layout_option_spice_advanced.addLayout(self.layout_option22_spice_advanced)
+            self.spice_layout.addLayout(self.layout_option_spice_advanced, 2, 0, 1, 2)
+        self.save_snapshot_spice_options()
+
+    def update_x509_dir(self):
+        self.option1_x509_dir.setEnabled(self.CB_option1_x509_dir.isChecked())
+
+    def update_x509_key_file(self):
+        self.option2_x509_key_file.setEnabled(self.CB_option2_x509_key_file.isChecked())
+    
+    def update_x509_key_password(self):
+        self.option3_x509_key_password.setEnabled(self.CB_option3_x509_key_password.isChecked())
+
+    def update_x509_cert_file(self):
+        self.option4_x509_cert_file.setEnabled(self.CB_option4_x509_cert_file.isChecked())
+    
+    def update_x509_cacert_file(self):
+        self.option6_x509_cacert_file.setEnabled(self.CB_option6_x509_cacert_file.isChecked())
+
+    def update_x509_dh_key_file(self):
+        self.option7_x509_dh_key_file.setEnabled(self.CB_option7_x509_dh_key_file.isChecked())
+
+    def update_addr_spice(self):
+        self.option6_addr_spice.setEnabled(self.CB_option6_addr_spice.isChecked())
+
+    def update_tls_cipher(self):
+        self.option8_tls_cipher.setEnabled(self.option8_CB_tls_cipher.isChecked())
+    
+    def update_tls_channel(self):
+        self.option9_tls_channel.setEnabled(self.CB_option9_tls_channel.isChecked())
+
+    def update_plaintext_channel(self):
+        self.option10_plaintext_channel.setEnabled(self.CB_option10_plaintext_channel.isChecked())
+
+    def update_password_secret_spice(self):
+        self.option6_secret_password_spice.setEnabled(self.CB_option6_secret_password_spice.isChecked())
+
+    def update_image_compression(self):
+        self.option12_image_compression.setEnabled(self.option12_CB_image_compression.isChecked())
+    
+    def update_jpeg_wan_compression(self):
+        self.option13_jpeg_wan_compression.setEnabled(self.option13_CB_jpeg_wan_compression.isChecked())
+
+    def update_zlib_glz_wan_compression(self):
+        self.option14_zlib_glz_wan_compression.setEnabled(self.option14_CB_zlib_glz_wan_compression.isChecked())
+
+    def update_streaming_video(self):
+        self.option15_streaming_video.setEnabled(self.option15_CB_streaming_video.isChecked())
+
+    def update_video_codec(self):
+        self.option19_video_codec.setEnabled(self.CB_option19_video_codec.isChecked())
+    
+    def update_max_refresh_rate(self):
+        self.option20_max_refresh_rate.setEnabled(self.CB_option20_max_refresh_rate.isChecked())
+
+    def update_render_node(self):
+        self.option22_render_node.setEnabled(self.CB_option22_render_node.isChecked())
+
+    def update_CB_Spice(self):
+        check = self.CB_Spice.isChecked()
+        self.Mode_of_spice.setEnabled(check)
+        self.save_snapshot()
+        if self.Mode_of_spice.currentText() == "cơ bản":
+            self.CB_option1_port_spice.setEnabled(check)
+            self.CB_option2_tls_port_spice.setEnabled(check)
+            self.option3_ipv4_spice.setEnabled(check)
+            self.option4_ipv6_spice.setEnabled(check)
+            self.option5_disable_ticketing_spice.setEnabled(check)
+            self.CB_option6_secret_password_spice.setEnabled(check)
+            self.option7_disable_copy_paste_spice.setEnabled(check)
+            self.option8_agent_mouse_spice.setEnabled(check)
+        if self.Mode_of_spice.currentText() == "nâng cao":
+            self.CB_option1_port_spice.setEnabled(check)
+            self.CB_option2_tls_port_spice.setEnabled(check)
+            self.option3_ipv4_spice.setEnabled(check)
+            self.option4_ipv6_spice.setEnabled(check)
+            self.option5_disable_ticketing_spice.setEnabled(check)
+            self.CB_option6_secret_password_spice.setEnabled(check)
+            self.CB_option6_addr_spice.setEnabled(check)
+            self.option7_disable_copy_paste_spice.setEnabled(check)
+            self.option8_agent_mouse_spice.setEnabled(check)
+            self.CB_option1_x509_dir.setEnabled(check)
+            self.CB_option2_x509_key_file.setEnabled(check)
+            self.CB_option3_x509_key_password.setEnabled(check)
+            self.CB_option4_x509_cert_file.setEnabled(check)
+            self.CB_option6_x509_cacert_file.setEnabled(check)
+            self.CB_option7_x509_dh_key_file.setEnabled(check)
+            self.option7_unix.setEnabled(check)
+            self.option8_CB_tls_cipher.setEnabled(check)
+            self.CB_option9_tls_channel.setEnabled(check)
+            self.CB_option10_plaintext_channel.setEnabled(check)
+            self.option11_sasl.setEnabled(check)
+            self.option12_CB_image_compression.setEnabled(check)
+            self.option13_CB_jpeg_wan_compression.setEnabled(check)
+            self.option14_CB_zlib_glz_wan_compression.setEnabled(check)
+            self.option15_CB_streaming_video.setEnabled(check)
+            self.option16_disable_agent_file_xfer.setEnabled(check)
+            self.option17_playback_compression.setEnabled(check)
+            self.option18_seamless_migration.setEnabled(check)
+            self.CB_option19_video_codec.setEnabled(check)
+            self.CB_option20_max_refresh_rate.setEnabled(check)
+            self.option21_gl.setEnabled(check)
+            self.CB_option22_render_node.setEnabled(check)
+
+    def update_x509(self):
+        check = self.CB_option2_tls_port_spice.isChecked()
+        self.option1_x509_dir.setEnabled(check)
+        self.option2_x509_key_file.setEnabled(check)
+        self.option3_x509_key_password.setEnabled(check)
+        self.option4_x509_cert_file.setEnabled(check)
+        self.option6_x509_cacert_file.setEnabled(check)
+        self.option7_x509_dh_key_file.setEnabled(check)
+
+    def clean_layout_option_spice(self):
+        if hasattr(self, 'layout_option_spice_basic'):
+            while self.layout_option_spice_basic.count():
+                item = self.layout_option_spice_basic.takeAt(0)
+                if item is None:
+                    continue
+                widget = item.widget()
+                if widget is not None:
+                    widget.deleteLater()
+                else:
+                    # Recursively clean nested layouts
+                    layout = item.layout()
+                    if layout is not None:
+                        self._recursive_clear_layout(layout)
+        if hasattr(self, 'layout_option_spice_advanced'):
+            while self.layout_option_spice_advanced.count():
+                item = self.layout_option_spice_advanced.takeAt(0)
+                if item is None:
+                    continue
+                widget = item.widget()
+                if widget is not None:
+                    widget.deleteLater()
+                else:
+                    # Recursively clean nested layouts
+                    layout = item.layout()
+                    if layout is not None:
+                        self._recursive_clear_layout(layout)
+
+    def update_option_diplay(self):
+        """ update tùy chọn display theo mode of display đã chọn """
+        # Remove old layout_options from display_layout to prevent overlap
+        if hasattr(self, 'layout_options') and self.layout_options is not None:
+            self.clean_layout_options()
+            # Remove the layout_options from the grid layout by finding it
+            try:
+                for i in range(self.display_layout.count()):
+                    item = self.display_layout.itemAt(i)
+                    if item and item.layout() is self.layout_options:
+                        self.display_layout.removeItem(item)
+                        break
+            except:
+                pass
+        
+        self.layout_options = QVBoxLayout()
+        self.option1_gl2 = QComboBox()
+        self.option1_gl2.addItems(["on", "off", "core", "es", "none"])
+        self.option1_gl2.setEnabled(False)
+        self.options1_readnode = QLineEdit()
+        self.options1_readnode.setPlaceholderText("Đường dẫn readnode cho egl-headless")
+        self.options1_readnode.setEnabled(False)
+        self.checkbox_options1_readnode = QCheckBox("Bật readnode")
+        self.checkbox_options1_readnode.setChecked(False)
+        self.checkbox_options1_readnode.setEnabled(False) #UI
+        self.option1_gl = QCheckBox("Bật/tắt gl")
+        self.option1_gl.setChecked(False)
+        self.option1_gl.setEnabled(False) #UI
+        if self.Mode_of_display.currentText() == "sdl":
+            self.clean_layout_options()
+            self.layout_options1sdl = QHBoxLayout()
+            self.layout_options1sdl.addWidget(QLabel("gl:"))
+            self.layout_options1sdl.addWidget(self.option1_gl2)
+            self.layout_options.addLayout(self.layout_options1sdl)
+            self.layout_options2sdl = QHBoxLayout()
+            self.option2_grap_mod = QLineEdit()
+            self.option2_grap_mod.setPlaceholderText("VD: rctrl (tham khảo tài liệu qemu)")
+            self.option2_grap_mod.setEnabled(False)
+            self.checkbox_option2_grap_mod = QCheckBox("Bật grap_mod")
+            self.checkbox_option2_grap_mod.setChecked(False)
+            self.checkbox_option2_grap_mod.setEnabled(False) #UI
+            self.checkbox_option2_grap_mod.toggled.connect(self.update_grap_mod)
+            self.layout_options2sdl.addWidget(QLabel("grap_mod:"))
+            self.layout_options2sdl.addWidget(self.option2_grap_mod)
+            self.layout_options2sdl.addWidget(self.checkbox_option2_grap_mod)
+            self.layout_options.addLayout(self.layout_options2sdl)
+            self.layout_options3sdl = QHBoxLayout()
+            self.option3_show_cursor = QCheckBox("Hiển thị con trỏ chuột")
+            self.option3_show_cursor.setChecked(True)
+            self.option3_show_cursor.setEnabled(False) #UI
+            self.layout_options3sdl.addWidget(self.option3_show_cursor)
+            self.layout_options.addLayout(self.layout_options3sdl)
+            self.layout_options4sdl = QHBoxLayout()
+            self.options4_windows_close = QCheckBox("Cho phép đóng cửa sổ QEMU")
+            self.options4_windows_close.setChecked(True)
+            self.options4_windows_close.setEnabled(False) #UI
+            self.layout_options4sdl.addWidget(self.options4_windows_close)
+            self.layout_options.addLayout(self.layout_options4sdl)
+        if self.Mode_of_display.currentText() == "spice-app":
+            self.clean_layout_options()
+            self.layout_options1sp = QHBoxLayout()
+            self.layout_options1sp.addWidget(QLabel("gl:"))
+            self.layout_options1sp.addWidget(self.option1_gl)
+            self.layout_options.addLayout(self.layout_options1sp)
+        if self.Mode_of_display.currentText() == "gtk":
+            self.clean_layout_options()
+            self.layout_options1gtk = QVBoxLayout()
+            self.option1_full_srceen = QCheckBox("Bật/tắt fullscreen")
+            self.option1_full_srceen.setChecked(False)
+            self.option1_full_srceen.setEnabled(False) #UI
+            self.layout_options1gtk.addWidget(QLabel("Fullscreen:"))
+            self.layout_options1gtk.addWidget(self.option1_full_srceen)
+            self.layout_options2gtk = QVBoxLayout()
+            self.option2_gl = QCheckBox("Bật/tắt gl")
+            self.option2_gl.setChecked(False)
+            self.option2_gl.setEnabled(False) #UI
+            self.layout_options2gtk.addWidget(QLabel("gl:"))
+            self.layout_options2gtk.addWidget(self.option2_gl)
+            self.layout_options.addLayout(self.layout_options1gtk)
+            self.layout_options.addLayout(self.layout_options2gtk)
+            self.layout_options3gtk = QVBoxLayout()
+            self.option3_show_tab = QCheckBox("Hiển thị tab khi có nhiều cửa sổ")
+            self.option3_show_tab.setChecked(True)
+            self.option3_show_tab.setEnabled(False) #UI
+            self.layout_options3gtk.addWidget(self.option3_show_tab)
+            self.layout_options.addLayout(self.layout_options3gtk)
+            self.layout_options4gtk = QVBoxLayout()
+            self.options4_show_curser  = QCheckBox("Hiển thị con trỏ chuột")
+            self.options4_show_curser.setChecked(True)
+            self.layout_options4gtk.addWidget(self.options4_show_curser)
+            self.layout_options.addLayout(self.layout_options4gtk)
+            self.layout_options5gtk = QVBoxLayout()
+            self.options5_windows_close = QCheckBox("Cho phép đóng cửa sổ QEMU")
+            self.options5_windows_close.setChecked(True)
+            self.options5_windows_close.setEnabled(False) #UI
+            self.layout_options5gtk.addWidget(self.options5_windows_close)
+            self.layout_options.addLayout(self.layout_options5gtk)
+            self.layout_options6gtk = QVBoxLayout()
+            self.option6_show_menubar = QCheckBox("Hiển thị menubar")
+            self.option6_show_menubar.setChecked(True)
+            self.option6_show_menubar.setEnabled(False) #UI
+            self.layout_options6gtk.addWidget(self.option6_show_menubar)
+            self.layout_options.addLayout(self.layout_options6gtk)
+            self.layout_options7gtk = QVBoxLayout()
+            self.options7_zoom_to_fit = QCheckBox("Bật zoom to fit")
+            self.options7_zoom_to_fit.setChecked(False)
+            self.options7_zoom_to_fit.setEnabled(False) #UI
+            self.layout_options7gtk.addWidget(self.options7_zoom_to_fit)
+            self.layout_options.addLayout(self.layout_options7gtk)
+        if self.Mode_of_display.currentText() == "curses":
+            self.clean_layout_options()
+            self.layout_options1cur = QVBoxLayout()
+            self.options1_charset = QLineEdit()
+            self.options1_charset.setPlaceholderText("VD: UTF-8")
+            self.layout_options1cur.addWidget(QLabel("charset:"))
+            self.options1_charset.setEnabled(False)
+            self.options1_charset_checkbox = QCheckBox("Bật charset")
+            self.options1_charset_checkbox.setChecked(False)
+            self.options1_charset_checkbox.setEnabled(False) #UI
+            self.options1_charset_checkbox.toggled.connect(self.update_charset)
+            self.layout_options1cur.addWidget(self.options1_charset_checkbox)
+            self.layout_options1cur.addWidget(self.options1_charset)
+            self.layout_options.addLayout(self.layout_options1cur)
+        if self.Mode_of_display.currentText() == "egl-headless":
+            self.clean_layout_options()
+            self.layout_options1egl = QVBoxLayout()
+            self.options1_readnode = QLineEdit()
+            self.layout_options1egl.addWidget(QLabel("readnode:"))
+            self.layout_options1egl.addWidget(self.options1_readnode)
+            self.checkbox_options1_readnode.toggled.connect(self.update_readnode1)
+            self.layout_options1egl.addWidget(self.checkbox_options1_readnode)
+            self.layout_options.addLayout(self.layout_options1egl)
+        if self.Mode_of_display.currentText() == "dbus":
+            self.clean_layout_options()
+            self.layout_options1dbus = QVBoxLayout()
+            self.options1_addr = QLineEdit()
+            self.checkbox_options1_addr = QCheckBox("Bật DBus address")
+            self.checkbox_options1_addr.setChecked(False)
+            self.checkbox_options1_addr.setEnabled(False) #UI
+            self.checkbox_options1_addr.toggled.connect(self.update_dbus_address)
+            self.options1_addr.setPlaceholderText("vd: tcp:host=127.0.0.1,port=12345")
+            self.options1_addr.setEnabled(False)
+            self.layout_options1dbus.addWidget(QLabel("DBus address:"))
+            self.layout_options1dbus.addWidget(self.options1_addr)
+            self.layout_options1dbus.addWidget(self.checkbox_options1_addr)
+            self.layout_options.addLayout(self.layout_options1dbus)
+            self.layout_options2dbus = QVBoxLayout()
+            self.layout_options2dbus.addWidget(QLabel("gl:"))
+            self.layout_options2dbus.addWidget(self.option1_gl2)
+            self.layout_options.addLayout(self.layout_options2dbus)
+            self.layout_options3dbus = QVBoxLayout()
+            self.layout_options3dbus.addWidget(QLabel("readnode:"))
+            self.layout_options3dbus.addWidget(self.options1_readnode)
+            self.layout_options3dbus.addWidget(self.checkbox_options1_readnode)
+            self.checkbox_options1_readnode.toggled.connect(self.update_readnode1)
+        if self.Mode_of_display.currentText() == "none":
+            self.clean_layout_options()
+        
+        # Add the layout_options to display_layout
+        self.display_layout.addLayout(self.layout_options, 2, 0, 1, 2)
+        self.save_snapshot_display_options()
+
+    def update_UI_display_options(self):
+        check_display_options = self.CB_Display.isChecked()
+        if self.Mode_of_display.currentText() == "sdl":
+            self.checkbox_option2_grap_mod.setEnabled(check_display_options)
+            self.option3_show_cursor.setEnabled(check_display_options)
+            self.options4_windows_close.setEnabled(check_display_options)
+            self.option1_gl2.setEnabled(check_display_options)
+        if self.Mode_of_display.currentText() == "spice-app":
+            self.option1_gl.setEnabled(check_display_options)
+        if self.Mode_of_display.currentText() == "gtk":
+            self.option1_full_srceen.setEnabled(check_display_options)
+            self.option2_gl.setEnabled(check_display_options)
+            self.option3_show_tab.setEnabled(check_display_options)
+            self.options4_show_curser.setEnabled(check_display_options)
+            self.options5_windows_close.setEnabled(check_display_options)
+            self.option6_show_menubar.setEnabled(check_display_options)
+            self.options7_zoom_to_fit.setEnabled(check_display_options)
+        if self.Mode_of_display.currentText() == "curses":
+            self.options1_charset_checkbox.setEnabled(check_display_options)
+        if self.Mode_of_display.currentText() == "egl-headless":
+            self.checkbox_options1_readnode.setEnabled(check_display_options)
+        if self.Mode_of_display.currentText() == "dbus":
+            self.checkbox_options1_addr.setEnabled(check_display_options)
+            self.option1_gl2.setEnabled(check_display_options)
+            self.checkbox_options1_readnode.setEnabled(check_display_options)
+
+    def save_snapshot_display_options(self):
+        """Connect display option signals to save snapshot when values change"""
+        # Note: Display options are automatically saved via save_snapshot() -> get_current_config() -> update_config_display_options()
+        # which saves them to the snapshots.latest section in the JSON file
+        # This function ensures that when display options change, we trigger a save
+        try:
+            if not hasattr(self, '_display_signals_connected'):
+                self._display_signals_connected = True
+                self.CB_Display.toggled.connect(lambda: self.save_snapshot())
+                self.Mode_of_display.currentTextChanged.connect(lambda: self.save_snapshot())
+        except:
+            pass
+        
+        # Connect mode-specific signals based on current mode
+        if self.Mode_of_display.currentText() == "sdl":
+            for attr in ['option1_gl2', 'checkbox_option2_grap_mod', 'option2_grap_mod', 'option3_show_cursor', 'options4_windows_close']:
+                if hasattr(self, attr):
+                    try:
+                        widget = getattr(self, attr)
+                        if isinstance(widget, QComboBox):
+                            if not hasattr(self, f'_signal_connected_{attr}'):
+                                widget.currentIndexChanged.connect(lambda: self.save_snapshot())
+                                setattr(self, f'_signal_connected_{attr}', True)
+                        elif isinstance(widget, QLineEdit):
+                            if not hasattr(self, f'_signal_connected_{attr}'):
+                                widget.textChanged.connect(lambda: self.save_snapshot())
+                                setattr(self, f'_signal_connected_{attr}', True)
+                        else:
+                            if not hasattr(self, f'_signal_connected_{attr}'):
+                                widget.toggled.connect(lambda: self.save_snapshot())
+                                setattr(self, f'_signal_connected_{attr}', True)
+                    except:
+                        pass
+        
+        elif self.Mode_of_display.currentText() == "spice-app":
+            if hasattr(self, 'option1_gl'):
+                try:
+                    if not hasattr(self, '_signal_connected_option1_gl'):
+                        self.option1_gl.toggled.connect(lambda: self.save_snapshot())
+                        setattr(self, '_signal_connected_option1_gl', True)
+                except:
+                    pass
+        
+        elif self.Mode_of_display.currentText() == "gtk":
+            for attr in ['option1_full_srceen', 'option2_gl', 'option3_show_tab', 'options4_show_curser', 
+                        'options5_windows_close', 'option6_show_menubar', 'options7_zoom_to_fit']:
+                if hasattr(self, attr):
+                    try:
+                        if not hasattr(self, f'_signal_connected_{attr}'):
+                            getattr(self, attr).toggled.connect(lambda: self.save_snapshot())
+                            setattr(self, f'_signal_connected_{attr}', True)
+                    except:
+                        pass
+                self.option6_show_menubar.toggled.connect(lambda: self.save_snapshot())
+            if hasattr(self, 'options7_zoom_to_fit'):
+                self.options7_zoom_to_fit.toggled.connect(lambda: self.save_snapshot())
+        
+        elif self.Mode_of_display.currentText() == "curses":
+            try:
+                if hasattr(self, 'options1_charset_checkbox'):
+                    self.options1_charset_checkbox.toggled.disconnect()
+            except: pass
+            try:
+                if hasattr(self, 'options1_charset'):
+                    self.options1_charset.textChanged.disconnect()
+            except: pass
+            if hasattr(self, 'options1_charset_checkbox'):
+                self.options1_charset_checkbox.toggled.connect(lambda: self.save_snapshot())
+            if hasattr(self, 'options1_charset'):
+                self.options1_charset.textChanged.connect(lambda: self.save_snapshot())
+        
+        elif self.Mode_of_display.currentText() == "egl-headless":
+            try:
+                if hasattr(self, 'checkbox_options1_readnode'):
+                    self.checkbox_options1_readnode.toggled.disconnect()
+            except: pass
+            try:
+                if hasattr(self, 'options1_readnode'):
+                    self.options1_readnode.textChanged.disconnect()
+            except: pass
+            if hasattr(self, 'checkbox_options1_readnode'):
+                self.checkbox_options1_readnode.toggled.connect(lambda: self.save_snapshot())
+            if hasattr(self, 'options1_readnode'):
+                self.options1_readnode.textChanged.connect(lambda: self.save_snapshot())
+        
+        elif self.Mode_of_display.currentText() == "dbus":
+            for attr in ['checkbox_options1_addr', 'options1_addr', 'option1_gl2', 'checkbox_options1_readnode', 'options1_readnode']:
+                try:
+                    if hasattr(self, attr):
+                        widget = getattr(self, attr)
+                        if isinstance(widget, QCheckBox):
+                            widget.toggled.disconnect()
+                        elif isinstance(widget, (QLineEdit, QComboBox)):
+                            if isinstance(widget, QLineEdit):
+                                widget.textChanged.disconnect()
+                            else:
+                                widget.currentIndexChanged.disconnect()
+                except: pass
+            
+            if hasattr(self, 'checkbox_options1_addr'):
+                self.checkbox_options1_addr.toggled.connect(lambda: self.save_snapshot())
+            if hasattr(self, 'options1_addr'):
+                self.options1_addr.textChanged.connect(lambda: self.save_snapshot())
+            if hasattr(self, 'option1_gl2'):
+                self.option1_gl2.currentIndexChanged.connect(lambda: self.save_snapshot())
+            if hasattr(self, 'checkbox_options1_readnode'):
+                self.checkbox_options1_readnode.toggled.connect(lambda: self.save_snapshot())
+            if hasattr(self, 'options1_readnode'):
+                self.options1_readnode.textChanged.connect(lambda: self.save_snapshot())
+
+    def save_snapshot_spice_options(self):
+        """Connect spice option signals to save snapshot when values change"""
+        # Note: Spice options are automatically saved via save_snapshot() -> get_current_config() -> update_config_spice_options()
+        # which saves them to the snapshots.latest section in the JSON file
+        # This function ensures that when spice options change, we trigger a save
+        try:
+            if not hasattr(self, '_spice_signals_connected'):
+                self._spice_signals_connected = True
+                self.CB_Spice.toggled.connect(lambda: self.save_snapshot())
+                self.Mode_of_spice.currentTextChanged.connect(lambda: self.save_snapshot())
+        except:
+            pass
+        
+        # Connect mode-specific signals based on current mode
+        if self.Mode_of_spice.currentText() == "cơ bản":
+            for attr in ['CB_option1_port_spice', 'option1_port_spice', 'CB_option2_tls_port_spice', 'option2_tls_port_spice',
+                        'option3_ipv4_spice', 'option4_ipv6_spice', 'option5_disable_ticketing_spice', 
+                        'CB_option6_secret_password_spice', 'option6_secret_password_spice', 'option7_disable_copy_paste_spice', 
+                        'option8_agent_mouse_spice']:
+                if hasattr(self, attr):
+                    try:
+                        widget = getattr(self, attr)
+                        if isinstance(widget, QComboBox):
+                            if not hasattr(self, f'_signal_connected_{attr}'):
+                                widget.currentIndexChanged.connect(lambda: self.save_snapshot())
+                                setattr(self, f'_signal_connected_{attr}', True)
+                        elif isinstance(widget, QLineEdit):
+                            if not hasattr(self, f'_signal_connected_{attr}'):
+                                widget.textChanged.connect(lambda: self.save_snapshot())
+                                setattr(self, f'_signal_connected_{attr}', True)
+                        elif isinstance(widget, QSpinBox):
+                            if not hasattr(self, f'_signal_connected_{attr}'):
+                                widget.valueChanged.connect(lambda: self.save_snapshot())
+                                setattr(self, f'_signal_connected_{attr}', True)
+                        else:
+                            if not hasattr(self, f'_signal_connected_{attr}'):
+                                widget.toggled.connect(lambda: self.save_snapshot())
+                                setattr(self, f'_signal_connected_{attr}', True)
+                    except:
+                        pass
+        
+        elif self.Mode_of_spice.currentText() == "nâng cao":
+            # Include all advanced mode controls
+            for attr in ['CB_option1_port_spice', 'option1_port_spice', 'CB_option2_tls_port_spice', 'option2_tls_port_spice',
+                        'option3_ipv4_spice', 'option4_ipv6_spice', 'option5_disable_ticketing_spice', 
+                        'CB_option6_secret_password_spice', 'option6_secret_password_spice', 'CB_option6_addr_spice', 'option6_addr_spice',
+                        'option7_disable_copy_paste_spice', 'option8_agent_mouse_spice', 'option7_unix',
+                        # x509 options
+                        'CB_option1_x509_dir', 'option1_x509_dir', 'CB_option2_x509_key_file', 'option2_x509_key_file',
+                        'CB_option3_x509_key_password', 'option3_x509_key_password', 'CB_option4_x509_cert_file', 'option4_x509_cert_file',
+                        'CB_option6_x509_cacert_file', 'option6_x509_cacert_file', 'CB_option7_x509_dh_key_file', 'option7_x509_dh_key_file',
+                        # TLS options
+                        'option8_CB_tls_cipher', 'option8_tls_cipher', 'CB_option9_tls_channel', 'option9_tls_channel',
+                        'CB_option10_plaintext_channel', 'option10_plaintext_channel', 'option11_sasl',
+                        # Compression options
+                        'option12_CB_image_compression', 'option12_image_compression', 'option13_CB_jpeg_wan_compression', 'option13_jpeg_wan_compression',
+                        'option14_CB_zlib_glz_wan_compression', 'option14_zlib_glz_wan_compression', 'option15_CB_streaming_video', 'option15_streaming_video',
+                        # Other advanced options
+                        'option16_disable_agent_file_xfer', 'option17_playback_compression', 'option18_seamless_migration',
+                        'CB_option19_video_codec', 'option19_video_codec', 'CB_option20_max_refresh_rate', 'option20_max_refresh_rate',
+                        'option21_gl', 'CB_option22_render_node', 'option22_render_node']:
+                if hasattr(self, attr):
+                    try:
+                        widget = getattr(self, attr)
+                        if isinstance(widget, QComboBox):
+                            if not hasattr(self, f'_signal_connected_{attr}'):
+                                widget.currentIndexChanged.connect(lambda: self.save_snapshot())
+                                setattr(self, f'_signal_connected_{attr}', True)
+                        elif isinstance(widget, QLineEdit):
+                            if not hasattr(self, f'_signal_connected_{attr}'):
+                                widget.textChanged.connect(lambda: self.save_snapshot())
+                                setattr(self, f'_signal_connected_{attr}', True)
+                        elif isinstance(widget, QSpinBox):
+                            if not hasattr(self, f'_signal_connected_{attr}'):
+                                widget.valueChanged.connect(lambda: self.save_snapshot())
+                                setattr(self, f'_signal_connected_{attr}', True)
+                        else:
+                            if not hasattr(self, f'_signal_connected_{attr}'):
+                                widget.toggled.connect(lambda: self.save_snapshot())
+                                setattr(self, f'_signal_connected_{attr}', True)
+                    except:
+                        pass
+
+    def clean_layout_options(self):
+        """Properly clean up and remove all widgets from layout_options"""
+        if hasattr(self, 'layout_options'):
+            while self.layout_options.count():
+                item = self.layout_options.takeAt(0)
+                if item is None:
+                    continue
+                widget = item.widget()
+                if widget is not None:
+                    widget.deleteLater()
+                else:
+                    # Recursively clean nested layouts
+                    layout = item.layout()
+                    if layout is not None:
+                        self._recursive_clear_layout(layout)
+    
+    def _recursive_clear_layout(self, layout):
+        """Recursively clear all widgets and nested layouts"""
+        while layout.count():
+            item = layout.takeAt(0)
+            if item is None:
+                continue
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+            else:
+                nested_layout = item.layout()
+                if nested_layout is not None:
+                    self._recursive_clear_layout(nested_layout)
+
+    def update_dbus_address(self):
+        self.options1_addr.setEnabled(self.checkbox_options1_addr.isChecked())
+
+    def update_charset(self):
+        self.options1_charset.setEnabled(self.options1_charset_checkbox.isChecked())
+    def update_readnode1(self):
+        self.options1_readnode.setEnabled(self.checkbox_options1_readnode.isChecked())
+    def update_grap_mod(self):
+        self.option2_grap_mod.setEnabled(self.checkbox_option2_grap_mod.isChecked())
+
+    def KeyPressEvent(self):
+        # Thiết lập các phím tắt (Shortcuts)
+        self.shortcuts = []
+        
+        shortcut_run = QShortcut(QKeySequence("F5"), self)
+        shortcut_run.activated.connect(self.run_qemu)
+        self.shortcuts.append(shortcut_run)
+
+        shortcut_run_ctrl = QShortcut(QKeySequence("Ctrl+R"), self)
+        shortcut_run_ctrl.activated.connect(self.run_qemu)
+        self.shortcuts.append(shortcut_run_ctrl)
+
+        shortcut_save = QShortcut(QKeySequence("Ctrl+S"), self)
+        shortcut_save.activated.connect(self.save_snapshot)
+        self.shortcuts.append(shortcut_save)
+
+        shortcut_iso = QShortcut(QKeySequence("Ctrl+O"), self)
+        shortcut_iso.activated.connect(self.BI)
+        self.shortcuts.append(shortcut_iso)
+
+        shortcut_disk = QShortcut(QKeySequence("Ctrl+D"), self)
+        shortcut_disk.activated.connect(self.open_disk_dialog)
+        self.shortcuts.append(shortcut_disk)
+
+        shortcut_usb = QShortcut(QKeySequence("Ctrl+U"), self)
+        shortcut_usb.activated.connect(self.open_usb_manager)
+        self.shortcuts.append(shortcut_usb)
+
+        shortcut_log = QShortcut(QKeySequence("Ctrl+L"), self)
+        shortcut_log.activated.connect(self.open_log_viewer)
+        self.shortcuts.append(shortcut_log)
+
+        shortcut_profile = QShortcut(QKeySequence("Ctrl+M"), self)
+        shortcut_profile.activated.connect(self._ui_profile_add)
+        self.shortcuts.append(shortcut_profile)
+
+        shortcut_close = QShortcut(QKeySequence("Alt+F4"), self)
+        shortcut_close.activated.connect(self.close)
+        self.shortcuts.append(shortcut_close)
+
+        shortcut_move_tab_to_right = QShortcut(QKeySequence("Ctrl+Right"), self)
+        shortcut_move_tab_to_right.activated.connect(self.move_tab_to_right)
+        self.shortcuts.append(shortcut_move_tab_to_right)
+
+        shortcut_move_tab_to_left = QShortcut(QKeySequence("Ctrl+Left"), self)
+        shortcut_move_tab_to_left.activated.connect(self.move_tab_to_left)
+        self.shortcuts.append(shortcut_move_tab_to_left)
+
+        shortcut_advanced_tab = QShortcut(QKeySequence("Ctrl+A"), self)
+        shortcut_advanced_tab.activated.connect(lambda: self.setCurrentWidget(self.findChild(QScrollArea, "Cấu hình nâng cao")))
+        self.shortcuts.append(shortcut_advanced_tab)
+
+    def keyPressEvent(self, event):
+        # Xử lý phím Escape để đóng ứng dụng hoặc các hành động cụ thể
+        if event.key() == Qt.Key_Escape:
+            self.close()
+        
+        else:
+            super().keyPressEvent(event)
+
+    def update_ui_SB(self):
+        # Feature 12: -sandbox
+        checked = self.CB_SB.isChecked()
+        self.SB_obsolete.setEnabled(checked)
+        self.SB_elevateprivileges.setEnabled(checked)
+        self.SB_spawn.setEnabled(checked)
+        self.SB_resourcecontrol.setEnabled(checked)
+        self.SB_seccomp_mode.setEnabled(checked)
+
+    def update_watchdog_list(self):
+        if self.AQEW.isChecked():
+            self.WDD.clear()
+            self.WDD.addItems(sorted(list(QEMU_SYSTEM_WATCHDOG_W.get(self.K.currentText(), []))))
+        else:
+            self.WDD.clear()
+            self.WDD.addItems(sorted(list(QEMU_SYSTEM_WATCHDOG.get(self.K.currentText(), []))))
+
+    def setup_WDD(self):
+        try:
+            with open(get_config_path(), "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except:
+            data = {}
+        if self.AQEW.isChecked():
+            self.WDD.clear()
+            self.WDD.addItems(sorted(list(QEMU_SYSTEM_WATCHDOG_W.get(self.K.currentText(), []))))
+            if "watchdog" in data:
+                self.WDD.setCurrentText(data["watchdog"])
+        else:
+            self.WDD.clear()
+            self.WDD.addItems(sorted(list(QEMU_SYSTEM_WATCHDOG.get(self.K.currentText(), []))))
+            if "watchdog" in data:
+                self.WDD.setCurrentText(data["watchdog"])
+
+    def move_tab_to_right(self):
+        current_index = self.currentIndex()
+        next_index = (current_index + 1) % self.count()
+        self.setCurrentIndex(next_index)
+
+    def move_tab_to_left(self):
+        current_index = self.currentIndex()
+        prev_index = (current_index - 1 + self.count()) % self.count()
+        self.setCurrentIndex(prev_index)
+
+    def browse_bios(self):
+        filename, _ = QFileDialog.getOpenFileName(self, "Chọn File BIOS", "", "Pulse Files (*.bin *.rom *.fd);;All Files (*.*)")
+        if filename:
+            self.LE_BIOS.setText(filename)
 
     def connect_snapshot_signals(self):
         # Connect all relevant widgets to save_snapshot
@@ -673,10 +2353,14 @@ class QG(QTabWidget):
         self.RM.valueChanged.connect(self.save_snapshot)
         self.V.currentIndexChanged.connect(self.save_snapshot)
         self.A.currentIndexChanged.connect(self.save_snapshot)
+        self.MT.currentIndexChanged.connect(self.save_snapshot)
+        self.ACC.currentIndexChanged.connect(self.save_snapshot)
         self.CCRQ.toggled.connect(self.save_snapshot)
         self.CCRQT.textChanged.connect(self.save_snapshot)
         self.AQEW.toggled.connect(self.save_snapshot)
-        
+        self.WDD.currentIndexChanged.connect(self.save_snapshot)
+        self.Checkbox_enable_watchdog_device.toggled.connect(self.save_snapshot)
+
         # Disk Tab
         self.HDA.currentIndexChanged.connect(self.save_snapshot)
         self.HDB.currentIndexChanged.connect(self.save_snapshot)
@@ -694,6 +2378,7 @@ class QG(QTabWidget):
         self.CDPDS2.currentIndexChanged.connect(self.save_snapshot)
         self.BCTDPDS.clicked.connect(self.save_snapshot)
         self.BCTDPDS.clicked.connect(self.click_kill_daemon)
+        self.btn_refresh_daemon.clicked.connect(self.check_daemon_status)
         
         # Boot Tab
         self.CBI.toggled.connect(self.save_snapshot)
@@ -706,6 +2391,10 @@ class QG(QTabWidget):
         self.LEDC.textChanged.connect(self.save_snapshot)
         self.CFDD.toggled.connect(self.save_snapshot)
         self.LEDD.textChanged.connect(self.save_snapshot)
+        self.CB_BIOS.toggled.connect(self.save_snapshot)
+        self.LE_BIOS.textChanged.connect(self.save_snapshot)
+        self.BOOT_ORDER.currentIndexChanged.connect(self.save_snapshot)
+        self.BOOT_MENU.toggled.connect(self.save_snapshot)
         
         # Net Tab
         self.CN.toggled.connect(self.save_snapshot)
@@ -717,6 +2406,59 @@ class QG(QTabWidget):
         #advanced tab
         self.CAD.toggled.connect(self.save_snapshot)
         self.DSNTR.currentIndexChanged.connect(self.save_snapshot)
+
+        # Shared Folder
+        self.CB_SF.toggled.connect(self.save_snapshot)
+        self.LE_SF_Path.textChanged.connect(self.save_snapshot)
+        self.LE_SF_Tag.textChanged.connect(self.save_snapshot)
+
+        # Guest Agent
+        self.CB_GuestAgent.toggled.connect(self.save_snapshot)
+
+        #readconfig
+        self.CB_RC.toggled.connect(self.save_snapshot)
+        self.path_rc.textChanged.connect(self.save_snapshot)
+
+        #sandbox
+        self.CB_SB.toggled.connect(self.save_snapshot)
+        self.SB_resourcecontrol.currentIndexChanged.connect(self.save_snapshot)
+        self.SB_obsolete.currentIndexChanged.connect(self.save_snapshot)
+        self.SB_elevateprivileges.currentIndexChanged.connect(self.save_snapshot)
+        self.SB_spawn.currentIndexChanged.connect(self.save_snapshot)
+        self.SB_seccomp_mode.currentIndexChanged.connect(self.save_snapshot)
+
+        #watchdog action
+        self.WAC.currentIndexChanged.connect(self.save_snapshot)
+
+        #nographics
+        self.CB_NGG.toggled.connect(self.save_snapshot)
+
+        #display options
+        self.CB_Display.toggled.connect(self.save_snapshot)
+        self.Mode_of_display.currentIndexChanged.connect(self.save_snapshot)
+        self.QTime_save_snapshot_display_options = QTimer()
+        self.QTime_save_snapshot_display_options.setSingleShot(True)
+        self.QTime_save_snapshot_display_options.setInterval(20) # 20ms debounce
+        self.QTime_save_snapshot_display_options.timeout.connect(self.save_snapshot_display_options)
+
+        #spice options
+        self.CB_Spice.toggled.connect(self.save_snapshot)
+        self.CB_Spice.toggled.connect(self.save_snapshot_spice_options)
+        self.Mode_of_spice.currentIndexChanged.connect(self.save_snapshot)
+        self.Mode_of_spice.currentIndexChanged.connect(self.save_snapshot_spice_options)
+        self.QTime_save_snapshot_spice_options = QTimer()
+        self.QTime_save_snapshot_spice_options.setSingleShot(True)
+        self.QTime_save_snapshot_spice_options.setInterval(20) # 20ms debounce
+        self.QTime_save_snapshot_spice_options.timeout.connect(self.save_snapshot_spice_options)
+
+        #i386 advanced options
+        self.win2k_hack.toggled.connect(self.save_snapshot)
+        self.no_fd_bootcheck.toggled.connect(self.save_snapshot)
+
+        #keyboard layout
+        self.keyboardlayoutlineedit.textChanged.connect(self.save_snapshot)
+        self.keyboardlayoutcheckbox.toggled.connect(self.save_snapshot)
+
     def save_snapshot(self):
         if self.is_loading:
             return
@@ -758,6 +2500,21 @@ class QG(QTabWidget):
         except Exception:
             pass
 
+    def check_disk_available(self):
+        cfg = get_config_path()
+        with open(cfg, 'r', encoding="utf-8") as f:
+            data = json.load(f)
+        
+        disk_list = data["disks"].keys()
+        for disk in disk_list:
+            if not Path(disk).exists():
+                del data["disks"][disk]
+
+        self.update_disk_list()
+
+        with open(cfg, 'w', encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+
     def update_disk_list(self):
         with open(get_config_path(), 'r', encoding="utf-8") as f:
             data = json.load(f)
@@ -774,6 +2531,74 @@ class QG(QTabWidget):
         self.HDD.addItems(list_disk)
         self.HD.addItems(list_disk)
         self.HD.removeItem(0)
+
+    def update_machine_type(self):
+        self.MT.clear()
+        check_w = self.AQEW.isChecked()
+        if check_w == True:
+            self.list_m = QEMU_MACHINE_W.get(self.K.currentText(), ["none"])
+        else:
+            self.list_m = QEMU_MACHINE.get(self.K.currentText(), ["none"])
+        self.MT.addItems(self.list_m)
+
+    def validate_accelerator(self):
+        acc = self.ACC.currentText()
+        if acc in ["tcg", "off"]:
+             self.L_ACC_Status.setText("")
+             return
+        
+        threading.Thread(target=self._validate_accel_thread, args=(acc,), daemon=True).start()
+
+    def _validate_accel_thread(self, acc):
+        try:
+            exe = self.get_qemu_exe()
+            # Run check
+            cmd = [exe, "-accel", acc, "-machine", "help"]
+            # Use startupinfo to hide window
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            
+            # Run with timeout
+            proc = subprocess.run(cmd, capture_output=True, timeout=3, startupinfo=startupinfo)
+            if proc.returncode != 0:
+                 self.L_ACC_Status.setText("Khong ho tro")
+                 self.L_ACC_Status.setStyleSheet("color: red")
+                 self.L_ACC_Status.setToolTip(f"QEMU tra ve ma loi {proc.returncode}. Co the may khong ho tro {acc} hoac chua bat feature.")
+            else:
+                 self.L_ACC_Status.setText("Ho tro")
+                 self.L_ACC_Status.setStyleSheet("color: green")
+                 self.L_ACC_Status.setToolTip("Accelerator kha dung.")
+        except Exception as e:
+             self.L_ACC_Status.setText("Loi kiem tra")
+             self.L_ACC_Status.setStyleSheet("color: orange")
+             self.L_ACC_Status.setToolTip(str(e))
+
+
+    def update_io_ds(self):
+        if self.K.currentText() == "rx" or self.K.currentText() == "avr" or self.K.currentText() == "tricore" or self.K.currentText() == "rxw" or self.K.currentText() == "avrw" or self.K.currentText() == "tricorew":
+            self.CAD.setChecked(False)
+            self.CAD.setEnabled(False)
+            self.DHD.clear()
+            self.DHD.addItems(["none"])
+            self.DHD.setEnabled(False)
+            return
+        self.CAD.setEnabled(True)
+        self.DHD.clear()
+        check_w = self.AQEW.isChecked()
+        if check_w == True:
+            list_io_ds = QEMU_IO_DAEMON_STORAGE_W.get(self.K.currentText(), ["none"])
+        else:
+            list_io_ds = QEMU_IO_DAEMON_STORAGE.get(self.K.currentText(), ["none"])
+        self.DHD.addItems(list_io_ds)
+
+    def update_audio_list(self):
+        self.A.clear()
+        check_W = self.AQEW.isChecked()
+        if check_W == True:
+            self.audio_list = QEMU_SYSTEMS_SOUNDS_W.get(self.K.currentText(), ["none"])
+        else:
+            self.audio_list = QEMU_SYSTEMS_SOUNDS.get(self.K.currentText(), ["none"])
+        self.A.addItems(self.audio_list)
 
     def update_DSNTR(self):
         self.DSNTR.clear()
@@ -795,12 +2620,13 @@ class QG(QTabWidget):
         self.CCRQ.setEnabled(True)
             
         # Other Tabs
-        self.disk_tab.setEnabled(not checked)
-        self.boot_tab.setEnabled(not checked)
-        self.net_tab.setEnabled(not checked)
-        self.daemon_storage_tab.setEnabled(not checked)
+        self.boot_scroll.setEnabled(not checked)
+        self.net_scroll.setEnabled(not checked)
+        self.daemon_storage_scroll.setEnabled(not checked)
+        self.adco_scroll.setEnabled(not checked)
 
     def update_daemon_list(self):
+        # We need fresh config here to reset it
         with open(get_config_path(), 'r', encoding="utf-8") as f:
             data = json.load(f)
         del data["caches"]
@@ -844,7 +2670,18 @@ class QG(QTabWidget):
     def update_advanced_tab(self):
         self.DSNTR.setEnabled(self.CAD.isChecked())
         self.DHD.setEnabled(self.CAD.isChecked())
-        
+
+    def update_sf_ui(self):
+        enabled = self.CB_SF.isChecked()
+        self.LE_SF_Path.setEnabled(enabled)
+        self.BTN_SF_Browse.setEnabled(enabled)
+        self.LE_SF_Tag.setEnabled(enabled)
+
+    def browse_shared_folder(self):
+        folder = QFileDialog.getExistingDirectory(self, "Chọn thư mục chia sẻ")
+        if folder:
+            self.LE_SF_Path.setText(folder)
+
 
     def update_FDA(self):
         self.LEDA.setEnabled(self.CFDA.isChecked())
@@ -882,6 +2719,8 @@ class QG(QTabWidget):
         else:
             self.V.addItems(["none", "std", "cirrus", "vmware", "qxl", "virtio"])
         self.update_net_list_I()
+        self.update_audio_list()
+        self.update_machine_type()
 
     def profiles_dir(self):
         return get_config_path()
@@ -917,7 +2756,6 @@ class QG(QTabWidget):
         with open(p, 'r', encoding="utf-8") as f:
             cfg = json.load(f)
         try:
-            self.apply_config(cfg)
             cfg['profiles'][name] = self.get_current_config()
             with open(p, 'w', encoding='utf-8') as f:
                 json.dump(cfg, f, ensure_ascii=False, indent=2)
@@ -932,12 +2770,6 @@ class QG(QTabWidget):
         p = self.profiles_dir()
         with open(p, 'r', encoding="utf-8") as f:
             cfg = json.load(f)
-        if cfg.get('enb_command_qemu'):
-            self.CCRQ.setChecked(True)
-            self.CCRQT.setText(cfg.get('command_qemu'))
-        else:
-            self.CCRQ.setChecked(False)
-            self.CCRQT.setText('')
         try:
             self.apply_config(cfg['profiles'][name])
         except Exception as e:
@@ -987,7 +2819,8 @@ class QG(QTabWidget):
             else:
                 config = {
                     "arch": arch,
-                    "exe": exe_path,
+                    "machine_type": self.MT.currentText(),
+                    "accel": self.ACC.currentText(),
                     "cpu": self.CP.currentText(),
                     "ram": self.RM.value(),
                     "smp": int(self.SC.currentText()),
@@ -1016,14 +2849,574 @@ class QG(QTabWidget):
                     "daemon_edit_name": self.ENPDS.text() if self.ENPDS.text().lower() != "" else "",
                     "IO_daemon_storage": self.DHD.currentText(),
                     "daemon_current": self.DSNTR.currentText(),
-                    "check_advanced_tab": self.CAD.isChecked()
+                    "check_advanced_tab": self.CAD.isChecked(),
+                    "shared_folder_enable": self.CB_SF.isChecked(),
+                    "shared_folder_path": self.LE_SF_Path.text(),
+                    "shared_folder_tag": self.LE_SF_Tag.text(),
+                    "bios_enable": self.CB_BIOS.isChecked(),
+                    "bios_path": self.LE_BIOS.text().strip() if self.CB_BIOS.isChecked() else "",
+                    "boot_order": self.BOOT_ORDER.currentText(),
+                    "boot_menu": self.BOOT_MENU.isChecked(),
+                    "guest_agent_enable": self.CB_GuestAgent.isChecked(),
+                    "readconfig_enable": self.CB_RC.isChecked(),
+                    "readconfig_path": self.path_rc.toPlainText(),
+                    "sandbox": {
+                        "check": self.CB_SB.isChecked(),
+                        "obsolete": self.SB_obsolete.currentText(),
+                        "elevateprivileges": self.SB_elevateprivileges.currentText(),
+                        "spawn": self.SB_spawn.currentText(),
+                        "resourcecontrol": self.SB_resourcecontrol.currentText(),
+                        "seccomp mode": self.SB_seccomp_mode.currentText(),
+                    },
+                    "watchdog": self.WDD.currentText(),
+                    "watchdog-action": self.WAC.currentText(),
+                    "checkbox_watchdog": self.Checkbox_enable_watchdog_device.isChecked(),
+                    "none_watchdog_device": self.none_Watchdog,
+                    "nographics": self.CB_NGG.isChecked(),
+                    "index_of_current_tab": self.currentIndex(),
+                    "win2k-hack": self.win2k_hack.isChecked(),
+                    "no-fd-bootcheck": self.no_fd_bootcheck.isChecked(),
+                    "klc": self.keyboardlayoutcheckbox.isChecked(),
+                    "keyboard_layout": self.keyboardlayoutlineedit.text() if self.keyboardlayoutcheckbox.isChecked() else None,
                 }
+                config = self.update_config_display_options(config)
+                config = self.update_config_spice_option(config)
+                # Use in-memory list if available, else load from file
+                if hasattr(self, 'usb_passthrough_list'):
+                    config["usb_passthrough"] = self.usb_passthrough_list
+                else:
+                    try:
+                        with open(get_config_path(), "r", encoding="utf-8") as f:
+                            data = json.load(f)
+                        config["usb_passthrough"] = data.get("config", {}).get("usb_passthrough", [])
+                        # Initialize list if missing
+                        self.usb_passthrough_list = config["usb_passthrough"]
+                    except:
+                        config["usb_passthrough"] = []
+                        self.usb_passthrough_list = []
         return config
+
+    def update_config_display_options(self, config):
+        if self.CCRQ.isChecked():
+            return config
+        if not self.CB_Display.isChecked():
+            return config
+        
+        mode = self.Mode_of_display.currentText()
+        config["display_options"] = {
+            "mode": mode,
+            "Enable": str(self.CB_Display.isChecked()),
+            "options": {}
+        }
+        
+        options_dict = {}
+        if mode == "sdl":
+            options_dict["sdl"] = {
+                "gl2": str(self.option1_gl2.currentIndex()) if hasattr(self, 'option1_gl2') else "0",
+                "grap_mod": str(self.option2_grap_mod.text()) if hasattr(self, 'option2_grap_mod') else "",
+                "check_grap_mod": str(self.checkbox_option2_grap_mod.isChecked()) if hasattr(self, 'checkbox_option2_grap_mod') else "False",
+                "show_cursor": str(self.option3_show_cursor.isChecked()) if hasattr(self, 'option3_show_cursor') else "True",
+                "windows_close": str(self.options4_windows_close.isChecked()) if hasattr(self, 'options4_windows_close') else "True",
+            }
+        elif mode == "spice-app":
+            options_dict["spice-app"] = {
+                "gl": str(self.option1_gl.isChecked()) if hasattr(self, 'option1_gl') else "False",
+            }
+        elif mode == "gtk":
+            options_dict["gtk"] = {
+                "fullscreen": str(self.option1_full_srceen.isChecked()) if hasattr(self, 'option1_full_srceen') else "False",
+                "gl": str(self.option2_gl.isChecked()) if hasattr(self, 'option2_gl') else "False",
+                "show_tab": str(self.option3_show_tab.isChecked()) if hasattr(self, 'option3_show_tab') else "False",
+                "show_curser": str(self.options4_show_curser.isChecked()) if hasattr(self, 'options4_show_curser') else "True",
+                "windows_close": str(self.options5_windows_close.isChecked()) if hasattr(self, 'options5_windows_close') else "True",
+                "show_menubar": str(self.option6_show_menubar.isChecked()) if hasattr(self, 'option6_show_menubar') else "True",
+                "zoom_to_fit": str(self.options7_zoom_to_fit.isChecked()) if hasattr(self, 'options7_zoom_to_fit') else "False",
+            }
+        elif mode == "curses":
+            options_dict["curses"] = {
+                "charset": str(self.options1_charset.text()) if hasattr(self, 'options1_charset') else "",
+                "charset_enable": str(self.options1_charset_checkbox.isChecked()) if hasattr(self, 'options1_charset_checkbox') else "False",
+            }
+        elif mode == "egl-headless":
+            options_dict["egl-headless"] = {
+                "readnode": str(self.options1_readnode.text()) if hasattr(self, 'options1_readnode') else "",
+                "readnode_enable": str(self.checkbox_options1_readnode.isChecked()) if hasattr(self, 'checkbox_options1_readnode') else "False",
+            }
+        elif mode == "dbus":
+            options_dict["dbus"] = {
+                "addr": str(self.options1_addr.text()) if hasattr(self, 'options1_addr') else "",
+                "addr_enable": str(self.checkbox_options1_addr.isChecked()) if hasattr(self, 'checkbox_options1_addr') else "False",
+                "gl2": str(self.option1_gl2.currentIndex()) if hasattr(self, 'option1_gl2') else "0",
+                "readnode": str(self.options1_readnode.text()) if hasattr(self, 'options1_readnode') else "",
+                "readnode_enable": str(self.checkbox_options1_readnode.isChecked()) if hasattr(self, 'checkbox_options1_readnode') else "False",
+            }
+        
+        config["display_options"]["options"] = options_dict
+        return config
+
+    def update_config_spice_option(self, config):
+        if self.CCRQ.isChecked():
+            return config
+        if not self.CB_Spice.isChecked():
+            return config
+        
+        mode = self.Mode_of_spice.currentText()
+        config["spice_option"] = {
+            "mode": mode,
+            "Enable": str(self.CB_Spice.isChecked()),
+            "options": {}
+        }
+        
+        options_dict = {}
+        if mode == "cơ bản":
+            options_dict["basic"] = {
+                "port":{
+                    "enable": str(self.CB_option1_port_spice.isChecked()) if hasattr(self, 'CB_option1_port_spice') else "False",
+                    "value": str(self.option1_port_spice.text()) if hasattr(self, 'option1_port_spice') else "",
+                },
+                "tls-port":{
+                    "enable": str(self.CB_option2_tls_port_spice.isChecked()) if hasattr(self, 'CB_option2_tls_port_spice') else "False",
+                    "value": str(self.option2_tls_port_spice.text()) if hasattr(self, 'option2_tls_port_spice') else "",
+                },
+                "ipv4": str(self.option3_ipv4_spice.isChecked()) if hasattr(self, 'option3_ipv4_spice') else "False",
+                "ipv6": str(self.option4_ipv6_spice.isChecked()) if hasattr(self, 'option4_ipv6_spice') else "False",
+                "disable_ticketing": str(self.option5_disable_ticketing_spice.isChecked()) if hasattr(self, 'option5_disable_ticketing_spice') else "False",
+                "password_secret":{
+                    "enable": str(self.CB_option6_secret_password_spice.isChecked()) if hasattr(self, 'CB_option6_secret_password_spice') else "False",
+                    "value": str(self.option6_secret_password_spice.text()) if hasattr(self, 'option6_secret_password_spice') else "",
+                },
+                "disable_copy_paste": str(self.option7_disable_copy_paste_spice.isChecked()) if hasattr(self, 'option7_disable_copy_paste_spice') else "False",
+                "agent_mouse": str(self.option8_agent_mouse_spice.isChecked()) if hasattr(self, "option8_agent_mouse_spice") else "False",
+            }
+        if mode == "nâng cao":
+            options_dict["advanced"] = {
+                "port":{
+                    "enable": str(self.CB_option1_port_spice.isChecked()) if hasattr(self, 'CB_option1_port_spice') else "False",
+                    "value": str(self.option1_port_spice.text()) if hasattr(self, 'option1_port_spice') else "",
+                },
+                "tls-port":{
+                    "enable": str(self.CB_option2_tls_port_spice.isChecked()) if hasattr(self, 'CB_option2_tls_port_spice') else "False",
+                    "value": str(self.option2_tls_port_spice.text()) if hasattr(self, 'option2_tls_port_spice') else "",
+                },
+                "ipv4": str(self.option3_ipv4_spice.isChecked()) if hasattr(self, 'option3_ipv4_spice') else "False",
+                "ipv6": str(self.option4_ipv6_spice.isChecked()) if hasattr(self, 'option4_ipv6_spice') else "False",
+                "disable_ticketing": str(self.option5_disable_ticketing_spice.isChecked()) if hasattr(self, 'checkbox_option3_disable_ticketing_spice') else "False",
+                "password_secrect":{
+                    "enable": str(self.CB_option6_secret_password_spice.isChecked()) if hasattr(self, 'CB_option6_secret_password_spice') else "False",
+                    "value": str(self.option6_secret_password_spice.text()) if hasattr(self, 'option6_secret_password_spice') else "",
+                },
+                "disable_copy_paste": str(self.option7_disable_copy_paste_spice.isChecked()) if hasattr(self, 'option7_disable_copy_paste_spice') else "False",
+                "x509":{
+                    "enable": str(self.CB_option2_tls_port_spice.isChecked()) if hasattr(self, 'CB_option2_tls_port_spice') else "False",
+                    "x509_dir":{
+                        "enable": str(self.CB_option1_x509_dir.isChecked()) if hasattr(self, 'CB_option1_x509_dir') else "False",
+                        "value": str(self.option1_x509_dir.text()) if hasattr(self, 'option1_x509_dir') else "",
+                    },
+                    "x509_key_file":{
+                        "enable": str(self.CB_option2_x509_key_file.isChecked()) if hasattr(self, 'CB_option2_x509_key_file') else "False",
+                        "value": str(self.option2_x509_key_file.text()) if hasattr(self, 'option2_x509_key_file') else "",
+                    },
+                    "x509_cert_file":{
+                        "enable": str(self.CB_option4_x509_cert_file.isChecked()) if hasattr(self, 'CB_option4_x509_cert_file') else "False",
+                        "value": str(self.option4_x509_cert_file.text()) if hasattr(self, 'option4_x509_cert_file') else "",
+                    },
+                    "x509_key_password":{
+                        "enable": str(self.CB_option3_x509_key_password.isChecked()) if hasattr(self, 'CB_option3_x509_key_password') else "False",
+                        "value": str(self.option3_x509_key_password.text()) if hasattr(self, 'option3_x509_key_password') else "",
+                    },
+                    "x509_cacert_file":{
+                        "enable": str(self.CB_option6_x509_cacert_file.isChecked()) if hasattr(self, 'CB_option6_x509_cacert_file') else "False",
+                        "value": str(self.option6_x509_cacert_file.text()) if hasattr(self, 'option6_x509_cacert_file') else "",
+                    },
+                    "x509_dh_key_file":{
+                        "enable": str(self.CB_option7_x509_dh_key_file.isChecked()) if hasattr(self, "CB_option7_x509_dh_key_file") else "False",
+                        "value": str(self.option7_x509_dh_key_file.text()) if hasattr(self, "option7_x509_dh_key_file") else "",
+                    },
+                },
+                "addr": {
+                    "enable": str(self.CB_option6_addr_spice.isChecked()) if hasattr(self, "CB_option6_addr_spice") else "False",
+                    "value": str(self.option6_addr_spice.text()) if hasattr(self, "option6_addr_spice") else "",
+                },
+                "unix": str(self.option7_unix.isChecked()) if hasattr(self, "option7_unix") else "False",
+                "tls_ciphers":{
+                    "enable": str(self.option8_CB_tls_cipher.isChecked()) if hasattr(self, "option8_CB_tls_cipher") else "False",
+                    "value": str(self.option8_tls_cipher.text()) if hasattr(self, "option8_tls_cipher") else "",
+                },
+                "tls_channel": {
+                    "enable": str(self.CB_option9_tls_channel.isChecked()) if hasattr(self, "CB_option9_tls_channel") else "False",
+                    "value": str(self.option9_tls_channel.currentText()) if hasattr(self, "option9_tls_channel") else "",
+                },
+                "plaintext_channel": {
+                    "enable": str(self.CB_option10_plaintext_channel.isChecked()) if hasattr(self, "CB_option10_plaintext_channel") else "False",
+                    "value": str(self.option10_plaintext_channel.currentText()) if hasattr(self, "option10_plaintext_channel") else "",
+                },
+                "sasl": str(self.option11_sasl.isChecked()) if hasattr(self, "option11_sasl") else "False",
+                "image_compression":{
+                    "enable": str(self.option12_CB_image_compression.isChecked()) if hasattr(self, "option12_CB_image_compression") else "False",
+                    "value": str(self.option12_image_compression.currentText()) if hasattr(self, "option12_image_compression") else "",
+                },
+                "jpeg_wan_compression":{
+                    "enable": str(self.option13_CB_jpeg_wan_compression.isChecked()) if hasattr(self, "option13_CB_jpeg_wan_compression") else "False",
+                    "value": str(self.option13_jpeg_wan_compression.currentText()) if hasattr(self, "option13_jpeg_wan_compression") else ""
+                },
+                "zlib_glz_wan_compression":{
+                    "enable": str(self.option14_CB_zlib_glz_wan_compression.isChecked()) if hasattr(self, "option14_CB_zlib_glz_wan_compression") else "False",
+                    "value": str(self.option14_zlib_glz_wan_compression.currentText()) if hasattr(self, "option14_zlib_glz_wan_compression") else "",
+                },
+                "streaming_video":{
+                    "enable": str(self.option15_CB_streaming_video.isChecked()) if hasattr(self, "option15_CB_streaming_video") else "False",
+                    "value": str(self.option15_streaming_video.currentText()) if hasattr(self, "option15_streaming_video") else ""
+                },
+                "disable_agent_file_xfer": str(self.option16_disable_agent_file_xfer.isChecked()) if hasattr(self, "option16_disable_agent_file_xfer") else "False",
+                "agent_mouse": str(self.option8_agent_mouse_spice.isChecked()) if hasattr(self, "option8_agent_mouse_spice") else "False",
+                "playback_compression": str(self.option17_playback_compression.isChecked()) if hasattr(self, "option17_playback_compression") else "False",
+                "seamless_migration": str(self.option18_seamless_migration.isChecked()) if hasattr(self, "option18_seamless_migration") else "False",
+                "video_codec": {
+                    "enable": str(self.CB_option19_video_codec.isChecked()) if hasattr(self, "CB_option19_video_codec") else "False",
+                    "value": str(self.option19_video_codec.text()) if hasattr(self, "option19_video_codec") else "",
+                },
+                "max_refresh_rate": {
+                    "enable": str(self.CB_option20_max_refresh_rate.isChecked()) if hasattr(self, "CB_option20_max_refresh_rate") else "False",
+                    'value': str(self.option20_max_refresh_rate.value()) if hasattr(self, "option20_max_refresh_rate") else "0",
+                },
+                "gl": str(self.option21_gl.isChecked()) if hasattr(self, "option21_gl") else "False",
+                "rendernode": {
+                    "enable": str(self.CB_option22_render_node.isChecked()) if hasattr(self, "CB_option22_render_node") else "False",
+                    "value": str(self.option22_render_node.text()) if hasattr(self, "option22_render_node") else "",
+                }
+            }
+        config["spice_option"]["options"] = options_dict
+        return config
+            
+    def apply_config_display_options(self, cfg=None):
+        try:
+            if cfg is None:
+                cfg = {}
+            display_options = cfg.get("display_options", {})
+            if not display_options:
+                self.CB_Display.setChecked(False)
+                return
+            mode = display_options.get("mode", "")
+            options = display_options.get("options", {})
+            if not mode:
+                self.CB_Display.setChecked(False)
+                return
+            
+            # First, set the mode which should trigger update_option_diplay to create widgets
+            self.CB_Display.setChecked(True)
+            self.Mode_of_display.setCurrentText(mode)
+            
+            # Manually call update_option_diplay to ensure widgets are created
+            # (in case signals are blocked)
+            if not hasattr(self, 'layout_options') or not hasattr(self, 'option1_gl2'):
+                self.update_option_diplay()
+            
+            # Now apply the specific options for this mode
+            if mode == "sdl":
+                if hasattr(self, 'option1_gl2'):
+                    self.option1_gl2.setCurrentIndex(int(options.get("sdl", {}).get("gl2", 0)))
+                if hasattr(self, 'option2_grap_mod'):
+                    self.option2_grap_mod.setText(str(options.get("sdl", {}).get("grap_mod", "")))
+                if hasattr(self, 'checkbox_option2_grap_mod'):
+                    self.checkbox_option2_grap_mod.setChecked(str(options.get("sdl", {}).get("check_grap_mod", "False")) == "True")
+                if hasattr(self, 'option3_show_cursor'):
+                    self.option3_show_cursor.setChecked(str(options.get("sdl", {}).get("show_cursor", "True")) == "True")
+                if hasattr(self, 'options4_windows_close'):
+                    self.options4_windows_close.setChecked(str(options.get("sdl", {}).get("windows_close", "True")) == "True")
+            elif mode == "spice-app":
+                if hasattr(self, 'option1_gl'):
+                    self.option1_gl.setChecked(str(options.get("spice-app", {}).get("gl", "False")) == "True")
+            elif mode == "gtk":
+                if hasattr(self, 'option1_full_srceen'):
+                    self.option1_full_srceen.setChecked(str(options.get("gtk", {}).get("fullscreen", "False")) == "True")
+                if hasattr(self, 'option2_gl'):
+                    self.option2_gl.setChecked(str(options.get("gtk", {}).get("gl", "False")) == "True")
+                if hasattr(self, 'option3_show_tab'):
+                    self.option3_show_tab.setChecked(str(options.get("gtk", {}).get("show_tab", "True")) == "True")
+                if hasattr(self, 'options4_show_curser'):
+                    self.options4_show_curser.setChecked(str(options.get("gtk", {}).get("show_curser", "True")) == "True")
+                if hasattr(self, 'options5_windows_close'):
+                    self.options5_windows_close.setChecked(str(options.get("gtk", {}).get("windows_close", "True")) == "True")
+                if hasattr(self, 'option6_show_menubar'):
+                    self.option6_show_menubar.setChecked(str(options.get("gtk", {}).get("show_menubar", "True")) == "True")
+                if hasattr(self, 'options7_zoom_to_fit'):
+                    self.options7_zoom_to_fit.setChecked(str(options.get("gtk", {}).get("zoom_to_fit", "False")) == "True")
+            elif mode == "curses":
+                if hasattr(self, 'options1_charset'):
+                    self.options1_charset.setText(str(options.get("curses", {}).get("charset", "")))
+                if hasattr(self, 'options1_charset_checkbox'):
+                    self.options1_charset_checkbox.setChecked(str(options.get("curses", {}).get("charset_enable", "False")) == "True")
+            elif mode == "egl-headless":
+                if hasattr(self, 'options1_readnode'):
+                    self.options1_readnode.setText(str(options.get("egl-headless", {}).get("readnode", "")))
+                if hasattr(self, 'checkbox_options1_readnode'):
+                    self.checkbox_options1_readnode.setChecked(str(options.get("egl-headless", {}).get("readnode_enable", "False")) == "True")
+            elif mode == "dbus":
+                if hasattr(self, 'options1_addr'):
+                    self.options1_addr.setText(str(options.get("dbus", {}).get("addr", "")))
+                if hasattr(self, 'checkbox_options1_addr'):
+                    self.checkbox_options1_addr.setChecked(str(options.get("dbus", {}).get("addr_enable", "False")) == "True")
+                if hasattr(self, 'option1_gl2'):
+                    self.option1_gl2.setCurrentIndex(int(options.get("dbus", {}).get("gl2", 0)))
+                if hasattr(self, 'options1_readnode'):
+                    self.options1_readnode.setText(str(options.get("dbus", {}).get("readnode", "")))
+                if hasattr(self, 'checkbox_options1_readnode'):
+                    self.checkbox_options1_readnode.setChecked(str(options.get("dbus", {}).get("readnode_enable", "False")) == "True")
+        except Exception:
+            pass
+
+    def apply_spice_option(self, cfg=None):
+        try:
+            if cfg is None:
+                cfg = {}
+            spice_option = cfg.get("spice_option", {})
+            if not spice_option:
+                self.CB_Spice.setChecked(False)
+                return
+            mode = spice_option.get("mode", "")
+            option = spice_option.get("options", {})
+            if not mode:
+                self.CB_Spice.setChecked(False)
+                return
+            
+            self.CB_Spice.setChecked(True)
+            self.Mode_of_spice.setCurrentText(mode)
+
+            if not hasattr(self, 'layout_option_spice') or not hasattr(self,"layout_option_spice_advanced") or not hasattr(self, "layout_option_spice_basic"):
+                self.update_UI_spice_options()
+
+            if mode == "cơ bản":
+                basic = option.get("basic", {})
+                if hasattr(self, "option1_port_spice"):
+                    self.option1_port_spice.setText(str(basic.get("port", {}).get("value", "")))
+                if hasattr(self, "CB_option1_port_spice"):
+                    self.CB_option1_port_spice.setChecked(bool(basic.get("port", {}).get("enable", "False")) == "True")
+                    self.update_port_spice()
+                if hasattr(self, "option2_tls_port_spice"):
+                    self.option2_tls_port_spice.setText(str(basic.get("tls-port",{}).get("value","")))
+                if hasattr(self, "CB_option2_tls_port_spice"):
+                    self.CB_option2_tls_port_spice.setChecked(bool(basic.get("tls-port",{}).get("enable", "False")) == "True")
+                    self.update_tls_port_spice()
+                if hasattr(self, "option5_disable_ticketing_spice"):
+                    self.option5_disable_ticketing_spice.setChecked(bool(basic.get("disable_ticketing", "False")) == "True")
+                if hasattr(self, "CB_option6_secret_password_spice"):
+                    self.CB_option6_secret_password_spice.setChecked(bool(basic.get("password_secret", {}).get("enable", "False")) == "True")
+                    self.update_password_secret_spice()
+                if hasattr(self, "option6_secret_password_spice"):
+                    self.option6_secret_password_spice.setText(str(basic.get("password_secret", {}).get("value", "")))
+                if hasattr(self, "option7_disable_copy_paste_spice"):
+                    self.option7_disable_copy_paste_spice.setChecked(bool(basic.get("disable_copy_paste", "False")) == "True")
+                if hasattr(self, "option3_ipv4_spice"):
+                    self.option3_ipv4_spice.setChecked(bool(basic.get("ipv4", "False")) == "True")
+                if hasattr(self, "option4_ipv6_spice"):
+                    self.option4_ipv6_spice.setChecked(bool(basic.get("ipv6", "False")))
+                if hasattr(self, "option8_agent_mouse_spice"):
+                    self.option8_agent_mouse_spice.setChecked(bool(basic.get("agent_mouse", "False")) == "True")
+            if mode == "nâng cao":
+                advanced = option.get("advanced", {})
+                # Basic options in advanced mode
+                if hasattr(self, "option1_port_spice"):
+                    self.option1_port_spice.setText(str(advanced.get("port", {}).get("value", "")))
+                if hasattr(self, "CB_option1_port_spice"):
+                    self.CB_option1_port_spice.setChecked(bool(advanced.get("port", {}).get("enable", "False")) == "True")
+                    self.update_port_spice()
+                if hasattr(self, "option2_tls_port_spice"):
+                    self.option2_tls_port_spice.setText(str(advanced.get("tls-port",{}).get("value","")))
+                if hasattr(self, "CB_option2_tls_port_spice"):
+                    self.CB_option2_tls_port_spice.setChecked(bool(advanced.get("tls-port",{}).get("enable", "False")) == "True")
+                    self.update_tls_port_spice()
+                if hasattr(self, "option3_ipv4_spice"):
+                    self.option3_ipv4_spice.setChecked(bool(advanced.get("ipv4", "False")))
+                if hasattr(self, "option4_ipv6_spice"):
+                    self.option4_ipv6_spice.setChecked(bool(advanced.get("ipv6", "False")))
+                if hasattr(self, "option5_disable_ticketing_spice"):
+                    self.option5_disable_ticketing_spice.setChecked(bool(advanced.get("disable_ticketing", "False")))
+                if hasattr(self, "CB_option6_secret_password_spice"):
+                    self.CB_option6_secret_password_spice.setChecked(bool(advanced.get("password_secret", {}).get("enable", "False")) == "True")
+                    self.update_password_secret_spice()
+                if hasattr(self, "option6_secret_password_spice"):
+                    self.option6_secret_password_spice.setText(str(advanced.get("password_secret", {}).get("value", "")))
+                if hasattr(self, "option7_disable_copy_paste_spice"):
+                    self.option7_disable_copy_paste_spice.setChecked(bool(advanced.get("disable_copy_paste", "False")) == "True")
+                if hasattr(self, "option8_agent_mouse_spice"):
+                    self.option8_agent_mouse_spice.setChecked(bool(advanced.get("agent_mouse", "False")) == "True")
+                # X509 options
+                x509_options = advanced.get("x509", {})
+                if x509_options.get("enable"):
+                    if hasattr(self, "CB_option1_x509_dir"):
+                        self.CB_option1_x509_dir.setChecked(bool(x509_options.get("x509_dir", {}).get("enable", "False")) == "True")
+                        self.update_x509_dir()
+                    if hasattr(self, "option1_x509_dir"):
+                        self.option1_x509_dir.setText(str(x509_options.get("x509_dir", {}).get("value", "")))
+                    if hasattr(self, "CB_option2_x509_key_file"):
+                        self.CB_option2_x509_key_file.setChecked(bool(x509_options.get("x509_key_file", {}).get("enable", "False")) == "True")
+                        self.update_x509_key_file()
+                    if hasattr(self,"option2_x509_key_file"):
+                        self.option2_x509_key_file.setText(str(x509_options.get("x509_key_file", {}).get("value", "")))
+                    if hasattr(self, "CB_option3_x509_key_password"):
+                        self.CB_option3_x509_key_password.setChecked(bool(x509_options.get("x509_key_password",{}).get("enable", "False")) == "True")
+                        self.update_x509_key_password()
+                    if hasattr(self, "option3_x509_key_password"):
+                        self.option3_x509_key_password.setText(str(x509_options.get("x509_key_password", {}).get("value", "")))
+                    if hasattr(self, "CB_option4_x509_cert_file"):
+                        self.CB_option4_x509_cert_file.setChecked(bool(x509_options.get("x509_cert_file",{}).get("enable", "False")) == "True")
+                        self.update_x509_cert_file()
+                    if hasattr(self, "option4_x509_cert_file"):
+                        self.option4_x509_cert_file.setText(str(x509_options.get("x509_cert_file", {}).get("value", "")))
+                    if hasattr(self, "CB_option6_x509_cacert_file"):
+                        self.CB_option6_x509_cacert_file.setChecked(bool(x509_options.get("x509_cacert_file",{}).get("enable", "False")) == "True")
+                        self.update_x509_cacert_file()
+                    if hasattr(self, "option6_x509_cacert_file"):
+                        self.option6_x509_cacert_file.setText(str(x509_options.get("x509_cacert_file", {}).get("value", "")))
+                    if hasattr(self, "CB_option7_x509_dh_key_file"):
+                        self.CB_option7_x509_dh_key_file.setChecked(bool(x509_options.get("x509_dh_key_file",{}).get("enable", "False")) == "True")
+                        self.update_x509_dh_key_file()
+                    if hasattr(self, "option7_x509_dh_key_file"):
+                        self.option7_x509_dh_key_file.setText(str(x509_options.get("x509_dh_key_file", {}).get("value", "")))
+                # Address option
+                if hasattr(self, "CB_option6_addr_spice"):
+                    self.CB_option6_addr_spice.setChecked(bool(advanced.get("addr", {}).get("enable", "False")) == "True")
+                    self.update_addr_spice()
+                if hasattr(self, "option6_addr_spice"):
+                    self.option6_addr_spice.setText(str(advanced.get("addr", {}).get("value", "")))
+                # Unix socket
+                if hasattr(self, "option7_unix"):
+                    self.option7_unix.setChecked(bool(advanced.get("unix", "False")) == "True")
+                # TLS Ciphers
+                if hasattr(self, "option8_CB_tls_cipher"):
+                    self.option8_CB_tls_cipher.setChecked(bool(advanced.get("tls_ciphers", {}).get("enable", "False")) == "True")
+                    self.update_tls_cipher()
+                if hasattr(self, "option8_tls_cipher"):
+                    self.option8_tls_cipher.setText(str(advanced.get("tls_ciphers", {}).get("value", "")))
+                # TLS Channel
+                if hasattr(self, "CB_option9_tls_channel"):
+                    self.CB_option9_tls_channel.setChecked(bool(advanced.get("tls_channel", {}).get("enable", "False")) == "True")
+                    self.update_tls_channel()
+                if hasattr(self, "option9_tls_channel"):
+                    self.option9_tls_channel.setCurrentText(str(advanced.get("tls_channel", {}).get("value", "main")))
+                # Plaintext Channel
+                if hasattr(self, "CB_option10_plaintext_channel"):
+                    self.CB_option10_plaintext_channel.setChecked(bool(advanced.get("plaintext_channel", {}).get("enable", "False")) == "True")
+                    self.update_plaintext_channel()
+                if hasattr(self, "option10_plaintext_channel"):
+                    self.option10_plaintext_channel.setCurrentText(str(advanced.get("plaintext_channel", {}).get("value", "main")))
+                # SASL
+                if hasattr(self, "option11_sasl"):
+                    self.option11_sasl.setChecked(bool(advanced.get("sasl", "False")) == "True")
+                # Image Compression
+                if hasattr(self, "option12_CB_image_compression"):
+                    self.option12_CB_image_compression.setChecked(bool(advanced.get("image_compression", {}).get("enable", "False")) == "True")
+                    self.update_image_compression()
+                if hasattr(self, "option12_image_compression"):
+                    self.option12_image_compression.setCurrentText(str(advanced.get("image_compression", {}).get("value", "auto_glz")))
+                # JPEG WAN Compression
+                if hasattr(self, "option13_CB_jpeg_wan_compression"):
+                    self.option13_CB_jpeg_wan_compression.setChecked(bool(advanced.get("jpeg_wan_compression", {}).get("enable", "False")) == "True")
+                    self.update_jpeg_wan_compression()
+                if hasattr(self, "option13_jpeg_wan_compression"):
+                    self.option13_jpeg_wan_compression.setCurrentText(str(advanced.get("jpeg_wan_compression", {}).get("value", "auto")))
+                # ZLIB/GLZ WAN Compression
+                if hasattr(self, "option14_CB_zlib_glz_wan_compression"):
+                    self.option14_CB_zlib_glz_wan_compression.setChecked(bool(advanced.get("zlib_glz_wan_compression", {}).get("enable", "False")) == "True")
+                    self.update_zlib_glz_wan_compression()
+                if hasattr(self, "option14_zlib_glz_wan_compression"):
+                    self.option14_zlib_glz_wan_compression.setCurrentText(str(advanced.get("zlib_glz_wan_compression", {}).get("value", "auto")))
+                # Streaming Video
+                if hasattr(self, "option15_CB_streaming_video"):
+                    self.option15_CB_streaming_video.setChecked(bool(advanced.get("streaming_video", {}).get("enable", "False")) == "True")
+                    self.update_streaming_video()
+                if hasattr(self, "option15_streaming_video"):
+                    self.option15_streaming_video.setCurrentText(str(advanced.get("streaming_video", {}).get("value", "off")))
+                # Agent File Transfer
+                if hasattr(self, "option16_disable_agent_file_xfer"):
+                    self.option16_disable_agent_file_xfer.setChecked(bool(advanced.get("disable_agent_file_xfer", "False")) == "True")
+                # Playback Compression
+                if hasattr(self, "option17_playback_compression"):
+                    self.option17_playback_compression.setChecked(bool(advanced.get("playback_compression", "False")) == "True")
+                # Seamless Migration
+                if hasattr(self, "option18_seamless_migration"):
+                    self.option18_seamless_migration.setChecked(bool(advanced.get("seamless_migration", "False")) == "True")
+                # Video Codec
+                if hasattr(self, "CB_option19_video_codec"):
+                    self.CB_option19_video_codec.setChecked(bool(advanced.get("video_codec", {}).get("enable", "False")) == "True")
+                    self.update_video_codec()
+                if hasattr(self, "option19_video_codec"):
+                    self.option19_video_codec.setText(str(advanced.get("video_codec", {}).get("value", "")))
+                # Max Refresh Rate
+                if hasattr(self, "CB_option20_max_refresh_rate"):
+                    self.CB_option20_max_refresh_rate.setChecked(bool(advanced.get("max_refresh_rate", {}).get("enable", "False")) == "True")
+                    self.update_max_refresh_rate()
+                if hasattr(self, "option20_max_refresh_rate"):
+                    self.option20_max_refresh_rate.setValue(int(advanced.get("max_refresh_rate", {}).get("value", "100")))
+                # GL
+                if hasattr(self, "option21_gl"):
+                    self.option21_gl.setChecked(bool(advanced.get("gl", "False")) == "True")
+                # Render Node
+                if hasattr(self, "CB_option22_render_node"):
+                    self.CB_option22_render_node.setChecked(bool(advanced.get("rendernode", {}).get("enable", "False")) == "True")
+                    self.update_render_node()
+                if hasattr(self, "option22_render_node"):
+                    self.option22_render_node.setText(str(advanced.get("rendernode", {}).get("value", "")))
+                    self.update_x509_cert_file()
+        except Exception:
+            pass
 
     def apply_config(self, cfg):
         self.is_loading = True
         try:
-            return self._apply_config_internal(cfg)
+            # Block signals to prevent snowballing updates during load
+            self.K.blockSignals(True)
+            self.CP.blockSignals(True)
+            self.SC.blockSignals(True)
+            self.RM.blockSignals(True)
+            self.V.blockSignals(True)
+            self.RM.blockSignals(True)
+            self.V.blockSignals(True)
+            self.A.blockSignals(True)
+            self.MT.blockSignals(True)
+            self.ACC.blockSignals(True)
+            self.CB_BIOS.blockSignals(True)
+            self.LE_BIOS.blockSignals(True)
+            self.BOOT_ORDER.blockSignals(True)
+            self.BOOT_MENU.blockSignals(True)
+            
+            self.CB_SF.blockSignals(True)
+            self.LE_SF_Path.blockSignals(True)
+            self.LE_SF_Tag.blockSignals(True)
+            self.CB_GuestAgent.blockSignals(True)
+            
+            
+            try:
+                result = self._apply_config_internal(cfg)
+                
+                # Manually trigger necessary updates after loading
+                self.update_arch_dependent_widgets()
+                
+                # Restore USB Passthrough in memory
+                if "usb_passthrough" in cfg:
+                    self.usb_passthrough_list = cfg["usb_passthrough"]
+
+                return result
+            finally:
+                # Restore signals
+                self.K.blockSignals(False)
+                self.CP.blockSignals(False)
+                self.SC.blockSignals(False)
+                self.RM.blockSignals(False)
+                self.V.blockSignals(False)
+                self.A.blockSignals(False)
+                self.MT.blockSignals(False)
+                self.ACC.blockSignals(False)
+                self.CB_BIOS.blockSignals(False)
+                self.LE_BIOS.blockSignals(False)
+                self.BOOT_ORDER.blockSignals(False)
+                self.BOOT_MENU.blockSignals(False)
+
+                self.CB_SF.blockSignals(False)
+                self.LE_SF_Path.blockSignals(False)
+                self.LE_SF_Tag.blockSignals(False)
+                self.CB_GuestAgent.blockSignals(False)
+
         finally:
             self.is_loading = False
 
@@ -1031,6 +3424,25 @@ class QG(QTabWidget):
         # Custom Command
         enb_cmd = cfg.get('enb_command_qemu', False)
         self.CCRQ.setChecked(enb_cmd)
+        
+        # Restore USB Passthrough if present in snapshot/profile
+        if "usb_passthrough" in cfg:
+            try:
+                path = get_config_path()
+                if path.exists():
+                    with open(path, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                    
+                    if "config" not in data:
+                        data["config"] = {}
+                    
+                    data["config"]["usb_passthrough"] = cfg["usb_passthrough"]
+                    
+                    with open(path, "w", encoding="utf-8") as f:
+                        json.dump(data, f, indent=4, ensure_ascii=False)
+            except:
+                pass
+
         if enb_cmd:
             self.CCRQT.setText(cfg.get('command_qemu', ''))
             return
@@ -1077,6 +3489,28 @@ class QG(QTabWidget):
                     self.V.addItem(vga)
             self.V.setCurrentText(vga)
             
+        # Machine Type
+        mt = cfg.get('machine_type', '')
+        if mt:
+            if self.MT.findText(mt) == -1:
+                self.MT.addItem(mt)
+            self.MT.setCurrentText(mt)
+            
+        # Accel
+        acc = cfg.get('accel', '')
+        if acc:
+            if self.ACC.findText(acc) == -1:
+                self.ACC.addItem(acc)
+            self.ACC.setCurrentText(acc)
+            
+        # Watchdog
+        watchdog = cfg.get('watchdog', '')
+        if watchdog:
+            if self.WDD.findText(watchdog) == -1:
+                self.setup_WDD()
+            self.WDD.setCurrentText(watchdog)
+
+            
         # Audio
         audio = cfg.get('audio', '')
         if audio:
@@ -1109,6 +3543,12 @@ class QG(QTabWidget):
         else:
             self.CFDA.setChecked(False)
             self.LEDA.setText('')
+            
+        # BIOS & Boot
+        self.CB_BIOS.setChecked(cfg.get('bios_enable', False))
+        self.LE_BIOS.setText(cfg.get('bios_path', ''))
+        self.BOOT_ORDER.setCurrentText(cfg.get('boot_order', 'Default'))
+        self.BOOT_MENU.setChecked(cfg.get('boot_menu', False))
             
         fdb = cfg.get('fdb', '')
         if fdb:
@@ -1187,6 +3627,64 @@ class QG(QTabWidget):
         check_advanced_tab = cfg.get('check_advanced_tab', False)
         self.CAD.setChecked(check_advanced_tab)
 
+        # Shared Folder
+        self.CB_SF.setChecked(cfg.get('shared_folder_enable', False))
+        self.LE_SF_Path.setText(cfg.get('shared_folder_path', ''))
+        self.LE_SF_Tag.setText(cfg.get('shared_folder_tag', 'shared'))
+        self.update_sf_ui()
+
+        # Guest Agent
+        self.CB_GuestAgent.setChecked(cfg.get('guest_agent_enable', False))
+
+        # readconfig
+        self.CB_RC.setChecked(cfg.get('readconfig_enable', False))
+        self.path_rc.setPlainText(cfg.get('readconfig_path', ''))
+
+        # sandbox
+        sandbox_cfg = cfg.get('sandbox', {})
+        self.CB_SB.setChecked(sandbox_cfg.get('check', False))
+
+        # watchdog
+        WAC_cfg = cfg.get('watchdog-action', '')
+        if WAC_cfg:
+            if self.WAC.findText(WAC_cfg) == -1:
+                self.WAC.addItem(WAC_cfg)
+            self.WAC.setCurrentText(WAC_cfg)
+        WDD_cfg = cfg.get('watchdog', '')
+        if WDD_cfg:
+            if self.WDD.findText(WDD_cfg) == -1:
+                self.WDD.addItem(WDD_cfg)
+            self.WDD.setCurrentText(WDD_cfg)
+        Checkbox_watchdog = cfg.get('checkbox_watchdog','')
+        if Checkbox_watchdog:
+            self.Checkbox_enable_watchdog_device.setChecked(Checkbox_watchdog)
+
+        #nographics
+        self.CB_NGG.setChecked(cfg.get('nographics', False))
+
+        # i386 advanced options
+        self.win2k_hack.setChecked(cfg.get('win2k-hack', False))
+        self.no_fd_bootcheck.setChecked(cfg.get("no_fd_bootcheck", False))
+
+        # keyboardlayout
+        self.keyboardlayoutcheckbox.setChecked(cfg.get('klc', False))
+        self.keyboardlayoutlineedit.setEnabled(cfg.get("klc", False))
+        self.keyboardlayoutlineedit.setText(cfg.get("keyboard_layout", "")) if cfg.get("keyboard_layout", "None") == "None" else self.keyboardlayoutlineedit.setText("")
+
+        # Helper function to safely set combobox text
+        def set_combobox_text(combobox, text):
+            if text:
+                if combobox.findText(text) == -1:
+                    combobox.addItem(text)
+                combobox.setCurrentText(text)
+
+        set_combobox_text(self.SB_obsolete, sandbox_cfg.get('obsolete', ''))
+        set_combobox_text(self.SB_elevateprivileges, sandbox_cfg.get('elevateprivileges', ''))
+        set_combobox_text(self.SB_spawn, sandbox_cfg.get('spawn', ''))
+        set_combobox_text(self.SB_resourcecontrol, sandbox_cfg.get('resourcecontrol', ''))
+        set_combobox_text(self.SB_seccomp_mode, sandbox_cfg.get('seccomp mode', ''))
+        self.apply_config_display_options(cfg)
+        self.apply_spice_option(cfg)
 
     def _ui_profile_add(self):
         name, ok = QInputDialog.getText(self, "Thêm profile", "Tên profile:")
@@ -1289,16 +3787,13 @@ class QG(QTabWidget):
 
         with open(get_config_path(), "r", encoding="utf-8") as f:
             data = json.load(f)
-        if self.CCRQ.isChecked() == False:
-            data["config"] = self.get_current_config()
-        else:
-            if self.CCRQ.isChecked():
-                data["config"]["enb_command_qemu"] = True
-                data["config"]["command_qemu"] = self.CCRQT.text()
+        data["config"] = self.get_current_config()
         with open(get_config_path(), "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=4)
         json_path = get_config_path()
-
+        if (not self.CB_option1_port_spice.isChecked() and not self.CB_option2_tls_port_spice.isChecked()) and self.CB_Spice.isChecked():
+            QMessageBox.warning(self, "lỗi khi khởi động QEMU", "Spice option bắt buộc phải có một trong hai option là port hoặc tls port")
+            return
         try:
             # Gọi trực tiếp hàm từ module load_config thay vì subprocess
             # Điều này sửa lỗi mở cửa sổ mới khi chạy file exe
@@ -1328,9 +3823,13 @@ class QG(QTabWidget):
                 # Ensure forward slashes for QEMU options to avoid escaping issues on Windows
                 addr_nbd = addr_nbd_path.as_posix()
                 disk_path = self.HD.currentText() if self.HD.currentText() != "none" else ""
-                path_DS = Path(__file__).resolve().parent / "qemu" / "qemu-storage-daemon.exe"
+                path_DS = find_qemu_storage_daemon()
+                if not path_DS:
+                    QMessageBox.critical(self, "Lỗi", "Không tìm thấy qemu-storage-daemon. Hãy cài đặt QEMU.")
+                    return None
+                
                 # qemu-storage-daemon.exe is the standard name
-                cmd_ds = f"{path_DS} --nbd-server addr.type=inet,addr.host=127.0.0.1,addr.port=1000{idds} --blockdev driver=file,node-name=d{idds},filename={disk_path} --export type=nbd,id=ex0,node-name=d{idds},writable=on"
+                cmd_ds = f'"{path_DS}" --nbd-server addr.type=inet,addr.host=127.0.0.1,addr.port=1000{idds} --blockdev driver=file,node-name=d{idds},filename="{disk_path}" --export type=nbd,id=ex0,node-name=d{idds},writable=on'
                 part_cmd_run_qemu = f"-blockdev export=d{idds},driver=nbd,server.type=inet,server.host=127.0.0.1,node-name=nbd{idds},server.port=1000{idds}"
                 
                 with open(get_config_path(), "r", encoding="utf-8") as f:
@@ -1385,7 +3884,7 @@ class QG(QTabWidget):
             load_config.run_daemon_storage_direct(get_config_path(), name_ds)
             self.update_daemon_list_kill()
             self.update_DSNTR()
-            QMessageBox.information(self, "Info", f"Đã chạy daemon: {name_ds}")
+            QMessageBox.information(self, "Thông báo", f"Đã chạy daemon: {name_ds}")
 
     def click_kill_daemon(self):
         key = self.CDPDS2.currentText()
@@ -1393,7 +3892,7 @@ class QG(QTabWidget):
              return
         load_config.kill_daemon_storage_direct(get_config_path(), key)
         self.update_daemon_list_kill()
-        QMessageBox.information(self, "Info", f"Đã kill daemon: {key}")
+        QMessageBox.information(self, "Thông báo", f"Đã dừng daemon: {key}")
         try:
             with open(get_config_path(), 'r', encoding="utf-8") as f:
                 data = json.load(f)
@@ -1414,6 +3913,86 @@ class QG(QTabWidget):
         self.LEI.setEnabled(checked)
         self.bi.setEnabled(checked)
 
+    def check_daemon_status(self):
+        self.table_daemon_status.setRowCount(0)
+        self.btn_refresh_daemon.setText("Đang kiểm tra...")
+        self.btn_refresh_daemon.setEnabled(False)
+        
+        # Read caches
+        try:
+            with open(get_config_path(), 'r', encoding="utf-8") as f:
+                data = json.load(f)
+            caches = data.get("caches", {})
+        except:
+            caches = {}
+
+        if not caches:
+            self.btn_refresh_daemon.setText("Cập nhật trạng thái")
+            self.btn_refresh_daemon.setEnabled(True)
+            return
+
+        import csv
+        
+        row = 0
+        for key, pid in caches.items():
+            # Key format usually 'Name:PID' but pid value is also stored
+            # Let's trust the key for name if possible, but the 'pid' value is the OS PID
+            
+            proc_name = key.split(":")[0] if ":" in key else key
+            pid_str = str(pid)
+
+            status = "Stopped"
+            time_run = "N/A"
+            
+            # Check using tasklist
+            # tasklist /FI "PID eq 1234" /FO CSV /NH
+            cmd = f'tasklist /FI "PID eq {pid_str}" /FO CSV /NH'
+            try:
+                startupinfo = subprocess.STARTUPINFO()
+                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                
+                output = subprocess.check_output(cmd, startupinfo=startupinfo).decode("utf-8", errors="ignore")
+                
+                # Check if PID is in output
+                if f'"{pid_str}"' in output:
+                    status = "Running"
+                    # Not easy to get start time from tasklist without verbose or wmic
+                    # Let's try wmic for start time if running
+                    # wmic process where ProcessId=1234 get CreationDate
+                    try: 
+                        cmd_wmic = f'wmic process where ProcessId={pid_str} get CreationDate'
+                        out_wmic = subprocess.check_output(cmd_wmic, startupinfo=startupinfo).decode("utf-8", errors="ignore")
+                        # Output like: CreationDate \n 202310...
+                        dates = [line.strip() for line in out_wmic.splitlines() if line.strip() and "CreationDate" not in line]
+                        if dates:
+                            # Parse generic WMI date format YYYYMMDDHHMMSS.mmmmm
+                            d = dates[0].split('.')[0]
+                            if len(d) == 14:
+                                dt = dt.strptime(d, "%Y%m%d%H%M%S")
+                                time_run = dt.strftime("%H:%M:%S %d/%m")
+                    except:
+                        pass
+                else:
+                    status = "Stopped (Not Found)"
+            except:
+                status = "Error Check"
+
+            self.table_daemon_status.insertRow(row)
+            self.table_daemon_status.setItem(row, 0, QTableWidgetItem(proc_name))
+            self.table_daemon_status.setItem(row, 1, QTableWidgetItem(pid_str))
+            
+            item_status = QTableWidgetItem(status)
+            if "Running" in status:
+                item_status.setForeground(QColor("green"))
+            else:
+                item_status.setForeground(QColor("red"))
+            self.table_daemon_status.setItem(row, 2, item_status)
+            self.table_daemon_status.setItem(row, 3, QTableWidgetItem(time_run))
+            row += 1
+            
+        self.btn_refresh_daemon.setText("Cập nhật trạng thái")
+        self.btn_refresh_daemon.setEnabled(True)
+
     def closeEvent(self, event):
         load_config.kill_all_daemons(get_config_path())
         event.accept()
@@ -1423,57 +4002,346 @@ class DL(QDialog):
         super().__init__()
         self.disk_created_path = None
         self.setWindowTitle("Trình quản lý ổ đĩa")
-        self.resize(400, 200)
+        self.resize(600, 600)
         self.mode_select = QComboBox()
-        self.mode_select.addItems(["New", "Open", "Delete"])
+        self.mode_select.addItems(["New", "Open", "Delete", "Resize"])
         self.stack = QStackedWidget()
         self.new_widget = self.create_new_widget()
         self.open_widget = self.create_open_widget()
         self.delete_widget = self.create_delete_widget()
+        self.resize_widget = self.create_resize_widget()
         self.stack.addWidget(self.new_widget)
         self.stack.addWidget(self.open_widget)
         self.stack.addWidget(self.delete_widget)
+        self.stack.addWidget(self.resize_widget)
         layout = QVBoxLayout(self)
         layout.addWidget(QLabel("Chọn chế độ ổ đĩa:"))
         layout.addWidget(self.mode_select)
         layout.addWidget(self.stack)
         self.mode_select.currentIndexChanged.connect(self.stack.setCurrentIndex)
+        self.setStyleSheet("""
+            QTabWidget::pane {
+                border: none;
+                background: #23272e;
+            }
+            QTabBar::tab {
+                background: #2c313c;
+                color: #e0e0e0;
+                border-radius: 12px 12px 0 0;
+                min-width: 120px;
+                min-height: 32px;
+                margin-right: 4px;
+                padding: 8px 20px;
+                font-size: 16px;
+            }
+            QTabBar::tab:selected {
+                background: #5e81ac;
+                color: #fff;
+                font-weight: bold;
+            }
+            QTabBar::tab:hover {
+                background: #434c5e;
+                color: #fff;
+            }
+            QWidget {
+                background: #23272e;
+                color: #e0e0e0;
+                font-size: 15px;
+            }
+            QGroupBox {
+                border: 2px solid #3b4252;
+                border-radius: 8px;
+                margin-top: 20px;
+                background: #2c313c;
+                font-weight: bold;
+                font-size: 18px;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                subcontrol-position: top left;
+                padding: 0 10px;
+                color: #cacdcf;
+            }
+            QPushButton {
+                background: #3b4252;
+                border-radius: 8px;
+                padding: 8px 16px;
+                font-size: 15px;
+            }
+            QPushButton:hover {
+                background: #5e81ac;
+                color: #fff;
+            }
+            QLineEdit, QComboBox, QSpinBox {
+                background: #23272e;
+                border: 1px solid #444;
+                border-radius: 6px;
+                padding: 6px;
+                color: #e0e0e0;
+                min-height: 28px;
+            }
+            QLabel {
+                font-weight: bold;
+                margin-right: 5px;
+            }
+        """)
 
+    def create_resize_widget(self):
+        resize_w = QWidget()
+        layout = QVBoxLayout(resize_w)
+        self.format_checkbox = QCheckBox()
+        self.format_checkbox.setText("bật chọn format option cụ thể")
+        self.format_checkbox.setChecked(False)
+        self.format_comboBox = QComboBox()
+        self.format_comboBox.addItems(QEMU_FORMAT_OPTIONS)
+        self.format_comboBox.setEnabled(False)
+        self.format_checkbox.toggled.connect(lambda: self.format_comboBox.setEnabled(self.format_checkbox.isChecked()))
+        self.image_opts_check = QCheckBox()
+        self.image_opts_check.setText("bật tùy chọn resize nâng cao")
+        self.image_opts_check.setChecked(False)
+        self.image_opts_lineEdit = QLineEdit()
+        self.image_opts_lineEdit.setPlaceholderText("Các options nâng cao")
+        self.image_opts_lineEdit.setEnabled(False)
+        self.image_opts_check.toggled.connect(lambda: self.image_opts_lineEdit.setEnabled(self.image_opts_check.isChecked()))
+        self.shrink_checkbox = QCheckBox()
+        self.shrink_checkbox.setText("bật tùy chọn shrink")
+        self.shrink_checkbox.setChecked(False)
+        self.preallocated_checkbox = QCheckBox()
+        self.preallocated_checkbox.setText("bật tùy chọn preallocated")
+        self.preallocated_checkbox.setChecked(False)
+        self.preallocated_combobox = QComboBox()
+        self.preallocated_combobox.addItems(["off", "metadata", "falloc", "full"])
+        self.preallocated_combobox.setEnabled(False)
+        self.preallocated_checkbox.toggled.connect(lambda: self.preallocated_combobox.setEnabled(self.preallocated_checkbox.isChecked()))
+        self.quiet_mod_resize = QCheckBox()
+        self.quiet_mod_resize.setText("bật tùy chọn quiet")
+        self.quiet_mod_resize.setChecked(False)
+        self.file_path_mod_resize = QComboBox()
+        self.file_path_mod_resize.addItems(load_disk_path_json_file())
+        self.size_resize_mode = QComboBox()
+        self.size_resize_mode.addItems(["+", "-"])
+        self.size_resize_value = QComboBox()
+        self.size_resize_value.addItems(QEMU_DISK_SIZE_FORMAT)
+        self.size_resize = QSpinBox()
+        self.size_resize.setRange(1, 2147483647)
+        self.size_resize.setSuffix(self.size_resize_value.currentText())
+        self.size_resize_value.currentIndexChanged.connect(lambda: self.size_resize.setSuffix(self.size_resize_value.currentText()))
+        self.btn_run_resize = QPushButton()
+        self.btn_run_resize.setText("resize ổ đĩa")
+        self.btn_run_resize.clicked.connect(self.run_resize)
+        layout.addWidget(self.format_checkbox)
+        layout.addWidget(self.format_comboBox)
+        layout.addWidget(self.image_opts_check)
+        layout.addWidget(self.image_opts_lineEdit)
+        layout.addWidget(self.shrink_checkbox)
+        layout.addWidget(self.preallocated_checkbox)
+        layout.addWidget(self.preallocated_combobox)
+        layout.addWidget(self.quiet_mod_resize)
+        layout.addWidget(QLabel("địa chỉ file ổ đĩa:"))
+        layout.addWidget(self.file_path_mod_resize)
+        layout.addWidget(QLabel("kích thước ổ đĩa (thêm hoặc bớt): "))
+        layout.addWidget(self.size_resize_mode)
+        layout.addWidget(self.size_resize)
+        layout.addWidget(self.btn_run_resize)
+        return resize_w
+
+    def format_combox_update(self):
+        self.format_comboBox.setEnabled(self.format_checkbox.isChecked())
+
+    def run_resize(self):
+        disk_path = self.file_path_mod_resize.text()
+        path = Path(disk_path).resolve()
+        mode = self.size_resize_mode.currentText()
+        value = self.size_resize.value()
+        format = self.size_resize_value.currentText()
+        qemu_img_path = find_qemu_img()
+        cmd_options = []
+        if self.format_checkbox.isChecked():
+            cmd_options.append(f"-f {self.format_comboBox.currentText()}")
+        if self.image_opts_check.isChecked():
+            cmd_options.append(f"--image-opts {self.image_opts_lineEdit.text()}")
+        if self.shrink_checkbox.isChecked():
+            cmd_options.append(f"--shrink")
+        if self.preallocated_checkbox.isChecked():
+            cmd_options.append(f"--preallocation={self.preallocated_combobox.currentText()}")
+        if self.quiet_mod_resize.isChecked():
+            cmd_options.append(f"--quiet")
+        if qemu_img_path is None:
+            return QMessageBox.information(self, "Thông báo", "Không tìm thấy qemu-img!")
+        with open(get_config_path(), 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        disk_path_json = data["disks"].keys()
+        if disk_path not in disk_path_json and not path.exists() and not str(path) in disk_path:
+            return QMessageBox.information(self, "Thông báo", "Không tìm thấy file ổ đĩa!")
+        if not can_write(path):
+            return QMessageBox.information(self, "Thông báo", "Không thể ghi vào file ổ đĩa!")
+        if not disk_path or not path:
+            QMessageBox.warning(self, "Lỗi", "Vui lòng nhập đủ tên và thư mục lưu.")
+            return
+        if re.match(r'^[A-Za-z]:$', disk_path):
+            disk_path = disk_path + os.sep
+        disk_path = os.path.abspath(disk_path)
+        try:
+            program_drive = Path(__file__).resolve().drive
+            target_drive = Path(disk_path).resolve().drive
+        except Exception:
+            program_drive = None
+            target_drive = None
+
+        if program_drive and target_drive and program_drive.lower() != target_drive.lower() and not is_admin():
+            reply = QMessageBox.question(
+                self,
+                "Quyền yêu cầu",
+                "Bạn đang tạo ổ đĩa trên phân vùng khác (ví dụ D:).\nBạn có muốn khởi động lại chương trình với quyền quản trị (Run as Administrator) để tiếp tục?",
+                QMessageBox.Yes | QMessageBox.No
+            )
+            if reply == QMessageBox.Yes:
+                try:
+                    params = f'"{Path(__file__).resolve()}"'
+                    ret = ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, params, None, 1)
+                    if int(ret) <= 32:
+                        QMessageBox.critical(self, "Lỗi", "Không thể khởi động lại với quyền admin.")
+                    else:
+                        QMessageBox.information(self, "Khởi động lại", "Đang khởi động lại chương trình với quyền quản trị. Vui lòng thực hiện thao tác sau khi cửa sổ mới mở.")
+                        QApplication.quit()
+                        sys.exit(0)
+                except Exception as e:
+                    QMessageBox.critical(self, "Lỗi", f"Không thể yêu cầu quyền admin: {e}")
+                    return
+            else:
+                return
+            match format:
+                case "B":
+                    form = 'b'
+                case "KB":
+                    form = 'K'
+                case "MB":
+                    form = 'M'
+                case "GB":
+                    form = 'G'
+                case "TB":
+                    form = 'T'
+                case _:
+                    return QMessageBox.information(self, "Thông báo", "Định dạng ổ đĩa không hợp lệ!")
+            cmd = [qemu_img_path, "resize", cmd_options, str(disk_path), f"{mode}{value}{form}"]
+            try:
+                subprocess.run(cmd, check=True, capture_output=True, text=True)
+                QMessageBox.information(self, "Thông báo", "Resize ổ đĩa thành công!")
+            except subprocess.CalledProcessError as e:
+                return QMessageBox.critical(self, "Lỗi", f"Lỗi khi resize ổ đĩa: {e}")
+            except Exception as e:
+                return QMessageBox.critical(self, "Lỗi", f"Lỗi khi resize ổ đĩa: {e}")
     def create_new_widget(self):
+        s = QScrollArea()
+        s.setWidgetResizable(True)
         w = QWidget()
         layout = QVBoxLayout(w)
         self.disk_name = QLineEdit()
         self.disk_name.setPlaceholderText("Tên file ổ đĩa")
         self.disk_format = QComboBox()
-        self.disk_format.addItem("qcow2 (format qcow2)")
-        self.disk_format.setItemData(0, "qcow2")
-        self.disk_format.addItem("img (format raw)")
-        self.disk_format.setItemData(1, "img")
+        self.disk_format.addItems(QEMU_FORMAT_OPTIONS)
         self.disk_size = QSpinBox()
-        self.disk_size.setRange(12, 10000000)
+        self.disk_size.setRange(1, 2147483647)
         self.disk_size.setValue(1024)
-        self.disk_size.setSuffix(" MB")
+        self.disk_size_value = QComboBox()
+        self.disk_size_value.addItems(["MB", "GB", "TB", "KB", "B"])
+        self.update_size_disk_format()
+        self.disk_size_value.currentIndexChanged.connect(self.update_size_disk_format)
         self.save_folder = QLineEdit()
         self.save_folder.setPlaceholderText("Thư mục lưu ổ đĩa")
         self.btn_choose_folder = QPushButton("Chọn thư mục")
         self.btn_choose_folder.clicked.connect(self.choose_folder)
         self.btn_create = QPushButton("Tạo ổ đĩa")
         self.btn_create.clicked.connect(self.create_disk)
+        self.format_disk = QComboBox()
+        self.format_disk.setEnabled(False)
+        self.custom_format_disks = QLineEdit()
+        self.custom_format_disks.setEnabled(False)
+        self.custom_format_disks.setPlaceholderText("định dạng file custom")
+        self.format_disk.currentIndexChanged.connect(self.custom_format_disk)
         folder_layout = QHBoxLayout()
         folder_layout.addWidget(self.save_folder)
         folder_layout.addWidget(self.btn_choose_folder)
+        self.disk_format.currentIndexChanged.connect(self.format_disk_update)
+        self.format_disk.currentTextChanged.connect(self.custom_format_disk)
+        self.quiet_mod = QCheckBox("bật chế độ im lặng")
         layout.addWidget(QLabel("Tên file ổ đĩa:"))
         layout.addWidget(self.disk_name)
         layout.addWidget(QLabel("Định dạng ổ đĩa:"))
         layout.addWidget(self.disk_format)
         layout.addWidget(QLabel("Dung lượng ổ đĩa:"))
+        layout.addWidget(self.disk_size_value)
         layout.addWidget(self.disk_size)
         layout.addWidget(QLabel("Thư mục lưu:"))
         layout.addLayout(folder_layout)
+        layout.addWidget(QLabel("Định dạng đuôi file custom:"))
+        layout.addWidget(self.format_disk)
+        layout.addWidget(self.custom_format_disks)
+        layout.addWidget(self.quiet_mod)
         layout.addWidget(self.btn_create)
-        return w
-
+        s.setWidget(w)
+        return s
+    def custom_format_disk(self):
+        if self.format_disk.currentText() == "custom":
+            self.custom_format_disks.setEnabled(True)
+            self.custom_format_disks.setText(".")
+        else:
+            self.custom_format_disks.setEnabled(False)
+            self.custom_format_disks.setText("")
+    def format_disk_update(self):
+        if self.disk_format.currentText() == "qcow2":
+            self.format_disk.setEnabled(True)
+            self.format_disk.clear()
+            self.format_disk.addItems([".qcow2", ".img"])
+        elif self.disk_format.currentText() == "raw":
+            self.format_disk.setEnabled(True)
+            self.format_disk.clear()
+            self.format_disk.addItems([".raw", ".img"])
+        elif self.disk_format.currentText() == "parallels":
+            self.format_disk.setEnabled(True)
+            self.format_disk.clear()
+            self.format_disk.addItems(".pvm", ".hdd")
+        elif self.disk_format.currentText() == "bochs":
+            self.format_disk.setEnabled(True)
+            self.format_disk.clear()
+            self.format_disk.addItems([".img", ".bximage", "custom"])
+        elif self.disk_format.currentText() == "file":
+            self.format_disk.setEnabled(True)
+            self.format_disk.clear()
+            self.format_disk.addItems([".img", ".raw"])
+        elif self.disk_format.currentText() == "luks":
+            self.format_disk.setEnabled(True)
+            self.format_disk.clear()
+            self.format_disk.addItems([".img", ".luks", "custom"])
+        else:
+            self.format_disk.setEnabled(False)
+            self.format_disk.clear()
+    def get_suffix_file(self):
+        if not self.disk_format.currentText() in ["qcow2", "raw", "parallels", "bochs", "file", "luks"]:
+            form = self.disk_format.currentText()
+            match form:
+                case "qcow":
+                    suffix = ".qcow"
+                case "qed":
+                    suffix = ".qed"
+                case "vmdk":
+                    suffix = ".vmdk"
+                case "vdi":
+                    suffix = ".vdi"
+                case "vhdx":
+                    suffix = ".vhdx"
+                case "cloop":
+                    suffix = ".cloop"
+                case "dmg":
+                    suffix = ".dmg"
+        else:
+            suffix = self.format_disk.currentText()
+            if suffix == "custom":
+                suffix = self.custom_format_disks.text()
+        return suffix
     def create_open_widget(self):
+        s = QScrollArea()
+        s.setWidgetResizable(True)
         w = QWidget()
         layout = QVBoxLayout(w)
         self.disk_path = QLineEdit()
@@ -1489,9 +4357,12 @@ class DL(QDialog):
         layout.addWidget(QLabel("Đường dẫn ổ đĩa hiện có"))
         layout.addLayout(browse_layout)
         layout.addWidget(self.btn_apcess)
-        return w
+        s.setWidget(w)
+        return s
 
     def create_delete_widget(self):
+        s = QScrollArea()
+        s.setWidgetResizable(True)
         w = QWidget()
         layout = QVBoxLayout(w)
         self.disk_list = QComboBox()
@@ -1504,7 +4375,8 @@ class DL(QDialog):
         layout.addWidget(QLabel("Chọn ổ đĩa để xóa:"))
         layout.addWidget(self.disk_list)
         layout.addWidget(self.btn_delete)
-        return w
+        s.setWidget(w)
+        return s
 
     def choose_folder(self):
         folder = QFileDialog.getExistingDirectory(self, "Chọn thư mục lưu ổ đĩa")
@@ -1517,6 +4389,9 @@ class DL(QDialog):
             save_disk_path_json_file(None, self.disk_created_path)
             self.accept()
 
+    def update_size_disk_format(self):
+        self.disk_size.setSuffix(self.disk_size_value.currentText())
+
     def browse_disk(self):
         file, _ = QFileDialog.getOpenFileName(self, "Chọn ổ đĩa", "", "Disk Images (*.img *.qcow2);;All Files (*)")
         if file:
@@ -1525,15 +4400,15 @@ class DL(QDialog):
             if self.btn_apcess.isChecked():
                 save_disk_path_json_file(None, file)
                 self.accept()
-
+    
     def create_disk(self):
         folder = self.save_folder.text()
         name = self.disk_name.text()
-        if self.disk_format.currentIndex() == 1:
-            fmt = "raw"
-        else:
-            fmt = self.disk_format.currentData()
         size = self.disk_size.value()
+        format_size = self.disk_size_value.currentText()
+        fmt = self.disk_format.currentText()
+        suf = self.get_suffix_file()
+        
         if not folder or not name:
             QMessageBox.warning(self, "Lỗi", "Vui lòng nhập đủ tên và thư mục lưu.")
             return
@@ -1574,7 +4449,7 @@ class DL(QDialog):
             QMessageBox.critical(self, "Lỗi quyền", "Bạn không có quyền ghi vào thư mục này. Vui lòng chạy chương trình với quyền admin hoặc chọn thư mục khác.")
             return
         safe_name = "".join(c for c in name if c.isalnum() or c in (' ', '.', '-', '_')).rstrip()
-        ext = fmt if fmt != 'raw' else 'img'
+        ext = suf
         full_path = os.path.join(folder, f"{safe_name}.{ext}")
 
         path_json = get_config_path()
@@ -1596,7 +4471,19 @@ class DL(QDialog):
             QMessageBox.critical(self, "Lỗi", "Không tìm thấy qemu-img! Hãy build/cài QEMU trước.")
             return
         qemu_img = str(qemu_img_path)
-        cmd = [qemu_img, "create", "-f", fmt, full_path, f"{size}M"]
+        if format_size == "MB":
+            fs = "M"
+        elif format_size == "GB":
+            fs = "G"
+        elif format_size == "KB":
+            fs = "K"
+        elif format_size == "B":
+            fs = "b"
+        elif format_size == "TB":
+            fs = "T"
+        cmd = [qemu_img, "create", "-f", fmt, full_path, f"{size}{fs}"]
+        if self.quiet_mod.isChecked():
+            cmd.append("-q")
         try:
             subprocess.run(cmd, check=True)
             
@@ -1613,6 +4500,16 @@ class DL(QDialog):
             QMessageBox.critical(self, "Lỗi", f"Lỗi khi chạy qemu-img:\n{e}")
         except Exception as e:
             QMessageBox.critical(self, "Lỗi", f"Không tạo được ổ đĩa:\n{e}")
+
+    def KeyPressEvent(self, event):
+        key_code = event.key()
+        if key_code == Qt.Key_Right:
+            self.disk_list.setCurrentIndex(self.disk_list.currentIndex() + 1)
+        elif key_code == Qt.Key_Left:
+            self.disk_list.setCurrentIndex(self.disk_list.currentIndex() - 1)
+        elif key_code in (Qt.Key_Alt + Qt.Key_F4):
+            self.close()
+
 
     def delete_disk(self):
         disk_path = self.disk_list.currentText()
@@ -1685,10 +4582,17 @@ def is_admin():
         return False
 
 if __name__ == "__main__":
-    create_json()
-    app = QApplication(sys.argv)
-    qg = QG()
-    qg.show()
-    sys.exit(app.exec_())
-#the command:pyinstaller --onedir --noconfirm --add-data "load_config.py;." --add-data "qemu;qemu" --add-data "log_module.py;." --add-data "find_tools_module.py;." --add-data "qemu_advanced_module.py;." run.py
-# 2025 Vncore lab (alias of Nguyễn Trường Lâm)
+    import traceback
+    
+    try:
+        create_json()
+        print("VNcore lab 2025 (alias of Nguyễn Trường Lâm)")
+        app = QApplication(sys.argv)
+        qg = QG()
+        qg.show()
+        sys.exit(app.exec_())
+    except Exception as e:
+        traceback.print_exc()
+        input("Press Enter to exit...")
+#the command:pyinstaller --onedir --noconfirm --icon="icon_VQEMU.ico" --add-data "load_config.py;." --add-data "qemu;qemu" --add-data "log_module.py;." --add-data "find_tools_module.py;." --add-data "qemu_advanced_module.py;." run.py
+# 2025 Vncore lab (alias of Nguyễn Trường Lâm) 
