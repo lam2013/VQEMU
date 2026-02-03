@@ -9,7 +9,7 @@
   <title>Qtest Driver Framework &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../../_static/qemu_32x32.png"/>
@@ -117,7 +117,7 @@
 take care of booting QEMU with the right machine and devices.
 This makes each test “hardcoded” for a specific configuration, reducing
 the possible coverage that it can reach.</p>
-<p>For example, the sdhci device is supported on both x86_64 and ARM boards,
+<p>For example, the sdhci device is supported on both x86_64 and Arm boards,
 therefore a generic sdhci test should test all machines and drivers that
 support that device.
 Using only libqos APIs, the test has to manually take care of
@@ -291,7 +291,7 @@ there.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">arm/raspi2b</span></code> machine node is listed as “UNAVAILABLE”. Although it is
 reachable from the root via ‘’ -&gt; ‘arm/raspi2b’ the node is unavailable because
 the QEMU binary did not list it when queried by the framework. This is expected
-because we used the <code class="docutils literal notranslate"><span class="pre">qemu-system-x86_64</span></code> binary which does not support ARM
+because we used the <code class="docutils literal notranslate"><span class="pre">qemu-system-x86_64</span></code> binary which does not support Arm
 machine types.</p>
 <p>If a test is unexpectedly listed as “UNAVAILABLE”, first check that the “ALL
 QGRAPH EDGES” output reports edge connectivity from the root (‘’) to the test.
@@ -309,9 +309,9 @@ machine type or device.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">sdhci-test</span></code> aims to test the <code class="docutils literal notranslate"><span class="pre">read[q,w],</span> <span class="pre">writeq</span></code> functions
 offered by the <code class="docutils literal notranslate"><span class="pre">sdhci</span></code> drivers.</p></li>
-<li><p>The current <code class="docutils literal notranslate"><span class="pre">sdhci</span></code> device is supported by both <code class="docutils literal notranslate"><span class="pre">x86_64/pc</span></code> and <code class="docutils literal notranslate"><span class="pre">ARM</span></code>
+<li><p>The current <code class="docutils literal notranslate"><span class="pre">sdhci</span></code> device is supported by both <code class="docutils literal notranslate"><span class="pre">x86_64/pc</span></code> and Arm
 (in this example we focus on the <code class="docutils literal notranslate"><span class="pre">arm-raspi2b</span></code>) machines.</p></li>
-<li><p>QEMU offers 2 types of drivers: <code class="docutils literal notranslate"><span class="pre">QSDHCI_MemoryMapped</span></code> for <code class="docutils literal notranslate"><span class="pre">ARM</span></code> and
+<li><p>QEMU offers 2 types of drivers: <code class="docutils literal notranslate"><span class="pre">QSDHCI_MemoryMapped</span></code> for Arm and
 <code class="docutils literal notranslate"><span class="pre">QSDHCI_PCI</span></code> for <code class="docutils literal notranslate"><span class="pre">x86_64/pc</span></code>. Both implement the
 <code class="docutils literal notranslate"><span class="pre">read[q,w],</span> <span class="pre">writeq</span></code> functions.</p></li>
 </ul>
@@ -720,14 +720,15 @@ a valid test path will be:
 <dd><p>Edge options to be passed to the contains/consumes *_args function.</p>
 </dd></dl>
 
-<p><strong>Definition</strong></p>
+<div class="kernelindent docutils container">
+<p><strong>Definition</strong>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">struct</span> <span class="n">QOSGraphEdgeOptions</span> <span class="p">{</span>
-  <span class="n">void</span> <span class="o">*</span><span class="n">arg</span><span class="p">;</span>
-  <span class="n">uint32_t</span> <span class="n">size_arg</span><span class="p">;</span>
-  <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">extra_device_opts</span><span class="p">;</span>
-  <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">before_cmd_line</span><span class="p">;</span>
-  <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">after_cmd_line</span><span class="p">;</span>
-  <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">edge_name</span><span class="p">;</span>
+    <span class="n">void</span> <span class="o">*</span><span class="n">arg</span><span class="p">;</span>
+    <span class="n">uint32_t</span> <span class="n">size_arg</span><span class="p">;</span>
+    <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">extra_device_opts</span><span class="p">;</span>
+    <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">before_cmd_line</span><span class="p">;</span>
+    <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">after_cmd_line</span><span class="p">;</span>
+    <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">edge_name</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
 </div>
@@ -759,18 +760,20 @@ Automatically prepends “ “ to this argument</p>
 devices with same node name</p>
 </dd>
 </dl>
+</div>
 <dl class="c struct">
 <dt class="sig sig-object c" id="c.QOSGraphTestOptions">
 <span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">QOSGraphTestOptions</span></span></span><a class="headerlink" href="#c.QOSGraphTestOptions" title="Link to this definition"></a><br /></dt>
 <dd><p>Test options to be passed to the test functions.</p>
 </dd></dl>
 
-<p><strong>Definition</strong></p>
+<div class="kernelindent docutils container">
+<p><strong>Definition</strong>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">struct</span> <span class="n">QOSGraphTestOptions</span> <span class="p">{</span>
-  <span class="n">QOSGraphEdgeOptions</span> <span class="n">edge</span><span class="p">;</span>
-  <span class="n">void</span> <span class="o">*</span><span class="n">arg</span><span class="p">;</span>
-  <span class="n">QOSBeforeTest</span> <span class="n">before</span><span class="p">;</span>
-  <span class="nb">bool</span> <span class="n">subprocess</span><span class="p">;</span>
+    <span class="n">QOSGraphEdgeOptions</span> <span class="n">edge</span><span class="p">;</span>
+    <span class="n">void</span> <span class="o">*</span><span class="n">arg</span><span class="p">;</span>
+    <span class="n">QOSBeforeTest</span> <span class="n">before</span><span class="p">;</span>
+    <span class="nb">bool</span> <span class="n">subprocess</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
 </div>
@@ -791,19 +794,21 @@ and modify the argument to the test function.</p>
 <dt><code class="docutils literal notranslate"><span class="pre">subprocess</span></code></dt><dd><p>run the test in a subprocess.</p>
 </dd>
 </dl>
+</div>
 <dl class="c struct">
 <dt class="sig sig-object c" id="c.QOSGraphObject">
 <span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">QOSGraphObject</span></span></span><a class="headerlink" href="#c.QOSGraphObject" title="Link to this definition"></a><br /></dt>
 <dd><p>Each driver, test or machine of this framework will have a QOSGraphObject as first field.</p>
 </dd></dl>
 
-<p><strong>Definition</strong></p>
+<div class="kernelindent docutils container">
+<p><strong>Definition</strong>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">struct</span> <span class="n">QOSGraphObject</span> <span class="p">{</span>
-  <span class="n">QOSGetDriver</span> <span class="n">get_driver</span><span class="p">;</span>
-  <span class="n">QOSGetDevice</span> <span class="n">get_device</span><span class="p">;</span>
-  <span class="n">QOSStartFunct</span> <span class="n">start_hw</span><span class="p">;</span>
-  <span class="n">QOSDestructorFunc</span> <span class="n">destructor</span><span class="p">;</span>
-  <span class="n">GDestroyNotify</span> <span class="n">free</span><span class="p">;</span>
+    <span class="n">QOSGetDriver</span> <span class="n">get_driver</span><span class="p">;</span>
+    <span class="n">QOSGetDevice</span> <span class="n">get_device</span><span class="p">;</span>
+    <span class="n">QOSStartFunct</span> <span class="n">start_hw</span><span class="p">;</span>
+    <span class="n">QOSDestructorFunc</span> <span class="n">destructor</span><span class="p">;</span>
+    <span class="n">GDestroyNotify</span> <span class="n">free</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
 </div>
@@ -838,6 +843,7 @@ called.</p>
 children</p>
 </dd>
 </dl>
+</div>
 <p><strong>Description</strong></p>
 <p>This set of functions offered by QOSGraphObject are executed
 in different stages of the framework:</p>
@@ -847,50 +853,59 @@ in different stages of the framework:</p>
 <dd><p>initialize the framework, creates two hash tables: one for the nodes and another for the edges.</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">void</span></code></dt><dd><p>no arguments</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_graph_destroy">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qos_graph_destroy</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_graph_destroy" title="Link to this definition"></a><br /></dt>
 <dd><p>deallocates all the hash tables, freeing all nodes and edges.</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">void</span></code></dt><dd><p>no arguments</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_node_destroy">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qos_node_destroy</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">key</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_node_destroy" title="Link to this definition"></a><br /></dt>
 <dd><p>removes and frees a node from the nodes hash table.</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">*key</span></code></dt><dd><p>Name of the node</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_edge_destroy">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qos_edge_destroy</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">key</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_edge_destroy" title="Link to this definition"></a><br /></dt>
 <dd><p>removes and frees an edge from the edges hash table.</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">*key</span></code></dt><dd><p>Name of the node</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_add_test">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qos_add_test</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">interface</span></span>, <span class="n"><span class="pre">QOSTestFunc</span></span><span class="w"> </span><span class="n"><span class="pre">test_func</span></span>, <a class="reference internal" href="#c.QOSGraphTestOptions" title="QOSGraphTestOptions"><span class="n"><span class="pre">QOSGraphTestOptions</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">opts</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_add_test" title="Link to this definition"></a><br /></dt>
 <dd><p>adds a test node <strong>name</strong> to the nodes hash table.</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*name</span></code></dt><dd><p>Name of the test</p>
@@ -909,12 +924,14 @@ executed. It also has the possibility to
 add an optional <strong>opts</strong> (see <code class="docutils literal notranslate"><span class="pre">QOSGraphTestOptions</span></code>).</p>
 <p>For tests, opts-&gt;edge.arg and size_arg represent the arg to pass
 to <strong>test_func</strong></p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_node_create_machine">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qos_node_create_machine</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span>, <span class="n"><span class="pre">QOSCreateMachineFunc</span></span><span class="w"> </span><span class="n"><span class="pre">function</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_node_create_machine" title="Link to this definition"></a><br /></dt>
 <dd><p>creates the machine <strong>name</strong> and adds it to the node hash table.</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*name</span></code></dt><dd><p>Name of the machine</p>
@@ -925,12 +942,14 @@ to <strong>test_func</strong></p>
 <p><strong>Description</strong></p>
 <p>This node will be of type QNODE_MACHINE and have <strong>function</strong>
 as constructor</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_node_create_machine_args">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qos_node_create_machine_args</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span>, <span class="n"><span class="pre">QOSCreateMachineFunc</span></span><span class="w"> </span><span class="n"><span class="pre">function</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">opts</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_node_create_machine_args" title="Link to this definition"></a><br /></dt>
 <dd><p>same as qos_node_create_machine, but with the possibility to add an optional “, <strong>opts</strong>” after -M machine command line.</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*name</span></code></dt><dd><p>Name of the machine</p>
@@ -940,12 +959,14 @@ as constructor</p>
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*opts</span></code></dt><dd><p>Optional additional command line</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_node_create_driver">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qos_node_create_driver</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span>, <span class="n"><span class="pre">QOSCreateDriverFunc</span></span><span class="w"> </span><span class="n"><span class="pre">function</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_node_create_driver" title="Link to this definition"></a><br /></dt>
 <dd><p>creates the driver <strong>name</strong> and adds it to the node hash table.</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*name</span></code></dt><dd><p>Name of the driver</p>
@@ -956,12 +977,14 @@ as constructor</p>
 <p><strong>Description</strong></p>
 <p>This node will be of type QNODE_DRIVER and have <strong>function</strong>
 as constructor</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_node_create_driver_named">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qos_node_create_driver_named</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">qemu_name</span></span>, <span class="n"><span class="pre">QOSCreateDriverFunc</span></span><span class="w"> </span><span class="n"><span class="pre">function</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_node_create_driver_named" title="Link to this definition"></a><br /></dt>
 <dd><p>behaves as qos_node_create_driver() with the extension of allowing to specify a different node name vs. associated QEMU device name.</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*name</span></code></dt><dd><p>Custom, unique name of the node to be created</p>
@@ -976,12 +999,14 @@ associated with</p>
 <p>Use this function instead of qos_node_create_driver() if you need to create
 several instances of the same QEMU device. You are free to choose a custom
 node name, however the chosen node name must always be unique.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_node_contains">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qos_node_contains</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">container</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">contained</span></span>, <a class="reference internal" href="#c.QOSGraphEdgeOptions" title="QOSGraphEdgeOptions"><span class="n"><span class="pre">QOSGraphEdgeOptions</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">opts</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_node_contains" title="Link to this definition"></a><br /></dt>
 <dd><p>creates one or more edges of type QEDGE_CONTAINS and adds them to the edge list mapped to <strong>container</strong> in the edge hash table.</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*container</span></code></dt><dd><p>Source node that “contains”</p>
@@ -1015,12 +1040,14 @@ devices, the right commands will be:</p>
 should implement a case for “emmc” and “sdcard”.</p>
 <p>For contains, op1.arg and op1.size_arg represent the arg to pass
 to <strong>contained</strong> constructor to properly initialize it.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_node_produces">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qos_node_produces</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">producer</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">interface</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_node_produces" title="Link to this definition"></a><br /></dt>
 <dd><p>creates an edge of type QEDGE_PRODUCES and adds it to the edge list mapped to <strong>producer</strong> in the edge hash table.</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*producer</span></code></dt><dd><p>Source node that “produces”</p>
@@ -1030,12 +1057,14 @@ to <strong>contained</strong> constructor to properly initialize it.</p>
 </dl>
 <p><strong>Description</strong></p>
 <p>This edge will have <strong>producer</strong> as source and <strong>interface</strong> as destination.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_node_consumes">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qos_node_consumes</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">consumer</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">interface</span></span>, <a class="reference internal" href="#c.QOSGraphEdgeOptions" title="QOSGraphEdgeOptions"><span class="n"><span class="pre">QOSGraphEdgeOptions</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">opts</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_node_consumes" title="Link to this definition"></a><br /></dt>
 <dd><p>creates an edge of type QEDGE_CONSUMED_BY and adds it to the edge list mapped to <strong>interface</strong> in the edge hash table.</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*consumer</span></code></dt><dd><p>Node that “consumes”</p>
@@ -1049,33 +1078,39 @@ to <strong>contained</strong> constructor to properly initialize it.</p>
 <p>This edge will have <strong>interface</strong> as source and <strong>consumer</strong> as destination.
 It also has the possibility to add an optional <strong>opts</strong>
 (see <code class="docutils literal notranslate"><span class="pre">QOSGraphEdgeOptions</span></code>)</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_invalidate_command_line">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qos_invalidate_command_line</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_invalidate_command_line" title="Link to this definition"></a><br /></dt>
 <dd><p>invalidates current command line, so that qgraph framework cannot try to cache the current command line and forces QEMU to restart.</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">void</span></code></dt><dd><p>no arguments</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_get_current_command_line">
 <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qos_get_current_command_line</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_get_current_command_line" title="Link to this definition"></a><br /></dt>
 <dd><p>return the command line required by the machine and driver objects. This is the same string that was passed to the test’s “before” callback, if any.</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">void</span></code></dt><dd><p>no arguments</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_allocate_objects">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qos_allocate_objects</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">QTestState</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">qts</span></span>, <span class="n"><span class="pre">QGuestAllocator</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">p_alloc</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_allocate_objects" title="Link to this definition"></a><br /></dt>
 <dd></dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">QTestState</span> <span class="pre">*qts</span></code></dt><dd><p>The <code class="xref c c-type docutils literal notranslate"><span class="pre">QTestState</span></code> that will be referred to by the machine object.</p>
@@ -1088,45 +1123,53 @@ It also has the possibility to add an optional <strong>opts</strong>
 path, but relative to the QTestState <strong>qts</strong>.</p>
 <p>Returns a test object just like the one that was passed to
 the test function, but relative to <strong>qts</strong>.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_object_destroy">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qos_object_destroy</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.QOSGraphObject" title="QOSGraphObject"><span class="n"><span class="pre">QOSGraphObject</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">obj</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_object_destroy" title="Link to this definition"></a><br /></dt>
 <dd><p>calls the destructor for <strong>obj</strong></p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">QOSGraphObject</span> <span class="pre">*obj</span></code></dt><dd><p>A <a class="reference internal" href="#c.QOSGraphObject" title="QOSGraphObject"><code class="xref c c-type docutils literal notranslate"><span class="pre">QOSGraphObject</span></code></a> to destroy</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_object_queue_destroy">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qos_object_queue_destroy</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.QOSGraphObject" title="QOSGraphObject"><span class="n"><span class="pre">QOSGraphObject</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">obj</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_object_queue_destroy" title="Link to this definition"></a><br /></dt>
 <dd><p>queue the destructor for <strong>obj</strong> so that it is called at the end of the test</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">QOSGraphObject</span> <span class="pre">*obj</span></code></dt><dd><p>A <a class="reference internal" href="#c.QOSGraphObject" title="QOSGraphObject"><code class="xref c c-type docutils literal notranslate"><span class="pre">QOSGraphObject</span></code></a> to destroy</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_object_start_hw">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qos_object_start_hw</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.QOSGraphObject" title="QOSGraphObject"><span class="n"><span class="pre">QOSGraphObject</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">obj</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_object_start_hw" title="Link to this definition"></a><br /></dt>
 <dd><p>calls the start_hw function for <strong>obj</strong></p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">QOSGraphObject</span> <span class="pre">*obj</span></code></dt><dd><p>A <a class="reference internal" href="#c.QOSGraphObject" title="QOSGraphObject"><code class="xref c c-type docutils literal notranslate"><span class="pre">QOSGraphObject</span></code></a> containing the start_hw function</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_machine_new">
 <a class="reference internal" href="#c.QOSGraphObject" title="QOSGraphObject"><span class="n"><span class="pre">QOSGraphObject</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qos_machine_new</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">QOSGraphNode</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">node</span></span>, <span class="n"><span class="pre">QTestState</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">qts</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_machine_new" title="Link to this definition"></a><br /></dt>
 <dd><p>instantiate a new machine node</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">QOSGraphNode</span> <span class="pre">*node</span></code></dt><dd><p>Machine node to be instantiated</p>
@@ -1136,12 +1179,14 @@ the test function, but relative to <strong>qts</strong>.</p>
 </dl>
 <p><strong>Description</strong></p>
 <p>Returns a machine object.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_driver_new">
 <a class="reference internal" href="#c.QOSGraphObject" title="QOSGraphObject"><span class="n"><span class="pre">QOSGraphObject</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qos_driver_new</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">QOSGraphNode</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">node</span></span>, <a class="reference internal" href="#c.QOSGraphObject" title="QOSGraphObject"><span class="n"><span class="pre">QOSGraphObject</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">parent</span></span>, <span class="n"><span class="pre">QGuestAllocator</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">alloc</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">arg</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_driver_new" title="Link to this definition"></a><br /></dt>
 <dd><p>instantiate a new driver node</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">QOSGraphNode</span> <span class="pre">*node</span></code></dt><dd><p>A driver node to be instantiated</p>
@@ -1155,12 +1200,14 @@ the test function, but relative to <strong>qts</strong>.</p>
 </dl>
 <p><strong>Description</strong></p>
 <p>Calls the constructor for the driver object.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qos_dump_graph">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qos_dump_graph</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qos_dump_graph" title="Link to this definition"></a><br /></dt>
 <dd><p>prints all currently existing nodes and edges to stdout. Just for debugging purposes.</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">void</span></code></dt><dd><p>no arguments</p>
@@ -1180,6 +1227,7 @@ the qtest framework uses QMP to automatically check which QEMU drivers are
 actually currently available, and accordingly qos marks certain paths as
 ‘unavailable’ in such cases (e.g. when QEMU was compiled without support for
 a certain feature).</p>
+</div>
 </section>
 </section>
 
@@ -1194,7 +1242,7 @@ a certain feature).</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -1205,7 +1253,7 @@ a certain feature).</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../../about/license.html">QEMU and this manual are released under the

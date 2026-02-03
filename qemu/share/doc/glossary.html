@@ -9,7 +9,7 @@
   <title>Glossary &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="_static/qemu_32x32.png"/>
@@ -124,7 +124,7 @@ by QEMU developers.</p>
 <h2>Accelerator<a class="headerlink" href="#accelerator" title="Link to this heading"></a></h2>
 <p>A specific API used to accelerate execution of guest instructions. It can be
 hardware-based, through a virtualization API provided by the host OS (kvm, hvf,
-whpx, …), or software-based (tcg). See this description of <a class="reference internal" href="system/introduction.html#accelerators"><span class="std std-ref">supported
+whpx, mshv, …), or software-based (tcg). See this description of <a class="reference internal" href="system/introduction.html#accelerators"><span class="std std-ref">supported
 accelerators</span></a>.</p>
 </section>
 <section id="board">
@@ -194,9 +194,8 @@ See also <a class="reference internal" href="#guest"><span class="std std-ref">G
 manage a virtual machine. QEMU is a virtualizer, that interacts with various
 hypervisors.</p>
 <p>In the context of QEMU, an hypervisor is an API, provided by the Host OS,
-allowing to execute virtual machines. Linux implementation is KVM (and supports
-Xen as well). For MacOS, it’s HVF. Windows defines WHPX. And NetBSD provides
-NVMM.</p>
+allowing to execute virtual machines.  Linux provides a choice of KVM, Xen
+or MSHV; MacOS provides HVF; Windows provides WHPX; NetBSD provides NVMM.</p>
 </section>
 <section id="machine">
 <span id="id5"></span><h2>Machine<a class="headerlink" href="#machine" title="Link to this heading"></a></h2>
@@ -332,7 +331,7 @@ minimizing the amount of interactions between a guest VM and its hypervisor.</p>
 </section>
 <section id="vhost-user">
 <h2>vhost-user<a class="headerlink" href="#vhost-user" title="Link to this heading"></a></h2>
-<p><a class="reference internal" href="system/devices/vhost-user.html#vhost-user"><span class="std std-ref">Vhost-user</span></a> is an interface used to implement VirtIO devices
+<p><a class="reference internal" href="system/devices/virtio/vhost-user.html#vhost-user"><span class="std std-ref">Vhost-user</span></a> is an interface used to implement VirtIO devices
 outside of QEMU itself.</p>
 </section>
 </section>
@@ -347,7 +346,7 @@ outside of QEMU itself.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -358,7 +357,7 @@ outside of QEMU itself.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="about/license.html">QEMU and this manual are released under the

@@ -6,10 +6,10 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>virtio pmem &mdash; QEMU  documentation</title>
+  <title>eMMC Emulation &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../../_static/qemu_32x32.png"/>
@@ -22,8 +22,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="virtio sound" href="virtio-snd.html" />
-    <link rel="prev" title="virtio-gpu" href="virtio-gpu.html" /> 
+    <link rel="next" title="igb" href="igb.html" />
+    <link rel="prev" title="Compute Express Link (CXL)" href="cxl.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -55,25 +55,22 @@
 <li class="toctree-l2 current"><a class="reference internal" href="../device-emulation.html">Device Emulation</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="../device-emulation.html#common-terms">Common Terms</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="../device-emulation.html#emulated-devices">Emulated Devices</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="virtio/index.html">VirtIO Devices</a></li>
 <li class="toctree-l4"><a class="reference internal" href="can.html">CAN Bus Emulation Support</a></li>
+<li class="toctree-l4"><a class="reference internal" href="canokey.html">CanoKey QEMU</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ccid.html">Chip Card Interface Device (CCID)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cxl.html">Compute Express Link (CXL)</a></li>
-<li class="toctree-l4"><a class="reference internal" href="vfio-user.html">vfio-user</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ivshmem.html">Inter-VM Shared Memory device</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">eMMC Emulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="igb.html">igb</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ivshmem-flat.html">Inter-VM Shared Memory Flat Device</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ivshmem.html">Inter-VM Shared Memory device</a></li>
 <li class="toctree-l4"><a class="reference internal" href="keyboard.html">Sparc32 keyboard</a></li>
 <li class="toctree-l4"><a class="reference internal" href="net.html">Network emulation</a></li>
 <li class="toctree-l4"><a class="reference internal" href="nvme.html">NVMe Emulation</a></li>
-<li class="toctree-l4"><a class="reference internal" href="usb.html">USB emulation</a></li>
-<li class="toctree-l4"><a class="reference internal" href="vhost-user.html">vhost-user back ends</a></li>
-<li class="toctree-l4"><a class="reference internal" href="virtio-gpu.html">virtio-gpu</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">virtio pmem</a></li>
-<li class="toctree-l4"><a class="reference internal" href="virtio-snd.html">virtio sound</a></li>
-<li class="toctree-l4"><a class="reference internal" href="vhost-user-input.html">QEMU vhost-user-input - Input emulation</a></li>
-<li class="toctree-l4"><a class="reference internal" href="vhost-user-rng.html">QEMU vhost-user-rng - RNG emulation</a></li>
-<li class="toctree-l4"><a class="reference internal" href="canokey.html">CanoKey QEMU</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scsi/index.html">SCSI Devices</a></li>
 <li class="toctree-l4"><a class="reference internal" href="usb-u2f.html">Universal Second Factor (U2F) USB Key Device</a></li>
-<li class="toctree-l4"><a class="reference internal" href="igb.html">igb</a></li>
+<li class="toctree-l4"><a class="reference internal" href="usb.html">USB emulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="vfio-user.html">vfio-user</a></li>
 </ul>
 </li>
 </ul>
@@ -102,8 +99,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../multi-process.html">Multi-process QEMU</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../confidential-guest-support.html">Confidential Guest Support</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../igvm.html">Independent Guest Virtual Machine (IGVM) support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nitro.html">AWS Nitro Enclaves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../whpx.html">Windows Hypervisor Platform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vm-templating.html">QEMU VM templating</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../sriov.html">Compsable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sriov.html">Composable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../qemu-colo.html">Qemu COLO Fault Tolerance</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Mode Emulation</a></li>
@@ -130,9 +130,9 @@
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">System Emulation</a></li>
           <li class="breadcrumb-item"><a href="../device-emulation.html">Device Emulation</a></li>
-      <li class="breadcrumb-item active">virtio pmem</li>
+      <li class="breadcrumb-item active">eMMC Emulation</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="https://gitlab.com/qemu-project/qemu/-/blob/master/docs/system/devices/virtio-pmem.rst">View page source</a>
+            <a href="https://gitlab.com/qemu-project/qemu/-/blob/master/docs/system/devices/emmc.rst">View page source</a>
       </li>
   </ul>
   <hr/>
@@ -140,74 +140,48 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="virtio-pmem">
-<h1>virtio pmem<a class="headerlink" href="#virtio-pmem" title="Link to this heading"></a></h1>
-<p>This document explains the setup and usage of the virtio pmem device.
-The virtio pmem device is a paravirtualized persistent memory device
-on regular (i.e non-NVDIMM) storage.</p>
-<section id="usecase">
-<h2>Usecase<a class="headerlink" href="#usecase" title="Link to this heading"></a></h2>
-<p>Virtio pmem allows to bypass the guest page cache and directly use
-host page cache. This reduces guest memory footprint as the host can
-make efficient memory reclaim decisions under memory pressure.</p>
-</section>
-<section id="how-does-virtio-pmem-compare-to-the-nvdimm-emulation">
-<h2>How does virtio-pmem compare to the nvdimm emulation?<a class="headerlink" href="#how-does-virtio-pmem-compare-to-the-nvdimm-emulation" title="Link to this heading"></a></h2>
-<p>NVDIMM emulation on regular (i.e. non-NVDIMM) host storage does not
-persist the guest writes as there are no defined semantics in the device
-specification. The virtio pmem device provides guest write persistence
-on non-NVDIMM host storage.</p>
-</section>
-<section id="virtio-pmem-usage">
-<h2>virtio pmem usage<a class="headerlink" href="#virtio-pmem-usage" title="Link to this heading"></a></h2>
-<p>A virtio pmem device backed by a memory-backend-file can be created on
-the QEMU command line as in the following example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="nb">object</span> <span class="n">memory</span><span class="o">-</span><span class="n">backend</span><span class="o">-</span><span class="n">file</span><span class="p">,</span><span class="nb">id</span><span class="o">=</span><span class="n">mem1</span><span class="p">,</span><span class="n">share</span><span class="p">,</span><span class="n">mem</span><span class="o">-</span><span class="n">path</span><span class="o">=./</span><span class="n">virtio_pmem</span><span class="o">.</span><span class="n">img</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="n">G</span>
-<span class="o">-</span><span class="n">device</span> <span class="n">virtio</span><span class="o">-</span><span class="n">pmem</span><span class="o">-</span><span class="n">pci</span><span class="p">,</span><span class="n">memdev</span><span class="o">=</span><span class="n">mem1</span><span class="p">,</span><span class="nb">id</span><span class="o">=</span><span class="n">nv1</span>
+  <section id="emmc-emulation">
+<h1>eMMC Emulation<a class="headerlink" href="#emmc-emulation" title="Link to this heading"></a></h1>
+<p>Besides SD card emulation, QEMU also offers an eMMC model as found on many
+embedded boards. An eMMC, just like an SD card, is connected to the machine
+via an SDHCI controller.</p>
+<section id="create-emmc-images">
+<h2>Create eMMC Images<a class="headerlink" href="#create-emmc-images" title="Link to this heading"></a></h2>
+<p>A recent eMMC consists of 4 partitions: 2 boot partitions, 1 Replay protected
+Memory Block (RPMB), and the user data area. QEMU expects backing images for
+the eMMC to contain those partitions concatenated in exactly that order.
+However, the boot partitions as well as the RPMB might be absent if their sizes
+are configured to zero.</p>
+<p>The eMMC specification defines alignment constraints for the partitions. The
+two boot partitions must be of the same size. Furthermore, boot and RPMB
+partitions must be multiples of 128 KB with a maximum of 32640 KB for each
+boot partition and 16384K for the RPMB partition.</p>
+<p>The alignment constrain of the user data area depends on its size. Up to 2
+GByte, the size must be a power of 2. From 2 GByte onward, the size has to be
+multiples of 512 byte.</p>
+<p>QEMU is enforcing those alignment rules before instantiating the device.
+Therefore, the provided image has to strictly follow them as well. The helper
+script <code class="docutils literal notranslate"><span class="pre">scripts/mkemmc.sh</span></code> can be used to create compliant images, with or
+without pre-filled partitions. E.g., to create an eMMC image from a firmware
+image and an OS image with an empty 2 MByte RPMB, use the following command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">scripts/mkemmc.sh -b firmware.img -r /dev/zero:2M os.img emmc.img</span>
 </pre></div>
 </div>
-<p>where:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>“object memory-backend-file,id=mem1,share,mem-path=&lt;image&gt;, size=&lt;image size&gt;”
-creates a backend file with the specified size.</p></li>
-<li><p>“device virtio-pmem-pci,id=nvdimm1,memdev=mem1” creates a virtio pmem
-pci device whose storage is provided by above memory backend device.</p></li>
-</ul>
-</div></blockquote>
-<p>Multiple virtio pmem devices can be created if multiple pairs of “-object”
-and “-device” are provided.</p>
+<p>This will take care of rounding up the partition sizes to the next valid value
+and will leave the RPMB and the second boot partition empty (zeroed).</p>
 </section>
-<section id="hotplug">
-<h2>Hotplug<a class="headerlink" href="#hotplug" title="Link to this heading"></a></h2>
-<p>Virtio pmem devices can be hotplugged via the QEMU monitor. First, the
-memory backing has to be added via ‘object_add’; afterwards, the virtio
-pmem device can be added via ‘device_add’.</p>
-<p>For example, the following commands add another 4GB virtio pmem device to
-the guest:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">qemu</span><span class="p">)</span> <span class="n">object_add</span> <span class="n">memory</span><span class="o">-</span><span class="n">backend</span><span class="o">-</span><span class="n">file</span><span class="p">,</span><span class="nb">id</span><span class="o">=</span><span class="n">mem2</span><span class="p">,</span><span class="n">share</span><span class="o">=</span><span class="n">on</span><span class="p">,</span><span class="n">mem</span><span class="o">-</span><span class="n">path</span><span class="o">=</span><span class="n">virtio_pmem2</span><span class="o">.</span><span class="n">img</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="n">G</span>
-<span class="p">(</span><span class="n">qemu</span><span class="p">)</span> <span class="n">device_add</span> <span class="n">virtio</span><span class="o">-</span><span class="n">pmem</span><span class="o">-</span><span class="n">pci</span><span class="p">,</span><span class="nb">id</span><span class="o">=</span><span class="n">virtio_pmem2</span><span class="p">,</span><span class="n">memdev</span><span class="o">=</span><span class="n">mem2</span>
+<section id="adding-emmc-devices">
+<h2>Adding eMMC Devices<a class="headerlink" href="#adding-emmc-devices" title="Link to this heading"></a></h2>
+<p>An eMMC is either automatically created by a machine model (e.g. Aspeed boards)
+or can be user-created when using a PCI-attached SDHCI controller. To
+instantiate the eMMC image from the example above in a machine without other
+SDHCI controllers while assuming that the firmware needs a boot partitions of
+1 MB, use the following options:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">-drive file=emmc.img,if=none,format=raw,id=emmc-img</span>
+<span class="go">-device sdhci-pci</span>
+<span class="go">-device emmc,drive=emmc-img,boot-partition-size=1048576,rpmb-partition-size=2097152</span>
 </pre></div>
 </div>
-</section>
-<section id="guest-data-persistence">
-<h2>Guest Data Persistence<a class="headerlink" href="#guest-data-persistence" title="Link to this heading"></a></h2>
-<p>Guest data persistence on non-NVDIMM requires guest userspace applications
-to perform fsync/msync. This is different from a real nvdimm backend where
-no additional fsync/msync is required. This is to persist guest writes in
-host backing file which otherwise remains in host page cache and there is
-risk of losing the data in case of power failure.</p>
-<p>With virtio pmem device, MAP_SYNC mmap flag is not supported. This provides
-a hint to application to perform fsync for write persistence.</p>
-</section>
-<section id="limitations">
-<h2>Limitations<a class="headerlink" href="#limitations" title="Link to this heading"></a></h2>
-<ul class="simple">
-<li><p>Real nvdimm device backend is not supported.</p></li>
-<li><p>virtio pmem hotunplug is not supported.</p></li>
-<li><p>ACPI NVDIMM features like regions/namespaces are not supported.</p></li>
-<li><p>ndctl command is not supported.</p></li>
-</ul>
 </section>
 </section>
 
@@ -215,14 +189,14 @@ a hint to application to perform fsync for write persistence.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="virtio-gpu.html" class="btn btn-neutral float-left" title="virtio-gpu" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="virtio-snd.html" class="btn btn-neutral float-right" title="virtio sound" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="cxl.html" class="btn btn-neutral float-left" title="Compute Express Link (CXL)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="igb.html" class="btn btn-neutral float-right" title="igb" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -233,7 +207,7 @@ a hint to application to perform fsync for write persistence.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../../about/license.html">QEMU and this manual are released under the

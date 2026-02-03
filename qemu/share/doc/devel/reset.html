@@ -9,7 +9,7 @@
   <title>Reset in QEMU: the Resettable interface &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -123,7 +123,7 @@
   <section id="reset-in-qemu-the-resettable-interface">
 <h1>Reset in QEMU: the Resettable interface<a class="headerlink" href="#reset-in-qemu-the-resettable-interface" title="Link to this heading"></a></h1>
 <p>The reset of qemu objects is handled using the resettable interface declared
-in <code class="docutils literal notranslate"><span class="pre">include/hw/resettable.h</span></code>.</p>
+in <code class="docutils literal notranslate"><span class="pre">include/hw/core/resettable.h</span></code>.</p>
 <p>This interface allows objects to be grouped (on a tree basis); so that the
 whole group can be reset consistently. Each individual member object does not
 have to care about others; in particular, problems of order (which object is
@@ -447,7 +447,7 @@ or <code class="docutils literal notranslate"><span class="pre">qemu_register_re
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -458,7 +458,7 @@ or <code class="docutils literal notranslate"><span class="pre">qemu_register_re
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

@@ -9,7 +9,7 @@
   <title>APEI tables generating and CPER record &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -91,6 +91,7 @@
 <li class="toctree-l2"><a class="reference internal" href="riscv-iommu.html">RISC-V IOMMU support for RISC-V machines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="riscv-aia.html">RISC-V AIA support for RISC-V machines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aspeed-intc.html">ASPEED Interrupt Controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iommu-testdev.html">iommu-testdev — IOMMU test device for bare-metal testing</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../devel/index.html">Developer Information</a></li>
@@ -170,7 +171,7 @@
                                           <span class="o">+-+-------------------------+-+</span>
 </pre></div>
 </div>
-<ol class="arabic simple">
+<ol class="arabic">
 <li><p>QEMU generates the ACPI HEST table. This table goes in the current
 “etc/acpi/tables” fw_cfg blob. Each error source has different
 notification types.</p></li>
@@ -197,12 +198,19 @@ corresponding “read_ack_register” within the “etc/hardware_errors” blob.
 <li><p>QEMU generates N ADD_POINTER commands for the firmware, which patch
 addresses in the “error_block_address” fields with a pointer to the
 respective “Error Status Data Block” in the “etc/hardware_errors” blob.</p></li>
-<li><p>QEMU defines a third and write-only fw_cfg blob which is called
-“etc/hardware_errors_addr”. Through that blob, the firmware can send back
-the guest-side allocation addresses to QEMU. The “etc/hardware_errors_addr”
-blob contains a 8-byte entry. QEMU generates a single WRITE_POINTER command
-for the firmware. The firmware will write back the start address of
-“etc/hardware_errors” blob to the fw_cfg file “etc/hardware_errors_addr”.</p></li>
+<li><p>QEMU defines a third and write-only fw_cfg blob to store the location
+where the error block offsets, read ack registers and CPER records are
+stored.</p>
+<p>Up to QEMU 9.2, the location was at “etc/hardware_errors_addr”, and
+contains a GPA for the beginning of “etc/hardware_errors”.</p>
+<p>Newer versions place the location at “etc/acpi_table_hest_addr”,
+pointing to the GPA of the HEST table.</p>
+<p>Using above mentioned ‘fw_cfg’ files, the firmware can send back the
+guest-side allocation addresses to QEMU. They contain a 8-byte entry.
+QEMU generates a single WRITE_POINTER command for the firmware. The
+firmware will write back the start address of either “etc/hardware_errors”
+or HEST table at the corresponding fw_cfg file.</p>
+</li>
 <li><p>When QEMU gets a SIGBUS from the kernel, QEMU writes CPER into corresponding
 “Error Status Data Block”, guest memory, and then injects platform specific
 interrupt (in case of arm/virt machine it’s Synchronous External Abort) as a
@@ -210,11 +218,8 @@ notification which is necessary for notifying the guest.</p></li>
 <li><p>This notification (in virtual hardware) will be handled by the guest
 kernel, on receiving notification, guest APEI driver could read the CPER error
 and take appropriate action.</p></li>
-<li><p>kvm_arch_on_sigbus_vcpu() uses source_id as index in “etc/hardware_errors” to
-find out “Error Status Data Block” entry corresponding to error source. So supported
-source_id values should be assigned here and not be changed afterwards to make sure
-that guest will write error into expected “Error Status Data Block” even if guest was
-migrated to a newer QEMU.</p></li>
+<li><p>kvm_arch_on_sigbus_vcpu() reports RAS errors via a SEA notifications,
+when a SIGBUS event is triggered.</p></li>
 </ol>
 </section>
 </section>
@@ -230,7 +235,7 @@ migrated to a newer QEMU.</p></li>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -241,7 +246,7 @@ migrated to a newer QEMU.</p></li>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

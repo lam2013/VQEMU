@@ -9,7 +9,7 @@
   <title>QEMU SystemTap trace tool &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -140,7 +140,7 @@ binary:</p>
 <pre class="literal-block">$ qemu-trace-stap list qemu-system-x86_64</pre>
 <p>To filter the list to only cover probes related to QEMU’s cryptographic
 subsystem, in a binary outside <code class="docutils literal notranslate"><span class="pre">$PATH</span></code></p>
-<pre class="literal-block">$ qemu-trace-stap list /opt/qemu/10.1.0/bin/qemu-system-x86_64 'qcrypto*'</pre>
+<pre class="literal-block">$ qemu-trace-stap list /opt/qemu/10.2.94/bin/qemu-system-x86_64 'qcrypto*'</pre>
 </dd></dl>
 
 <dl class="std option">
@@ -177,7 +177,7 @@ as found on <code class="docutils literal notranslate"><span class="pre">$PATH</
 <p>To monitor QEMU processes running an alternative binary outside of
 <code class="docutils literal notranslate"><span class="pre">$PATH</span></code>, displaying verbose information about setup of the
 tracing environment:</p>
-<pre class="literal-block">$ qemu-trace-stap -v run /opt/qemu/10.1.0/bin/qemu-system-x86_64 'qio*'</pre>
+<pre class="literal-block">$ qemu-trace-stap -v run /opt/qemu/10.2.94/bin/qemu-system-x86_64 'qio*'</pre>
 </dd></dl>
 
 </section>
@@ -198,7 +198,7 @@ tracing environment:</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -209,7 +209,7 @@ tracing environment:</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

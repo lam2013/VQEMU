@@ -9,7 +9,7 @@
   <title>Record/replay &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -87,8 +87,11 @@
 <li class="toctree-l2"><a class="reference internal" href="multi-process.html">Multi-process QEMU</a></li>
 <li class="toctree-l2"><a class="reference internal" href="confidential-guest-support.html">Confidential Guest Support</a></li>
 <li class="toctree-l2"><a class="reference internal" href="igvm.html">Independent Guest Virtual Machine (IGVM) support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nitro.html">AWS Nitro Enclaves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="whpx.html">Windows Hypervisor Platform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vm-templating.html">QEMU VM templating</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sriov.html">Compsable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sriov.html">Composable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qemu-colo.html">Qemu COLO Fault Tolerance</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Mode Emulation</a></li>
@@ -139,7 +142,7 @@ including external input, hardware clocks, and interrupts.</p>
 the memory, state of the hardware devices, clocks, and screen of the VM.</p></li>
 <li><p>Writes execution log into the file for later replaying for multiple times
 on different machines.</p></li>
-<li><p>Supports i386, x86_64, ARM, AArch64, Risc-V, MIPS, MIPS64, S390X, Alpha,
+<li><p>Supports i386, x86_64, Arm, AArch64, Risc-V, MIPS, MIPS64, S390X, Alpha,
 PowerPC, PowerPC64, M68000, Microblaze, OpenRISC, SPARC,
 and Xtensa hardware platforms.</p></li>
 <li><p>Performs deterministic replay of all operations with keyboard and mouse
@@ -346,7 +349,7 @@ temporary snapshots (existing within the session).</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -357,7 +360,7 @@ temporary snapshots (existing within the session).</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

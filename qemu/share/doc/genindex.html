@@ -8,7 +8,7 @@
   <title>Index &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="_static/qemu_32x32.png"/>
@@ -937,9 +937,15 @@
 </li>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-transaction.AbortWrapper">AbortWrapper (QMP object)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#object-QSD-transaction.AbortWrapper">[1]</a>
 </li>
+      <li><a href="interop/qemu-qmp-ref.html#enum-QMP-accelerator.Accelerator">Accelerator (QMP enum)</a>
+</li>
       <li><a href="interop/qemu-qmp-ref.html#module-QMP-accelerator">accelerator (QMP module)</a>
 </li>
+      <li><a href="interop/qemu-qmp-ref.html#object-QMP-accelerator.AcceleratorInfo">AcceleratorInfo (QMP object)</a>
+</li>
       <li><a href="interop/qemu-qmp-ref.html#module-QMP-acpi">acpi (QMP module)</a>
+</li>
+      <li><a href="interop/qemu-qmp-ref.html#module-QMP-acpi-hest">acpi-hest (QMP module)</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#event-QMP-acpi.ACPI_DEVICE_OST">ACPI_DEVICE_OST (QMP event)</a>
 </li>
@@ -961,19 +967,15 @@
 </li>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-misc.AddfdInfo">AddfdInfo (QMP object)</a>
 </li>
-      <li><a href="devel/memory.html#c.address_space_cache_destroy">address_space_cache_destroy (C function)</a>
-</li>
-      <li><a href="devel/memory.html#c.address_space_cache_init_empty">address_space_cache_init_empty (C function)</a>
-</li>
-      <li><a href="devel/memory.html#c.address_space_cache_invalidate">address_space_cache_invalidate (C function)</a>
-</li>
       <li><a href="devel/memory.html#c.address_space_destroy">address_space_destroy (C function)</a>
+</li>
+      <li><a href="devel/memory.html#c.address_space_destroy_free">address_space_destroy_free (C function)</a>
 </li>
       <li><a href="devel/memory.html#c.address_space_init">address_space_init (C function)</a>
 </li>
-      <li><a href="devel/memory.html#c.address_space_read">address_space_read (C function)</a>
+      <li><a href="devel/memory.html#c.address_space_is_io">address_space_is_io (C function)</a>
 </li>
-      <li><a href="devel/memory.html#c.address_space_read_cached">address_space_read_cached (C function)</a>
+      <li><a href="devel/memory.html#c.address_space_read">address_space_read (C function)</a>
 </li>
       <li><a href="devel/memory.html#c.address_space_remove_listeners">address_space_remove_listeners (C function)</a>
 </li>
@@ -982,8 +984,6 @@
       <li><a href="devel/memory.html#c.address_space_set">address_space_set (C function)</a>
 </li>
       <li><a href="devel/memory.html#c.address_space_write">address_space_write (C function)</a>
-</li>
-      <li><a href="devel/memory.html#c.address_space_write_cached">address_space_write_cached (C function)</a>
 </li>
       <li><a href="devel/memory.html#c.address_space_write_rom">address_space_write_rom (C function)</a>
 </li>
@@ -1300,10 +1300,10 @@
 </li>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-block-core.BlockdevCreateOptionsVhdx">BlockdevCreateOptionsVhdx (QMP object)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#object-QSD-block-core.BlockdevCreateOptionsVhdx">[1]</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-block-core.BlockdevCreateOptionsVmdk">BlockdevCreateOptionsVmdk (QMP object)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#object-QSD-block-core.BlockdevCreateOptionsVmdk">[1]</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-block-core.BlockdevCreateOptionsVpc">BlockdevCreateOptionsVpc (QMP object)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#object-QSD-block-core.BlockdevCreateOptionsVpc">[1]</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#enum-QMP-block-core.BlockdevDetectZeroesOptions">BlockdevDetectZeroesOptions (QMP enum)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#enum-QSD-block-core.BlockdevDetectZeroesOptions">[1]</a>
@@ -1452,6 +1452,8 @@
 </li>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-block-export.BlockExportInfo">BlockExportInfo (QMP object)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#object-QSD-block-export.BlockExportInfo">[1]</a>
 </li>
+      <li><a href="interop/qemu-qmp-ref.html#alternate-QMP-block-export.BlockExportIothreads">BlockExportIothreads (QMP alternate)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#alternate-QSD-block-export.BlockExportIothreads">[1]</a>
+</li>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-block-export.BlockExportOptions">BlockExportOptions (QMP object)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#object-QSD-block-export.BlockExportOptions">[1]</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-block-export.BlockExportOptionsFuse">BlockExportOptionsFuse (QMP object)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#object-QSD-block-export.BlockExportOptionsFuse">[1]</a>
@@ -1483,6 +1485,8 @@
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-block-core.BlockJobInfoMirror">BlockJobInfoMirror (QMP object)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#object-QSD-block-core.BlockJobInfoMirror">[1]</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-block-core.BlockLatencyHistogramInfo">BlockLatencyHistogramInfo (QMP object)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#object-QSD-block-core.BlockLatencyHistogramInfo">[1]</a>
+</li>
+      <li><a href="interop/qemu-qmp-ref.html#object-QMP-block-core.BlockLimitsInfo">BlockLimitsInfo (QMP object)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#object-QSD-block-core.BlockLimitsInfo">[1]</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-block-core.BlockMeasureInfo">BlockMeasureInfo (QMP object)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#object-QSD-block-core.BlockMeasureInfo">[1]</a>
 </li>
@@ -1681,12 +1685,12 @@
 </li>
       <li><a href="interop/qemu-qmp-ref.html#enum-QMP-migration.COLOMessage">COLOMessage (QMP enum)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="interop/qemu-qmp-ref.html#enum-QMP-migration.COLOMode">COLOMode (QMP enum)</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-migration.COLOStatus">COLOStatus (QMP object)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-control.CommandInfo">CommandInfo (QMP object)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#object-QSD-control.CommandInfo">[1]</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-misc.CommandLineOptionInfo">CommandLineOptionInfo (QMP object)</a>
@@ -1828,7 +1832,11 @@
 </li>
       <li><a href="interop/qemu-qmp-ref.html#command-QMP-cxl.cxl-release-dynamic-capacity">cxl-release-dynamic-capacity (QMP command)</a>
 </li>
+      <li><a href="interop/qemu-qmp-ref.html#object-QMP-cxl.CXLCommonEventBase">CXLCommonEventBase (QMP object)</a>
+</li>
       <li><a href="interop/qemu-qmp-ref.html#enum-QMP-cxl.CxlCorErrorType">CxlCorErrorType (QMP enum)</a>
+</li>
+      <li><a href="interop/qemu-qmp-ref.html#object-QMP-cxl.CXLDRAMEvent">CXLDRAMEvent (QMP object)</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-cxl.CxlDynamicCapacityExtent">CxlDynamicCapacityExtent (QMP object)</a>
 </li>
@@ -1841,6 +1849,10 @@
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-machine.CXLFixedMemoryWindowOptions">CXLFixedMemoryWindowOptions (QMP object)</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-machine.CXLFMWProperties">CXLFMWProperties (QMP object)</a>
+</li>
+      <li><a href="interop/qemu-qmp-ref.html#object-QMP-cxl.CXLGeneralMediaEvent">CXLGeneralMediaEvent (QMP object)</a>
+</li>
+      <li><a href="interop/qemu-qmp-ref.html#object-QMP-cxl.CXLMemModuleEvent">CXLMemModuleEvent (QMP object)</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-cxl.CXLUncorErrorRecord">CXLUncorErrorRecord (QMP object)</a>
 </li>
@@ -2172,6 +2184,8 @@
         <li><a href="interop/dbus-display.html#org.qemu.Display1.AudioOutListener.Fini">(org.qemu.Display1.AudioOutListener method)</a>
 </li>
       </ul></li>
+      <li><a href="interop/qemu-qmp-ref.html#object-QMP-machine.FirmwareLog">FirmwareLog (QMP object)</a>
+</li>
       <li><a href="devel/memory.html#c.flatview_cb">flatview_cb (C macro)</a>
 </li>
       <li><a href="devel/memory.html#c.flatview_for_each_range">flatview_for_each_range (C function)</a>
@@ -2392,6 +2406,8 @@
 </li>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-run-state.GuestPanicInformationS390">GuestPanicInformationS390 (QMP object)</a>
 </li>
+      <li><a href="interop/qemu-qmp-ref.html#object-QMP-run-state.GuestPanicInformationSev">GuestPanicInformationSev (QMP object)</a>
+</li>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-run-state.GuestPanicInformationTdx">GuestPanicInformationTdx (QMP object)</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#enum-QMP-run-state.GuestPanicInformationType">GuestPanicInformationType (QMP enum)</a>
@@ -2581,6 +2597,8 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="interop/qemu-qmp-ref.html#command-QMP-acpi-hest.inject-ghes-v2-error">inject-ghes-v2-error (QMP command)</a>
+</li>
       <li><a href="interop/qemu-qmp-ref.html#command-QMP-machine.inject-nmi">inject-nmi (QMP command)</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#command-QMP-ui.input-send-event">input-send-event (QMP command)</a>
@@ -2878,6 +2896,8 @@
 </li>
       <li><a href="devel/memory.html#c.memory_region_dispatch_write">memory_region_dispatch_write (C function)</a>
 </li>
+      <li><a href="devel/memory.html#c.memory_region_enable_lockless_io">memory_region_enable_lockless_io (C function)</a>
+</li>
       <li><a href="devel/memory.html#c.memory_region_find">memory_region_find (C function)</a>
 </li>
       <li><a href="devel/memory.html#c.memory_region_flush_rom_device">memory_region_flush_rom_device (C function)</a>
@@ -2920,8 +2940,6 @@
 </li>
       <li><a href="devel/memory.html#c.memory_region_init_ram_from_file">memory_region_init_ram_from_file (C function)</a>
 </li>
-      <li><a href="devel/memory.html#c.memory_region_init_ram_nomigrate">memory_region_init_ram_nomigrate (C function)</a>
-</li>
       <li><a href="devel/memory.html#c.memory_region_init_ram_ptr">memory_region_init_ram_ptr (C function)</a>
 </li>
       <li><a href="devel/memory.html#c.memory_region_init_resizeable_ram">memory_region_init_resizeable_ram (C function)</a>
@@ -2929,10 +2947,6 @@
       <li><a href="devel/memory.html#c.memory_region_init_rom">memory_region_init_rom (C function)</a>
 </li>
       <li><a href="devel/memory.html#c.memory_region_init_rom_device">memory_region_init_rom_device (C function)</a>
-</li>
-      <li><a href="devel/memory.html#c.memory_region_init_rom_device_nomigrate">memory_region_init_rom_device_nomigrate (C function)</a>
-</li>
-      <li><a href="devel/memory.html#c.memory_region_init_rom_nomigrate">memory_region_init_rom_nomigrate (C function)</a>
 </li>
       <li><a href="devel/memory.html#c.memory_region_iommu_attrs_to_index">memory_region_iommu_attrs_to_index (C function)</a>
 </li>
@@ -3072,8 +3086,6 @@
 </li>
       <li><a href="interop/qemu-qmp-ref.html#command-QMP-migration.migrate_cancel">migrate_cancel (QMP command)</a>
 </li>
-      <li><a href="interop/qemu-qmp-ref.html#object-QMP-migration.MigrateSetParameters">MigrateSetParameters (QMP object)</a>
-</li>
       <li><a href="interop/qemu-qmp-ref.html#event-QMP-migration.MIGRATION">MIGRATION (QMP event)</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#module-QMP-migration">migration (QMP module)</a>
@@ -3103,8 +3115,6 @@
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-migration.MigrationStats">MigrationStats (QMP object)</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#enum-QMP-migration.MigrationStatus">MigrationStatus (QMP enum)</a>
-</li>
-      <li><a href="interop/qemu-qmp-ref.html#object-QMP-migration.MigrationThreadInfo">MigrationThreadInfo (QMP object)</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#enum-QMP-block-core.MirrorCopyMode">MirrorCopyMode (QMP enum)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#enum-QSD-block-core.MirrorCopyMode">[1]</a>
 </li>
@@ -3275,6 +3285,8 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="interop/qemu-qmp-ref.html#enum-QMP-misc-arm.OasMode">OasMode (QMP enum)</a>
+</li>
       <li><a href="devel/qom-api.html#c.OBJECT">OBJECT (C macro)</a>
 </li>
       <li><a href="devel/qom-api.html#c.Object">Object (C struct)</a>
@@ -3545,6 +3557,10 @@
 </li>
       <li><a href="devel/pci.html#c.pci_ats_request_translation">pci_ats_request_translation (C function)</a>
 </li>
+      <li><a href="devel/pci.html#c.pci_device_get_host_iommu_quirks">pci_device_get_host_iommu_quirks (C function)</a>
+</li>
+      <li><a href="devel/pci.html#c.pci_device_get_viommu_flags">pci_device_get_viommu_flags (C function)</a>
+</li>
       <li><a href="devel/pci.html#c.pci_iommu_get_iotlb_info">pci_iommu_get_iotlb_info (C function)</a>
 </li>
       <li><a href="devel/pci.html#c.pci_iommu_init_iotlb_notifier">pci_iommu_init_iotlb_notifier (C function)</a>
@@ -3575,10 +3591,10 @@
 </li>
       <li><a href="interop/qemu-qmp-ref.html#enum-QMP-common.PCIELinkWidth">PCIELinkWidth (QMP enum)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#enum-QSD-common.PCIELinkWidth">[1]</a>
 </li>
-      <li><a href="interop/qemu-qmp-ref.html#object-QMP-pci.PciInfo">PciInfo (QMP object)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="interop/qemu-qmp-ref.html#object-QMP-pci.PciInfo">PciInfo (QMP object)</a>
+</li>
       <li><a href="devel/pci.html#c.PCIIOMMUOps">PCIIOMMUOps (C struct)</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-pci.PciMemoryRange">PciMemoryRange (QMP object)</a>
@@ -3810,6 +3826,8 @@
 </li>
       <li><a href="devel/qdev-api.html#c.qdev_del_unplug_blocker">qdev_del_unplug_blocker (C function)</a>
 </li>
+      <li><a href="devel/qdev-api.html#c.qdev_get_dev_path">qdev_get_dev_path (C function)</a>
+</li>
       <li><a href="devel/qdev-api.html#c.qdev_get_gpio_in">qdev_get_gpio_in (C function)</a>
 </li>
       <li><a href="devel/qdev-api.html#c.qdev_get_gpio_in_named">qdev_get_gpio_in_named (C function)</a>
@@ -3819,6 +3837,8 @@
       <li><a href="devel/qdev-api.html#c.qdev_get_hotplug_handler">qdev_get_hotplug_handler (C function)</a>
 </li>
       <li><a href="devel/qdev-api.html#c.qdev_get_human_name">qdev_get_human_name (C function)</a>
+</li>
+      <li><a href="devel/qdev-api.html#c.qdev_get_printable_name">qdev_get_printable_name (C function)</a>
 </li>
       <li><a href="devel/qdev-api.html#c.qdev_init_gpio_in">qdev_init_gpio_in (C function)</a>
 </li>
@@ -4422,6 +4442,8 @@
 </li>
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_cond">qemu_plugin_cond (C enum)</a>
 </li>
+      <li><a href="devel/tcg-plugins.html#c.qemu_plugin_discon_type">qemu_plugin_discon_type (C enum)</a>
+</li>
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_end_code">qemu_plugin_end_code (C function)</a>
 </li>
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_entry_code">qemu_plugin_entry_code (C function)</a>
@@ -4460,7 +4482,13 @@
 </li>
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_mem_is_store">qemu_plugin_mem_is_store (C function)</a>
 </li>
+      <li><a href="devel/tcg-plugins.html#c.qemu_plugin_mem_rw">qemu_plugin_mem_rw (C enum)</a>
+</li>
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_mem_size_shift">qemu_plugin_mem_size_shift (C function)</a>
+</li>
+      <li><a href="devel/tcg-plugins.html#c.qemu_plugin_mem_value">qemu_plugin_mem_value (C type)</a>
+</li>
+      <li><a href="devel/tcg-plugins.html#c.qemu_plugin_mem_value_type">qemu_plugin_mem_value_type (C enum)</a>
 </li>
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_meminfo_t">qemu_plugin_meminfo_t (C type)</a>
 </li>
@@ -4480,6 +4508,10 @@
 </li>
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_register_atexit_cb">qemu_plugin_register_atexit_cb (C function)</a>
 </li>
+      <li><a href="devel/tcg-plugins.html#c.qemu_plugin_register_flush_cb">qemu_plugin_register_flush_cb (C function)</a>
+</li>
+      <li><a href="devel/tcg-plugins.html#c.qemu_plugin_register_vcpu_discon_cb">qemu_plugin_register_vcpu_discon_cb (C function)</a>
+</li>
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_register_vcpu_exit_cb">qemu_plugin_register_vcpu_exit_cb (C function)</a>
 </li>
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_register_vcpu_idle_cb">qemu_plugin_register_vcpu_idle_cb (C function)</a>
@@ -4498,6 +4530,12 @@
 </li>
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_register_vcpu_resume_cb">qemu_plugin_register_vcpu_resume_cb (C function)</a>
 </li>
+      <li><a href="devel/tcg-plugins.html#c.qemu_plugin_register_vcpu_syscall_cb">qemu_plugin_register_vcpu_syscall_cb (C function)</a>
+</li>
+      <li><a href="devel/tcg-plugins.html#c.qemu_plugin_register_vcpu_syscall_filter_cb">qemu_plugin_register_vcpu_syscall_filter_cb (C function)</a>
+</li>
+      <li><a href="devel/tcg-plugins.html#c.qemu_plugin_register_vcpu_syscall_ret_cb">qemu_plugin_register_vcpu_syscall_ret_cb (C function)</a>
+</li>
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_register_vcpu_tb_exec_cb">qemu_plugin_register_vcpu_tb_exec_cb (C function)</a>
 </li>
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_register_vcpu_tb_exec_cond_cb">qemu_plugin_register_vcpu_tb_exec_cond_cb (C function)</a>
@@ -4515,6 +4553,8 @@
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_scoreboard_free">qemu_plugin_scoreboard_free (C function)</a>
 </li>
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_scoreboard_new">qemu_plugin_scoreboard_new (C function)</a>
+</li>
+      <li><a href="devel/tcg-plugins.html#c.qemu_plugin_set_pc">qemu_plugin_set_pc (C function)</a>
 </li>
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_simple_cb_t">qemu_plugin_simple_cb_t (C macro)</a>
 </li>
@@ -4544,11 +4584,19 @@
 </li>
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_update_ns">qemu_plugin_update_ns (C function)</a>
 </li>
+      <li><a href="devel/tcg-plugins.html#c.qemu_plugin_vcpu_discon_cb_t">qemu_plugin_vcpu_discon_cb_t (C macro)</a>
+</li>
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_vcpu_for_each">qemu_plugin_vcpu_for_each (C function)</a>
 </li>
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_vcpu_mem_cb_t">qemu_plugin_vcpu_mem_cb_t (C macro)</a>
 </li>
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_vcpu_simple_cb_t">qemu_plugin_vcpu_simple_cb_t (C macro)</a>
+</li>
+      <li><a href="devel/tcg-plugins.html#c.qemu_plugin_vcpu_syscall_cb_t">qemu_plugin_vcpu_syscall_cb_t (C macro)</a>
+</li>
+      <li><a href="devel/tcg-plugins.html#c.qemu_plugin_vcpu_syscall_filter_cb_t">qemu_plugin_vcpu_syscall_filter_cb_t (C macro)</a>
+</li>
+      <li><a href="devel/tcg-plugins.html#c.qemu_plugin_vcpu_syscall_ret_cb_t">qemu_plugin_vcpu_syscall_ret_cb_t (C macro)</a>
 </li>
       <li><a href="devel/tcg-plugins.html#c.qemu_plugin_vcpu_tb_trans_cb_t">qemu_plugin_vcpu_tb_trans_cb_t (C macro)</a>
 </li>
@@ -4696,6 +4744,8 @@
 </li>
       <li><a href="devel/testing/qtest.html#c.qtest_init">qtest_init (C function)</a>
 </li>
+      <li><a href="devel/testing/qtest.html#c.qtest_init_after_exec">qtest_init_after_exec (C function)</a>
+</li>
       <li><a href="devel/testing/qtest.html#c.qtest_init_ext">qtest_init_ext (C function)</a>
 </li>
       <li><a href="devel/testing/qtest.html#c.qtest_init_with_serial">qtest_init_with_serial (C function)</a>
@@ -4731,6 +4781,10 @@
       <li><a href="devel/testing/qtest.html#c.qtest_pid">qtest_pid (C function)</a>
 </li>
       <li><a href="devel/testing/qtest.html#c.qtest_probe_child">qtest_probe_child (C function)</a>
+</li>
+      <li><a href="devel/testing/qtest.html#c.qtest_qemu_args">qtest_qemu_args (C function)</a>
+</li>
+      <li><a href="devel/testing/qtest.html#c.qtest_qemu_binary">qtest_qemu_binary (C function)</a>
 </li>
       <li><a href="devel/testing/qtest.html#c.qtest_qmp">qtest_qmp (C function)</a>
 </li>
@@ -4838,6 +4892,8 @@
 </li>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-qom.QtestProperties">QtestProperties (QMP object)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#object-QSD-qom.QtestProperties">[1]</a>
 </li>
+      <li><a href="interop/qemu-qmp-ref.html#command-QMP-accelerator.query-accelerators">query-accelerators (QMP command)</a>
+</li>
       <li><a href="interop/qemu-qmp-ref.html#command-QMP-acpi.query-acpi-ospm-status">query-acpi-ospm-status (QMP command)</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#command-QMP-audio.query-audiodevs">query-audiodevs (QMP command)</a>
@@ -4886,6 +4942,8 @@
 </li>
       <li><a href="interop/qemu-qmp-ref.html#command-QMP-misc.query-fdsets">query-fdsets (QMP command)</a>
 </li>
+      <li><a href="interop/qemu-qmp-ref.html#command-QMP-machine.query-firmware-log">query-firmware-log (QMP command)</a>
+</li>
       <li><a href="interop/qemu-qmp-ref.html#command-QMP-misc-arm.query-gic-capabilities">query-gic-capabilities (QMP command)</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#command-QMP-machine.query-hotpluggable-cpus">query-hotpluggable-cpus (QMP command)</a>
@@ -4913,8 +4971,6 @@
       <li><a href="interop/qemu-qmp-ref.html#command-QMP-migration.query-migrate-capabilities">query-migrate-capabilities (QMP command)</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#command-QMP-migration.query-migrate-parameters">query-migrate-parameters (QMP command)</a>
-</li>
-      <li><a href="interop/qemu-qmp-ref.html#command-QMP-migration.query-migrationthreads">query-migrationthreads (QMP command)</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#command-QMP-misc.query-name">query-name (QMP command)</a>
 </li>
@@ -5237,6 +5293,8 @@
 </li>
       <li><a href="interop/qemu-qmp-ref.html#enum-QMP-introspect.SchemaMetaType">SchemaMetaType (QMP enum)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#enum-QSD-introspect.SchemaMetaType">[1]</a>
 </li>
+      <li><a href="interop/qemu-qmp-ref.html#event-QMP-machine-s390x.SCLP_CPI_INFO_AVAILABLE">SCLP_CPI_INFO_AVAILABLE (QMP event)</a>
+</li>
       <li><a href="interop/qemu-qmp-ref.html#command-QMP-ui.screendump">screendump (QMP command)</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-crypto.SecretCommonProperties">SecretCommonProperties (QMP object)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#object-QSD-crypto.SecretCommonProperties">[1]</a>
@@ -5408,6 +5466,8 @@
       <li><a href="interop/qemu-qmp-ref.html#enum-QMP-block-core.SshHostKeyCheckMode">SshHostKeyCheckMode (QMP enum)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#enum-QSD-block-core.SshHostKeyCheckMode">[1]</a>
 </li>
       <li><a href="interop/qemu-qmp-ref.html#object-QMP-block-core.SshHostKeyHash">SshHostKeyHash (QMP object)</a>, <a href="interop/qemu-storage-daemon-qmp-ref.html#object-QSD-block-core.SshHostKeyHash">[1]</a>
+</li>
+      <li><a href="interop/qemu-qmp-ref.html#enum-QMP-misc-arm.SsidSizeMode">SsidSizeMode (QMP enum)</a>
 </li>
       <li>
     static
@@ -5899,7 +5959,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -5910,7 +5970,7 @@
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="about/license.html">QEMU and this manual are released under the

@@ -9,7 +9,7 @@
   <title>Backwards compatibility &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../../_static/qemu_32x32.png"/>
@@ -23,7 +23,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Best practices" href="best-practices.html" />
-    <link rel="prev" title="QATzip Compression" href="qatzip-compression.html" /> 
+    <link rel="prev" title="XBZRLE (Xor Based Zero Run Length Encoding)" href="xbzrle.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -219,7 +219,7 @@ that array.  And the device, during initialization needs to look at
 that array to see what value it needs to get for that feature.  And
 what are we going to put in that array, the value of a property.</p>
 <p>To create a property for a device, we need to use one of the
-DEFINE_PROP_*() macros. See include/hw/qdev-properties.h to find the
+DEFINE_PROP_*() macros. See include/hw/core/qdev-properties.h to find the
 macros that exist.  With it, we set the default value for that
 property, and that is what it is going to get in the latest released
 version.  But if we want a different value for a previous version, we
@@ -566,14 +566,14 @@ on we can use the proper real machine.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="qatzip-compression.html" class="btn btn-neutral float-left" title="QATzip Compression" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="xbzrle.html" class="btn btn-neutral float-left" title="XBZRLE (Xor Based Zero Run Length Encoding)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="best-practices.html" class="btn btn-neutral float-right" title="Best practices" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -584,7 +584,7 @@ on we can use the proper real machine.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../../about/license.html">QEMU and this manual are released under the

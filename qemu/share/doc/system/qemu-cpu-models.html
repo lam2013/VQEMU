@@ -9,7 +9,7 @@
   <title>QEMU / KVM CPU model configuration &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -656,7 +656,22 @@ matches the generation of the host CPUs in use. In a deployment with a
 mixture of host CPU models between machines, if live migration
 compatibility is required, use the newest CPU model that is compatible
 across all desired hosts.</p>
-<dl class="simple">
+<dl>
+<dt><code class="docutils literal notranslate"><span class="pre">DiamondRapids</span></code></dt><dd><p>Intel Xeon Processor (DiamondRapids, 2026)</p>
+<p>This does not include SMT but allows the module (dual core module
+- DCM) and die (core building block - CBB) topology levels. The
+cache hierarchy is L1 i/d cache per thread, L2 cache per module,
+and L3 cache per die, which can be emulated using the smp-cache
+option:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">machine</span> <span class="n">smp</span><span class="o">-</span><span class="n">cache</span><span class="mf">.0</span><span class="o">.</span><span class="n">cache</span><span class="o">=</span><span class="n">l1d</span><span class="p">,</span><span class="n">smp</span><span class="o">-</span><span class="n">cache</span><span class="mf">.0</span><span class="o">.</span><span class="n">topology</span><span class="o">=</span><span class="n">thread</span><span class="p">,</span>\
+         <span class="n">smp</span><span class="o">-</span><span class="n">cache</span><span class="mf">.1</span><span class="o">.</span><span class="n">cache</span><span class="o">=</span><span class="n">l1i</span><span class="p">,</span><span class="n">smp</span><span class="o">-</span><span class="n">cache</span><span class="mf">.1</span><span class="o">.</span><span class="n">topology</span><span class="o">=</span><span class="n">thread</span><span class="p">,</span>\
+         <span class="n">smp</span><span class="o">-</span><span class="n">cache</span><span class="mf">.2</span><span class="o">.</span><span class="n">cache</span><span class="o">=</span><span class="n">l2</span><span class="p">,</span><span class="n">smp</span><span class="o">-</span><span class="n">cache</span><span class="mf">.2</span><span class="o">.</span><span class="n">topology</span><span class="o">=</span><span class="n">module</span><span class="p">,</span>\
+         <span class="n">smp</span><span class="o">-</span><span class="n">cache</span><span class="mf">.3</span><span class="o">.</span><span class="n">cache</span><span class="o">=</span><span class="n">l3</span><span class="p">,</span><span class="n">smp</span><span class="o">-</span><span class="n">cache</span><span class="mf">.3</span><span class="o">.</span><span class="n">topology</span><span class="o">=</span><span class="n">die</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd>
 <dt><code class="docutils literal notranslate"><span class="pre">ClearwaterForest</span></code></dt><dd><p>Intel Xeon Processor (ClearwaterForest, 2025)</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">SierraForest</span></code>, <code class="docutils literal notranslate"><span class="pre">SierraForest-v2</span></code></dt><dd><p>Intel Xeon Processor (SierraForest, 2024), SierraForest-v2 mitigates
@@ -1066,7 +1081,7 @@ across all desired hosts.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -1077,7 +1092,7 @@ across all desired hosts.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

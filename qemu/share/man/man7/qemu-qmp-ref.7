@@ -28,7 +28,7 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .in \\n[rst2man-indent\\n[rst2man-indent-level]]u
 ..
-.TH "QEMU-QMP-REF" "7" "Aug 26, 2025" "10.1.0" "QEMU"
+.TH "QEMU-QMP-REF" "7" "Apr 16, 2026" "10.2.94" "QEMU"
 .SH NAME
 qemu-qmp-ref \- QEMU QMP Reference Manual
 .INDENT 0.0
@@ -474,24 +474,26 @@ IPv6
 \fBipv6\fP (\fBboolean\fP, \fIoptional\fP) \-\- whether to accept IPv6 addresses, default try both IPv4 and
 IPv6
 .IP \(bu 2
-\fBkeep\-alive\fP (\fBboolean\fP, \fIoptional\fP) \-\- enable keep\-alive when connecting to/listening on this socket.
+\fBkeep\-alive\fP (\fBboolean\fP, \fIoptional\fP) \-\- enable keep\-alive when connecting to/listening on this
+socket.
 (Since 4.2, not supported for listening sockets until 10.1)
 .IP \(bu 2
-\fBkeep\-alive\-count\fP (\fBint\fP, \fIoptional\fP) \-\- number of keep\-alive packets sent before the connection is
-closed.  Only supported for TCP sockets on systems where TCP_KEEPCNT
-socket option is defined (this includes Linux, Windows, macOS, FreeBSD,
-but not OpenBSD).  When set to 0, system setting is used.  (Since 10.1)
+\fBkeep\-alive\-count\fP (\fBint\fP, \fIoptional\fP) \-\- number of keep\-alive packets sent before the
+connection is closed.  Only supported for TCP sockets on systems
+where TCP_KEEPCNT socket option is defined (this includes Linux,
+Windows, macOS, FreeBSD, but not OpenBSD).  When set to 0,
+system setting is used.  (Since 10.1)
 .IP \(bu 2
-\fBkeep\-alive\-idle\fP (\fBint\fP, \fIoptional\fP) \-\- time in seconds the connection needs to be idle before
-sending a keepalive packet.  Only supported for TCP sockets on systems
-where TCP_KEEPIDLE socket option is defined (this includes Linux,
-Windows, macOS, FreeBSD, but not OpenBSD).  When set to 0, system setting
-is used.  (Since 10.1)
+\fBkeep\-alive\-idle\fP (\fBint\fP, \fIoptional\fP) \-\- time in seconds the connection needs to be idle
+before sending a keepalive packet.  Only supported for TCP
+sockets on systems where TCP_KEEPIDLE socket option is defined
+(this includes Linux, Windows, macOS, FreeBSD, but not OpenBSD).
+When set to 0, system setting is used.  (Since 10.1)
 .IP \(bu 2
-\fBkeep\-alive\-interval\fP (\fBint\fP, \fIoptional\fP) \-\- time in seconds between keep\-alive packets.  Only
-supported for TCP sockets on systems where TCP_KEEPINTVL is defined (this
-includes Linux, Windows, macOS, FreeBSD, but not OpenBSD).  When set to
-0, system setting is used.  (Since 10.1)
+\fBkeep\-alive\-interval\fP (\fBint\fP, \fIoptional\fP) \-\- time in seconds between keep\-alive packets.
+Only supported for TCP sockets on systems where TCP_KEEPINTVL is
+defined (this includes Linux, Windows, macOS, FreeBSD, but not
+OpenBSD).  When set to 0, system setting is used.  (Since 10.1)
 .IP \(bu 2
 \fBmptcp\fP (\fBboolean\fP, \fIoptional\fP) \-\- enable multi\-path TCP.  (Since 6.1)
 .IP \(bu 2
@@ -970,8 +972,8 @@ hibernate state
 \fBNOTE:\fP
 .INDENT 7.0
 .INDENT 3.5
-QEMU shuts down (similar to event \fI\%SHUTDOWN\fP) when entering
-this state.
+QEMU shuts down (similar to event \fI\%SHUTDOWN\fP) when
+entering this state.
 .UNINDENT
 .UNINDENT
 .INDENT 7.0
@@ -1025,9 +1027,9 @@ Emitted when the watchdog device\(aqs timer is expired
 \fBNOTE:\fP
 .INDENT 7.0
 .INDENT 3.5
-If action is \(dqreset\(dq, \(dqshutdown\(dq, or \(dqpause\(dq the \fI\%WATCHDOG\fP
-event is followed respectively by the \fI\%RESET\fP, \fI\%SHUTDOWN\fP, or \fI\%STOP\fP
-events.
+If action is \(dqreset\(dq, \(dqshutdown\(dq, or \(dqpause\(dq the
+\fI\%WATCHDOG\fP event is followed respectively by the \fI\%RESET\fP,
+\fI\%SHUTDOWN\fP, or \fI\%STOP\fP events.
 .UNINDENT
 .UNINDENT
 .sp
@@ -1176,7 +1178,8 @@ guest events.
 .IP \(bu 2
 \fBpanic\fP (\fI\%PanicAction\fP, \fIoptional\fP) \-\- \fI\%PanicAction\fP action taken on guest panic.
 .IP \(bu 2
-\fBwatchdog\fP (\fI\%WatchdogAction\fP, \fIoptional\fP) \-\- \fI\%WatchdogAction\fP action taken when watchdog timer expires.
+\fBwatchdog\fP (\fI\%WatchdogAction\fP, \fIoptional\fP) \-\- \fI\%WatchdogAction\fP action taken when watchdog timer
+expires.
 .UNINDENT
 .UNINDENT
 .INDENT 7.0
@@ -1308,6 +1311,8 @@ An enumeration of the guest panic information types
 \fBs390\fP \-\- s390 guest panic information type (Since: 2.12)
 .IP \(bu 2
 \fBtdx\fP \-\- tdx guest panic information type (Since: 10.1)
+.IP \(bu 2
+\fBsev\fP \-\- AMD SEV\-ES guest termination information type (Since: 11.0)
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1327,6 +1332,8 @@ When \fBtype\fP is \fBhyper\-v\fP: The members of \fI\%GuestPanicInformationHype
 When \fBtype\fP is \fBs390\fP: The members of \fI\%GuestPanicInformationS390\fP\&.
 .IP \(bu 2
 When \fBtype\fP is \fBtdx\fP: The members of \fI\%GuestPanicInformationTdx\fP\&.
+.IP \(bu 2
+When \fBtype\fP is \fBsev\fP: The members of \fI\%GuestPanicInformationSev\fP\&.
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1352,8 +1359,8 @@ program counter of the guest.
 \fBarg4\fP (\fBint\fP) \-\- for Windows, third argument of the \fI\%STOP\fP\&.  For Linux, the
 RAX register (x86) or the stack pointer (aarch64) of the guest.
 .IP \(bu 2
-\fBarg5\fP (\fBint\fP) \-\- for Windows, fourth argument of the \fI\%STOP\fP\&.  For x86 Linux, the
-stack pointer of the guest.
+\fBarg5\fP (\fBint\fP) \-\- for Windows, fourth argument of the \fI\%STOP\fP\&.  For x86 Linux,
+the stack pointer of the guest.
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1412,12 +1419,28 @@ section TDG.VP.VMCALL<ReportFatalError>.
 .IP \(bu 2
 \fBerror\-code\fP (\fBint\fP) \-\- TD\-specific error code
 .IP \(bu 2
-\fBmessage\fP (\fBstring\fP) \-\- Human\-readable error message provided by the guest. Not
+\fBmessage\fP (\fBstring\fP) \-\- Human\-readable error message provided by the guest.  Not
 to be trusted.
 .IP \(bu 2
 \fBgpa\fP (\fBint\fP, \fIoptional\fP) \-\- guest\-physical address of a page that contains more verbose
 error information, as zero\-terminated string.  Present when the
 \(dqGPA valid\(dq bit (bit 63) is set in \fBerror\-code\fP\&.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B Object GuestPanicInformationSev (Since: 11.0)
+Information for AMD SEV\-specific termination request (GHCB MSR
+contents)
+.INDENT 7.0
+.TP
+.B Members
+.INDENT 7.0
+.IP \(bu 2
+\fBset\fP (\fBint\fP) \-\- The reason code set provided by the guest
+.IP \(bu 2
+\fBcode\fP (\fBint\fP) \-\- The reason code provided by the guest
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1579,7 +1602,8 @@ The supported algorithms for computing content digests
 .IP \(bu 2
 \fBmd5\fP \-\- MD5.  Should not be used in any new code, legacy compat only
 .IP \(bu 2
-\fBsha1\fP \-\- SHA\-1.  Should not be used in any new code, legacy compat only
+\fBsha1\fP \-\- SHA\-1.  Should not be used in any new code, legacy compat
+only
 .IP \(bu 2
 \fBsha224\fP \-\- SHA\-224.  (since 2.7)
 .IP \(bu 2
@@ -1913,8 +1937,8 @@ to be written into added active keyslots
 deactivate all keyslots that match password located in
 QCryptoSecret with this ID
 .IP \(bu 2
-\fBiter\-time\fP (\fBint\fP, \fIoptional\fP) \-\- Optional (for activation only).  Number of milliseconds to
-spend in PBKDF passphrase processing for the newly activated
+\fBiter\-time\fP (\fBint\fP, \fIoptional\fP) \-\- Optional (for activation only).  Number of milliseconds
+to spend in PBKDF passphrase processing for the newly activated
 keyslot.  Currently defaults to 2000.
 .IP \(bu 2
 \fBkeyslot\fP (\fBint\fP, \fIoptional\fP) \-\- 
@@ -2354,16 +2378,16 @@ state.  Completing the job in any other state is an error.
 .sp
 This is supported only for drive mirroring, where it also switches
 the device to write to the target path only.  Note that drive
-mirroring includes \fI\%drive\-mirror\fP, \fI\%blockdev\-mirror\fP and \fI\%block\-commit\fP
-job (only in case of \(dqactive commit\(dq, when the node being commited
-is used by the guest).  The ability to complete is signaled with a
-\fI\%BLOCK_JOB_READY\fP event.
+mirroring includes \fI\%drive\-mirror\fP, \fI\%blockdev\-mirror\fP and
+\fI\%block\-commit\fP job (only in case of \(dqactive commit\(dq, when the node
+being committed is used by the guest).  The ability to complete is
+signaled with a \fI\%BLOCK_JOB_READY\fP event.
 .sp
 This command completes an active background block operation
 synchronously.  The ordering of this command\(aqs return with the
-\fI\%BLOCK_JOB_COMPLETED\fP event is not defined.  Note that if an I/O error
-occurs during the processing of this command: 1) the command itself
-will fail; 2) the error will be processed according to the
+\fI\%BLOCK_JOB_COMPLETED\fP event is not defined.  Note that if an I/O
+error occurs during the processing of this command: 1) the command
+itself will fail; 2) the error will be processed according to the
 rerror/werror arguments that were specified when starting the
 operation.
 .INDENT 7.0
@@ -2380,16 +2404,16 @@ operation.
 .B Command job\-dismiss (Since: 3.0)
 Deletes a job that is in the CONCLUDED state.  This command only
 needs to be run explicitly for jobs that don\(aqt have automatic
-dismiss enabled.  In turn, automatic dismiss may be enabled only
-for jobs that have \fBauto\-dismiss\fP option, which are \fI\%drive\-backup\fP,
-\fI\%blockdev\-backup\fP, \fI\%drive\-mirror\fP, \fI\%blockdev\-mirror\fP, \fI\%block\-commit\fP and
-\fI\%block\-stream\fP\&.  \fBauto\-dismiss\fP is enabled by default for these
+dismiss enabled.  In turn, automatic dismiss may be enabled only for
+jobs that have \fBauto\-dismiss\fP option, which are \fI\%drive\-backup\fP,
+\fI\%blockdev\-backup\fP, \fI\%drive\-mirror\fP, \fI\%blockdev\-mirror\fP, \fI\%block\-commit\fP
+and \fI\%block\-stream\fP\&.  \fBauto\-dismiss\fP is enabled by default for these
 jobs.
 .sp
 This command will refuse to operate on any job that has not yet
 reached its terminal state, CONCLUDED.  For jobs that make use of
-the JOB_READY event, \fI\%job\-cancel\fP or \fI\%job\-complete\fP will still need to
-be used as appropriate.
+the JOB_READY event, \fI\%job\-cancel\fP or \fI\%job\-complete\fP will still need
+to be used as appropriate.
 .INDENT 7.0
 .TP
 .B Arguments
@@ -2411,8 +2435,8 @@ For jobs in a transaction, instructing one job to finalize will
 force ALL jobs in the transaction to finalize, so it is only
 necessary to instruct a single member job to finalize.
 .sp
-The command is applicable only to jobs which have \fBauto\-finalize\fP option
-and only when this option is set to false.
+The command is applicable only to jobs which have \fBauto\-finalize\fP
+option and only when this option is set to false.
 .INDENT 7.0
 .TP
 .B Arguments
@@ -2526,6 +2550,73 @@ Query accelerator statistics
 .TP
 .B Return
 \fI\%HumanReadableText\fP \-\- accelerator statistics
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B Enum Accelerator (Since: 10.2.0)
+Information about support for MSHV acceleration
+.INDENT 7.0
+.TP
+.B Values
+.INDENT 7.0
+.IP \(bu 2
+\fBhvf\fP \-\- Apple Hypervisor.framework
+.IP \(bu 2
+\fBkvm\fP \-\- KVM
+.IP \(bu 2
+\fBmshv\fP \-\- Hyper\-V
+.IP \(bu 2
+\fBnvmm\fP \-\- NetBSD NVMM
+.IP \(bu 2
+\fBqtest\fP \-\- QTest (dummy accelerator)
+.IP \(bu 2
+\fBtcg\fP \-\- TCG (dynamic translation)
+.IP \(bu 2
+\fBwhpx\fP \-\- Windows Hypervisor Platform
+.IP \(bu 2
+\fBxen\fP \-\- Xen
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B Object AcceleratorInfo (Since: 10.2.0)
+Information about support for various accelerators
+.INDENT 7.0
+.TP
+.B Members
+.INDENT 7.0
+.IP \(bu 2
+\fBenabled\fP (\fI\%Accelerator\fP) \-\- the accelerator that is in use
+.IP \(bu 2
+\fBpresent\fP (\fB[\fP\fI\%Accelerator\fP\fB]\fP) \-\- the list of accelerators that are built into this
+executable
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B Command query\-accelerators (Since: 10.2.0)
+Return information about accelerators
+.INDENT 7.0
+.TP
+.B Return
+\fI\%AcceleratorInfo\fP \-\- \fBAcceleratorInfo\fP
+.UNINDENT
+.INDENT 7.0
+.INDENT 3.5
+.IP "Example:"
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+\-> { \(dqexecute\(dq: \(dqquery\-accelerators\(dq }
+<\- { \(dqreturn\(dq: { \(dqenabled\(dq: \(dqmshv\(dq, \(dqpresent\(dq: [\(dqkvm\(dq, \(dqmshv\(dq, \(dqqtest\(dq, \(dqtcg\(dq] } }
+.EE
+.UNINDENT
+.UNINDENT
+.UNINDENT
 .UNINDENT
 .UNINDENT
 .SH BLOCK DEVICES
@@ -2671,14 +2762,15 @@ Information about a VMDK extent file
 .B Members
 .INDENT 7.0
 .IP \(bu 2
-\fBencryption\-format\fP (\fI\%RbdImageEncryptionFormat\fP, \fIoptional\fP) \-\- Image encryption format. If encryption is enabled for the
-image (see encrypted in BlockNodeInfo), this is the actual format in which the
-image is accessed. If encryption is not enabled, this is the result of
-probing when the image was opened, to give a suggestion which encryption
-format could be enabled. Note that probing results can be changed by the
-guest by writing a (possibly partial) encryption format header to the
-image, so don\(aqt treat this information as trusted if the guest is not
-trusted.
+\fBencryption\-format\fP (\fI\%RbdImageEncryptionFormat\fP, \fIoptional\fP) \-\- Image encryption format.  If encryption is
+enabled for the image (see encrypted in BlockNodeInfo), this is
+the actual format in which the image is accessed.  If encryption
+is not enabled, this is the result of probing when the image was
+opened, to give a suggestion which encryption format could be
+enabled.  Note that probing results can be changed by the guest
+by writing a (possibly partial) encryption format header to the
+image, so don\(aqt treat this information as trusted if the guest
+is not trusted.
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -2800,6 +2892,62 @@ When \fBtype\fP is \fBfile\fP: The members of \fI\%ImageInfoSpecificFileWrapper\
 .UNINDENT
 .INDENT 0.0
 .TP
+.B Object BlockLimitsInfo
+.INDENT 7.0
+.TP
+.B Members
+.INDENT 7.0
+.IP \(bu 2
+\fBrequest\-alignment\fP (\fBint\fP) \-\- Alignment requirement, in bytes, for
+offset/length of I/O requests.
+.IP \(bu 2
+\fBmax\-discard\fP (\fBint\fP, \fIoptional\fP) \-\- Maximum number of bytes that can be discarded at once.
+If not present, there is no specific maximum.
+.IP \(bu 2
+\fBdiscard\-alignment\fP (\fBint\fP, \fIoptional\fP) \-\- Optimal alignment for discard requests in bytes.
+Note that this doesn\(aqt have to be a power of two.  If not
+present, discards don\(aqt have a alignment requirement different
+from \fBrequest\-alignment\fP\&.
+.IP \(bu 2
+\fBmax\-write\-zeroes\fP (\fBint\fP, \fIoptional\fP) \-\- Maximum number of bytes that can be zeroed out at
+once.  If not present, there is no specific maximum.
+.IP \(bu 2
+\fBwrite\-zeroes\-alignment\fP (\fBint\fP, \fIoptional\fP) \-\- Optimal alignment for write zeroes requests
+in bytes.  Note that this doesn\(aqt have to be a power of two.  If
+not present, write_zeroes doesn\(aqt have a alignment requirement
+different from \fBrequest\-alignment\fP\&.
+.IP \(bu 2
+\fBopt\-transfer\fP (\fBint\fP, \fIoptional\fP) \-\- Optimal transfer length in bytes.  If not present,
+there is no preferred size.
+.IP \(bu 2
+\fBmax\-transfer\fP (\fBint\fP, \fIoptional\fP) \-\- Maximal transfer length in bytes.  If not present,
+there is no specific maximum.
+.IP \(bu 2
+\fBmax\-hw\-transfer\fP (\fBint\fP, \fIoptional\fP) \-\- Maximal hardware transfer length in bytes.
+Applies whenever transfers to the device bypass the kernel I/O
+scheduler, for example with SG_IO.  If not present, there is no
+specific maximum.
+.IP \(bu 2
+\fBmax\-iov\fP (\fBint\fP) \-\- Maximum number of scatter/gather elements
+.IP \(bu 2
+\fBmax\-hw\-iov\fP (\fBint\fP, \fIoptional\fP) \-\- Maximum number of scatter/gather elements allowed by
+the hardware.  Applies whenever transfers to the device bypass
+the kernel I/O scheduler, for example with SG_IO.  If not
+present, the hardware limits is unknown and \fBmax\-iov\fP is always
+used.
+.IP \(bu 2
+\fBmin\-mem\-alignment\fP (\fBint\fP) \-\- Minimal required memory alignment in bytes for
+zero\-copy I/O to succeed.  For unaligned requests, a bounce
+buffer will be used.
+.IP \(bu 2
+\fBopt\-mem\-alignment\fP (\fBint\fP) \-\- Optimal memory alignment in bytes.  This is the
+alignment used for any buffer allocations QEMU performs
+internally.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
 .B Object BlockNodeInfo (Since: 8.0)
 Information about a QEMU image file
 .INDENT 7.0
@@ -2830,6 +2978,8 @@ Information about a QEMU image file
 \fBbacking\-filename\-format\fP (\fBstring\fP, \fIoptional\fP) \-\- the format of the backing file
 .IP \(bu 2
 \fBsnapshots\fP (\fB[\fP\fI\%SnapshotInfo\fP\fB]\fP, \fIoptional\fP) \-\- list of VM snapshots
+.IP \(bu 2
+\fBlimits\fP (\fI\%BlockLimitsInfo\fP, \fIoptional\fP) \-\- block limits that are used for I/O on the node (Since 10.2)
 .IP \(bu 2
 \fBformat\-specific\fP (\fI\%ImageInfoSpecific\fP, \fIoptional\fP) \-\- structure supplying additional format\-specific
 information (since 1.7)
@@ -2863,8 +3013,8 @@ parent.
 .B Members
 .INDENT 7.0
 .IP \(bu 2
-\fBname\fP (\fBstring\fP) \-\- Child name of the root node in the \fI\%BlockGraphInfo\fP struct, in
-its role as the child of some undescribed parent node
+\fBname\fP (\fBstring\fP) \-\- Child name of the root node in the \fI\%BlockGraphInfo\fP struct,
+in its role as the child of some undescribed parent node
 .IP \(bu 2
 \fBinfo\fP (\fI\%BlockGraphInfo\fP) \-\- Block graph information starting at this node
 .UNINDENT
@@ -3026,11 +3176,12 @@ added, \(aqtftp\(aq dropped 2.9: \(aqarchipelago\(aq dropped
 \fBbacking_file_depth\fP (\fBint\fP) \-\- number of files in the backing file chain
 (since: 1.2)
 .IP \(bu 2
-\fBchildren\fP (\fB[\fP\fI\%BlockdevChild\fP\fB]\fP) \-\- Information about child block nodes. (since: 10.1)
+\fBchildren\fP (\fB[\fP\fI\%BlockdevChild\fP\fB]\fP) \-\- Information about child block nodes.  (since: 10.1)
 .IP \(bu 2
-\fBactive\fP (\fBboolean\fP) \-\- true if the backend is active; typical cases for inactive backends
-are on the migration source instance after migration completes and on the
-destination before it completes.  (since: 10.0)
+\fBactive\fP (\fBboolean\fP) \-\- true if the backend is active; typical cases for inactive
+backends are on the migration source instance after migration
+completes and on the destination before it completes.
+(since: 10.0)
 .IP \(bu 2
 \fBencrypted\fP (\fBboolean\fP) \-\- true if the backing device is encrypted
 .IP \(bu 2
@@ -3301,9 +3452,17 @@ support persistent bitmaps.  (since 5.1)
 Get a list of \fI\%BlockInfo\fP for all virtual block devices.
 .INDENT 7.0
 .TP
+.B Arguments
+.INDENT 7.0
+.IP \(bu 2
+\fBflat\fP (\fBboolean\fP, \fIoptional\fP) \-\- Omit nested data about the backing image, i.e. \fI\%BlockInfo\fP
+member \(aqinserted.image.backing\-image\(aq will be absent.
+Default is false.  (Since 11.0)
+.UNINDENT
+.TP
 .B Return
-\fB[\fP\fI\%BlockInfo\fP\fB]\fP \-\- a list describing each virtual block device.
-Filter nodes that were created implicitly are skipped over.
+\fB[\fP\fI\%BlockInfo\fP\fB]\fP \-\- a list describing each virtual block device.  Filter nodes
+that were created implicitly are skipped over.
 .UNINDENT
 .INDENT 7.0
 .INDENT 3.5
@@ -4140,11 +4299,12 @@ default \(aqreport\(aq (no limitations, since this applies to a
 different block device than \fBdevice\fP).
 .IP \(bu 2
 \fBon\-cbw\-error\fP (\fI\%OnCbwError\fP, \fIoptional\fP) \-\- policy defining behavior on I/O errors in
-copy\-before\-write jobs; defaults to break\-guest\-write.  (Since 10.1)
+copy\-before\-write jobs; defaults to break\-guest\-write.
+(Since 10.1)
 .IP \(bu 2
 \fBauto\-finalize\fP (\fBboolean\fP, \fIoptional\fP) \-\- When false, this job will wait in a PENDING state
-after it has finished its work, waiting for \fI\%job\-finalize\fP before
-making any block graph changes.  When true, this job will
+after it has finished its work, waiting for \fI\%job\-finalize\fP
+before making any block graph changes.  When true, this job will
 automatically perform its abort or commit actions.  Defaults to
 true.  (Since 2.12)
 .IP \(bu 2
@@ -4276,7 +4436,8 @@ The members of \fI\%BlockdevSnapshot\fP\&.
 .IP \(bu 2
 \fBallow\-write\-only\-overlay\fP \-\- If present, the check whether this
 operation is safe was relaxed so that it can be used to change
-backing file of a destination of a \fI\%blockdev\-mirror\fP\&.  (since 5.0)
+backing file of a destination of a \fI\%blockdev\-mirror\fP\&.
+(since 5.0)
 .UNINDENT
 .UNINDENT
 .INDENT 7.0
@@ -4347,8 +4508,8 @@ i.e., writes data between \(aqtop\(aq and \(aqbase\(aq into \(aqbase\(aq.
 .sp
 If top == base, that is an error.  If top has no overlays on top of
 it, or if it is in use by a writer, the job will not be completed by
-itself.  The user needs to complete the job with the
-\fI\%job\-complete\fP command after getting the ready event.  (Since 2.0)
+itself.  The user needs to complete the job with the \fI\%job\-complete\fP
+command after getting the ready event.  (Since 2.0)
 .sp
 If the base image is smaller than top, then the base image will be
 resized to be the same size as top.  If top is smaller than the base
@@ -4417,8 +4578,8 @@ filter driver that the commit job inserts into the graph above
 autogenerated.  (Since: 2.9)
 .IP \(bu 2
 \fBauto\-finalize\fP (\fBboolean\fP, \fIoptional\fP) \-\- When false, this job will wait in a PENDING state
-after it has finished its work, waiting for \fI\%job\-finalize\fP before
-making any block graph changes.  When true, this job will
+after it has finished its work, waiting for \fI\%job\-finalize\fP
+before making any block graph changes.  When true, this job will
 automatically perform its abort or commit actions.  Defaults to
 true.  (Since 3.1)
 .IP \(bu 2
@@ -4513,10 +4674,10 @@ If \fBdevice\fP is not a valid block device, GenericError
 .TP
 .B Command blockdev\-backup (Since: 2.3)
 Start a point\-in\-time copy of a block device to a new destination.
-The status of ongoing \fI\%blockdev\-backup\fP operations can be checked with
-\fI\%query\-block\-jobs\fP where the \fI\%BlockJobInfo\fP\&.type field has the value
-\(aqbackup\(aq.  The operation can be stopped before it has completed
-using the \fI\%job\-cancel\fP or \fI\%block\-job\-cancel\fP command.
+The status of ongoing \fI\%blockdev\-backup\fP operations can be checked
+with \fI\%query\-block\-jobs\fP where the \fI\%BlockJobInfo\fP\&.type field has the
+value \(aqbackup\(aq.  The operation can be stopped before it has
+completed using the \fI\%job\-cancel\fP or \fI\%block\-job\-cancel\fP command.
 .INDENT 7.0
 .TP
 .B Arguments
@@ -4857,8 +5018,8 @@ Default is true.  (Since 2.4)
 \(aqbackground\(aq (Since: 3.0)
 .IP \(bu 2
 \fBauto\-finalize\fP (\fBboolean\fP, \fIoptional\fP) \-\- When false, this job will wait in a PENDING state
-after it has finished its work, waiting for \fI\%job\-finalize\fP before
-making any block graph changes.  When true, this job will
+after it has finished its work, waiting for \fI\%job\-finalize\fP
+before making any block graph changes.  When true, this job will
 automatically perform its abort or commit actions.  Defaults to
 true.  (Since 3.1)
 .IP \(bu 2
@@ -4905,7 +5066,8 @@ for \fI\%block\-dirty\-bitmap\-add\fP\&.  (Since: 2.10)
 .IP \(bu 2
 \fBdisabled\fP (\fBboolean\fP, \fIoptional\fP) \-\- the bitmap is created in the disabled state, which means
 that it will not track drive changes.  The bitmap may be enabled
-with \fI\%block\-dirty\-bitmap\-enable\fP\&.  Default is false.  (Since: 4.0)
+with \fI\%block\-dirty\-bitmap\-enable\fP\&.  Default is false.
+(Since: 4.0)
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -4984,8 +5146,8 @@ If \fBname\fP is already taken, GenericError
 .TP
 .B Command block\-dirty\-bitmap\-remove (Since: 2.4)
 Stop write tracking and remove the dirty bitmap that was created
-with \fI\%block\-dirty\-bitmap\-add\fP\&.  If the bitmap is persistent, remove it
-from its storage too.
+with \fI\%block\-dirty\-bitmap\-add\fP\&.  If the bitmap is persistent, remove
+it from its storage too.
 .INDENT 7.0
 .TP
 .B Arguments
@@ -5283,8 +5445,8 @@ autogenerated.  (Since: 2.9)
 \(aqbackground\(aq (Since: 3.0)
 .IP \(bu 2
 \fBauto\-finalize\fP (\fBboolean\fP, \fIoptional\fP) \-\- When false, this job will wait in a PENDING state
-after it has finished its work, waiting for \fI\%job\-finalize\fP before
-making any block graph changes.  When true, this job will
+after it has finished its work, waiting for \fI\%job\-finalize\fP
+before making any block graph changes.  When true, this job will
 automatically perform its abort or commit actions.  Defaults to
 true.  (Since 3.1)
 .IP \(bu 2
@@ -5602,8 +5764,8 @@ filter driver that the stream job inserts into the graph above
 autogenerated.  (Since: 6.0)
 .IP \(bu 2
 \fBauto\-finalize\fP (\fBboolean\fP, \fIoptional\fP) \-\- When false, this job will wait in a PENDING state
-after it has finished its work, waiting for \fI\%job\-finalize\fP before
-making any block graph changes.  When true, this job will
+after it has finished its work, waiting for \fI\%job\-finalize\fP
+before making any block graph changes.  When true, this job will
 automatically perform its abort or commit actions.  Defaults to
 true.  (Since 3.1)
 .IP \(bu 2
@@ -5803,16 +5965,16 @@ state.  Completing the job in any other state is an error.
 .sp
 This is supported only for drive mirroring, where it also switches
 the device to write to the target path only.  Note that drive
-mirroring includes \fI\%drive\-mirror\fP, \fI\%blockdev\-mirror\fP and \fI\%block\-commit\fP
-job (only in case of \(dqactive commit\(dq, when the node being commited
-is used by the guest).  The ability to complete is signaled with a
-\fI\%BLOCK_JOB_READY\fP event.
+mirroring includes \fI\%drive\-mirror\fP, \fI\%blockdev\-mirror\fP and
+\fI\%block\-commit\fP job (only in case of \(dqactive commit\(dq, when the node
+being committed is used by the guest).  The ability to complete is
+signaled with a \fI\%BLOCK_JOB_READY\fP event.
 .sp
 This command completes an active background block operation
 synchronously.  The ordering of this command\(aqs return with the
-\fI\%BLOCK_JOB_COMPLETED\fP event is not defined.  Note that if an I/O error
-occurs during the processing of this command: 1) the command itself
-will fail; 2) the error will be processed according to the
+\fI\%BLOCK_JOB_COMPLETED\fP event is not defined.  Note that if an I/O
+error occurs during the processing of this command: 1) the command
+itself will fail; 2) the error will be processed according to the
 rerror/werror arguments that were specified when starting the
 operation.
 .INDENT 7.0
@@ -5848,10 +6010,10 @@ This command is deprecated.
 .sp
 Deletes a job that is in the CONCLUDED state.  This command only
 needs to be run explicitly for jobs that don\(aqt have automatic
-dismiss enabled.  In turn, automatic dismiss may be enabled only
-for jobs that have \fBauto\-dismiss\fP option, which are \fI\%drive\-backup\fP,
-\fI\%blockdev\-backup\fP, \fI\%drive\-mirror\fP, \fI\%blockdev\-mirror\fP, \fI\%block\-commit\fP and
-\fI\%block\-stream\fP\&.  \fBauto\-dismiss\fP is enabled by default for these
+dismiss enabled.  In turn, automatic dismiss may be enabled only for
+jobs that have \fBauto\-dismiss\fP option, which are \fI\%drive\-backup\fP,
+\fI\%blockdev\-backup\fP, \fI\%drive\-mirror\fP, \fI\%blockdev\-mirror\fP, \fI\%block\-commit\fP
+and \fI\%block\-stream\fP\&.  \fBauto\-dismiss\fP is enabled by default for these
 jobs.
 .sp
 This command will refuse to operate on any job that has not yet
@@ -5888,8 +6050,8 @@ For jobs in a transaction, instructing one job to finalize will
 force ALL jobs in the transaction to finalize, so it is only
 necessary to instruct a single member job to finalize.
 .sp
-The command is applicable only to jobs which have \fBauto\-finalize\fP option
-and only when this option is set to false.
+The command is applicable only to jobs which have \fBauto\-finalize\fP
+option and only when this option is set to false.
 .INDENT 7.0
 .TP
 .B Arguments
@@ -7457,6 +7619,11 @@ no cookies.
 \fBcookie\-secret\fP (\fBstring\fP, \fIoptional\fP) \-\- ID of a QCryptoSecret object providing the cookie
 data in a secure way.  See \fBcookie\fP for the format.  (since 2.10)
 .IP \(bu 2
+\fBforce\-range\fP (\fBboolean\fP, \fIoptional\fP) \-\- Don\(aqt issue a HEAD HTTP request to discover if the
+http server supports range requests and rely only on GET
+requests.  This is especially useful for S3 presigned URLs where
+HEAD requests are unauthorized.  (default: false; since 11.0)
+.IP \(bu 2
 The members of \fI\%BlockdevOptionsCurlBase\fP\&.
 .UNINDENT
 .UNINDENT
@@ -7471,17 +7638,10 @@ curl backend.  URLs must start with \(dq\X'tty: link https://'\fI\%https://\fP\X
 .B Members
 .INDENT 7.0
 .IP \(bu 2
-\fBcookie\fP (\fBstring\fP, \fIoptional\fP) \-\- List of cookies to set; format is \(dqname1=content1;
-name2=content2;\(dq as explained by CURLOPT_COOKIE(3).  Defaults to
-no cookies.
-.IP \(bu 2
 \fBsslverify\fP (\fBboolean\fP, \fIoptional\fP) \-\- Whether to verify the SSL certificate\(aqs validity
 (defaults to true)
 .IP \(bu 2
-\fBcookie\-secret\fP (\fBstring\fP, \fIoptional\fP) \-\- ID of a QCryptoSecret object providing the cookie
-data in a secure way.  See \fBcookie\fP for the format.  (since 2.10)
-.IP \(bu 2
-The members of \fI\%BlockdevOptionsCurlBase\fP\&.
+The members of \fI\%BlockdevOptionsCurlHttp\fP\&.
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -7700,9 +7860,9 @@ characters.  (Since 2.0)
 \fBcache\fP (\fI\%BlockdevCacheOptions\fP, \fIoptional\fP) \-\- cache\-related options
 .IP \(bu 2
 \fBactive\fP (\fBboolean\fP, \fIoptional\fP) \-\- whether the block node should be activated (default: true).
-Having inactive block nodes is useful primarily for migration because it
-allows opening an image on the destination while the source is still
-holding locks for it.  (Since 10.0)
+Having inactive block nodes is useful primarily for migration
+because it allows opening an image on the destination while the
+source is still holding locks for it.  (Since 10.0)
 .IP \(bu 2
 \fBread\-only\fP (\fBboolean\fP, \fIoptional\fP) \-\- whether the block device should be read\-only (default:
 false).  Note that some block drivers support only read\-only
@@ -7936,11 +8096,12 @@ transaction, so if one of them fails then the whole transaction is
 cancelled.
 .sp
 The command receives a list of block devices to reopen.  For each
-one of them, the top\-level \fBnode\-name\fP option (from \fI\%BlockdevOptions\fP)
-must be specified and is used to select the block device to be
-reopened.  Other \fBnode\-name\fP options must be either omitted or set to
-the current name of the appropriate node.  This command won\(aqt change
-any node name and any attempt to do it will result in an error.
+one of them, the top\-level \fBnode\-name\fP option (from
+\fI\%BlockdevOptions\fP) must be specified and is used to select the block
+device to be reopened.  Other \fBnode\-name\fP options must be either
+omitted or set to the current name of the appropriate node.  This
+command won\(aqt change any node name and any attempt to do it will
+result in an error.
 .sp
 In the case of options that refer to child nodes, the behavior of
 this command depends on the value:
@@ -7965,10 +8126,10 @@ null: the current child (if any) is detached.
 Options (1) and (2) are supported in all cases.  Option (3) is
 supported for \fBfile\fP and \fBbacking\fP, and option (4) for \fBbacking\fP only.
 .sp
-Unlike with \fI\%blockdev\-add\fP, the \fBbacking\fP option must always be present
-unless the node being reopened does not have a backing file and its
-image does not have a default backing file name as part of its
-metadata.
+Unlike with \fI\%blockdev\-add\fP, the \fBbacking\fP option must always be
+present unless the node being reopened does not have a backing file
+and its image does not have a default backing file name as part of
+its metadata.
 .INDENT 7.0
 .TP
 .B Arguments
@@ -7981,8 +8142,8 @@ metadata.
 .INDENT 0.0
 .TP
 .B Command blockdev\-del (Since: 2.9)
-Deletes a block device that has been added using \fI\%blockdev\-add\fP\&.  The
-command will fail if the node is attached to a device or is
+Deletes a block device that has been added using \fI\%blockdev\-add\fP\&.
+The command will fail if the node is attached to a device or is
 otherwise being used.
 .INDENT 7.0
 .TP
@@ -8024,22 +8185,22 @@ otherwise being used.
 .INDENT 0.0
 .TP
 .B Command blockdev\-set\-active (Since: 10.0)
-Activate or inactivate a block device.  Use this to manage the handover of
-block devices on migration with qemu\-storage\-daemon.
+Activate or deactivate a block device.  Use this to manage the
+handover of block devices on migration with qemu\-storage\-daemon.
 .sp
-Activating a node automatically activates all of its child nodes first.
-Inactivating a node automatically inactivates any of its child nodes that are
-not in use by a still active node.
+Activating a node automatically activates all of its child nodes
+first.  Deactivating a node automatically deactivates any of its
+child nodes that are not in use by a still active node.
 .INDENT 7.0
 .TP
 .B Arguments
 .INDENT 7.0
 .IP \(bu 2
-\fBnode\-name\fP (\fBstring\fP, \fIoptional\fP) \-\- Name of the graph node to activate or inactivate.  By default, all
-nodes are affected by the operation.
+\fBnode\-name\fP (\fBstring\fP, \fIoptional\fP) \-\- Name of the graph node to activate or deactivate.  By
+default, all nodes are affected by the operation.
 .IP \(bu 2
-\fBactive\fP (\fBboolean\fP) \-\- true if the nodes should be active when the command returns success,
-false if they should be inactive.
+\fBactive\fP (\fBboolean\fP) \-\- true if the nodes should be active when the command returns
+success, false if they should be inactive.
 .UNINDENT
 .UNINDENT
 .INDENT 7.0
@@ -8751,7 +8912,7 @@ the \fI\%BLOCK_IO_ERROR\fP event.
 \fBNOTE:\fP
 .INDENT 7.0
 .INDENT 3.5
-This event is rate\-limited.
+This event is rate\-limited, except if action is \(dqstop\(dq.
 .UNINDENT
 .UNINDENT
 .INDENT 7.0
@@ -8946,9 +9107,9 @@ The \(dqready to complete\(dq status is always reset by a
 .TP
 .B Event BLOCK_JOB_PENDING (Since: 2.12)
 Emitted when a block job is awaiting explicit authorization to
-finalize graph changes via \fI\%job\-finalize\fP\&.  If this job is part
-of a transaction, it will not emit this event until the transaction
-has converged first.
+finalize graph changes via \fI\%job\-finalize\fP\&.  If this job is part of a
+transaction, it will not emit this event until the transaction has
+converged first.
 .INDENT 7.0
 .TP
 .B Members
@@ -10236,8 +10397,8 @@ default: 100).
 .INDENT 0.0
 .TP
 .B Object NbdServerOptions
-Keep this type consistent with the \fI\%NbdServerOptionsLegacy\fP type.  The
-only intended difference is using \fI\%SocketAddress\fP instead of
+Keep this type consistent with the \fI\%NbdServerOptionsLegacy\fP type.
+The only intended difference is using \fI\%SocketAddress\fP instead of
 \fI\%SocketAddressLegacy\fP\&.
 .INDENT 7.0
 .TP
@@ -10253,8 +10414,8 @@ The members of \fI\%NbdServerOptionsBase\fP\&.
 .INDENT 0.0
 .TP
 .B Object NbdServerOptionsLegacy
-Keep this type consistent with the \fI\%NbdServerOptions\fP type.  The only
-intended difference is using \fI\%SocketAddressLegacy\fP instead of
+Keep this type consistent with the \fI\%NbdServerOptions\fP type.  The
+only intended difference is using \fI\%SocketAddressLegacy\fP instead of
 \fI\%SocketAddress\fP\&.
 .INDENT 7.0
 .TP
@@ -10343,8 +10504,8 @@ A vhost\-user\-blk block export.
 .INDENT 7.0
 .IP \(bu 2
 \fBaddr\fP (\fI\%SocketAddress\fP) \-\- The vhost\-user socket on which to listen.  Both \(aqunix\(aq and
-\(aqfd\(aq \fI\%SocketAddress\fP types are supported.  Passed fds must be UNIX
-domain sockets.
+\(aqfd\(aq \fI\%SocketAddress\fP types are supported.  Passed fds must be
+UNIX domain sockets.
 .IP \(bu 2
 \fBlogical\-block\-size\fP (\fBint\fP, \fIoptional\fP) \-\- Logical block size in bytes.  Defaults to 512
 bytes.
@@ -10379,6 +10540,11 @@ without allow_other.
 .sp
 Options for exporting a block graph node on some (file) mountpoint
 as a raw image.
+.sp
+Multi\-threading note: The FUSE export supports multi\-threading.
+Currently, requests are distributed across these threads in a
+round\-robin fashion, i.e. independently of the CPU core from which a
+request originates.
 .INDENT 7.0
 .TP
 .B Members
@@ -10584,21 +10750,24 @@ types)
 to the export before completion is signalled.  (since: 5.2;
 default: false)
 .IP \(bu 2
-\fBiothread\fP (\fBstring\fP, \fIoptional\fP) \-\- The name of the iothread object where the export will
-run.  The default is to use the thread currently associated with
-the block node.  (since: 5.2)
+\fBiothread\fP (\fI\%BlockExportIothreads\fP, \fIoptional\fP) \-\- The name(s) of one or more iothread object(s) where the
+export will run.  The default is to use the thread currently
+associated with the block node.  (since: 5.2; multi\-threading
+since 10.1)
 .IP \(bu 2
 \fBfixed\-iothread\fP (\fBboolean\fP, \fIoptional\fP) \-\- True prevents the block node from being moved to
 another thread while the export is active.  If true and
 \fBiothread\fP is given, export creation fails if the block node
-cannot be moved to the iothread.  The default is false.
+cannot be moved to the iothread.  Must not be true when giving
+multiple iothreads for \fBiothread\fP\&.  The default is false.
 (since: 5.2)
 .IP \(bu 2
-\fBallow\-inactive\fP (\fBboolean\fP, \fIoptional\fP) \-\- If true, the export allows the exported node to be inactive.
-If it is created for an inactive block node, the node remains inactive.  If
-the export type doesn\(aqt support running on an inactive node, an error is
-returned.  If false, inactive block nodes are automatically activated before
-creating the export and trying to inactivate them later fails.
+\fBallow\-inactive\fP (\fBboolean\fP, \fIoptional\fP) \-\- If true, the export allows the exported node to be
+inactive.  If it is created for an inactive block node, the node
+remains inactive.  If the export type doesn\(aqt support running on
+an inactive node, an error is returned.  If false, inactive
+block nodes are automatically activated before creating the
+export and trying to inactivate them later fails.
 (since: 10.0; default: false)
 .IP \(bu 2
 When \fBtype\fP is \fBnbd\fP: The members of \fI\%BlockExportOptionsNbd\fP\&.
@@ -10608,6 +10777,29 @@ When \fBtype\fP is \fBvhost\-user\-blk\fP: The members of \fI\%BlockExportOption
 When \fBtype\fP is \fBfuse\fP: The members of \fI\%BlockExportOptionsFuse\fP\&.
 .IP \(bu 2
 When \fBtype\fP is \fBvduse\-blk\fP: The members of \fI\%BlockExportOptionsVduseBlk\fP\&.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B Alternate BlockExportIothreads (Since: 10.1)
+Specify a single or multiple I/O threads in which to run a block
+export\(aqs I/O.
+.INDENT 7.0
+.TP
+.B Alternatives
+.INDENT 7.0
+.IP \(bu 2
+\fBsingle\fP (\fBstring\fP) \-\- Run the export\(aqs I/O in the given single I/O thread.
+.IP \(bu 2
+\fBmulti\fP (\fB[\fP\fBstring\fP\fB]\fP) \-\- Use multi\-threading across the given set of I/O threads,
+which must not be empty.  Note: Passing a single I/O thread via
+this variant is still treated as multi\-threading, which is
+different from using the \fBsingle\fP variant.  In particular, even
+if there only is a single I/O thread in the set, export types
+that do not support multi\-threading will generally reject this
+variant, and BlockExportOptions.fixed\-iothread is always
+incompatible with it.
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -10681,7 +10873,8 @@ Information about a single block export.
 \fBnode\-name\fP (\fBstring\fP) \-\- The node name of the block node that is exported
 .IP \(bu 2
 \fBshutting\-down\fP (\fBboolean\fP) \-\- True if the export is shutting down (e.g. after a
-\fI\%block\-export\-del\fP command, but before the shutdown has completed)
+\fI\%block\-export\-del\fP command, but before the shutdown has
+completed)
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -10943,6 +11136,9 @@ Configuration shared across all chardev backends
 .IP \(bu 2
 \fBlogappend\fP (\fBboolean\fP, \fIoptional\fP) \-\- true to append instead of truncate (default to false to
 truncate)
+.IP \(bu 2
+\fBlogtimestamp\fP (\fBboolean\fP, \fIoptional\fP) \-\- true to insert timestamps into logfile
+(default false) (since 11.0)
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -11018,25 +11214,12 @@ deprecated.
 \fBwebsocket\fP (\fBboolean\fP, \fIoptional\fP) \-\- enable websocket protocol on server sockets
 (default: false) (Since: 3.1)
 .IP \(bu 2
-\fBreconnect\fP (\fBint\fP, \fIoptional\fP) \-\- For a client socket, if a socket is disconnected, then
-attempt a reconnect after the given number of seconds.  Setting
-this to zero disables this function.  The use of this member is
-deprecated, use \fBreconnect\-ms\fP instead.  (default: 0) (Since: 2.2)
-.IP \(bu 2
 \fBreconnect\-ms\fP (\fBint\fP, \fIoptional\fP) \-\- For a client socket, if a socket is disconnected,
 then attempt a reconnect after the given number of milliseconds.
-Setting this to zero disables this function.  This member is
-mutually exclusive with \fBreconnect\fP\&.
+Setting this to zero disables this function.
 (default: 0) (Since: 9.2)
 .IP \(bu 2
 The members of \fI\%ChardevCommon\fP\&.
-.UNINDENT
-.TP
-.B Features
-.INDENT 7.0
-.IP \(bu 2
-\fBdeprecated\fP \-\- Member \fBreconnect\fP is deprecated.  Use \fBreconnect\-ms\fP
-instead.
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -12184,9 +12367,11 @@ Unprivileged user\-mode network connectivity using passt
 .B Members
 .INDENT 7.0
 .IP \(bu 2
-\fBpath\fP (\fBstring\fP, \fIoptional\fP) \-\- Filename of the passt program to run (by default \(aqpasst\(aq, and use PATH)
+\fBpath\fP (\fBstring\fP, \fIoptional\fP) \-\- Filename of the passt program to run (by default \(aqpasst\(aq, and
+use PATH)
 .IP \(bu 2
-\fBquiet\fP (\fBboolean\fP, \fIoptional\fP) \-\- don\(aqt print informational messages (default, passed as \(aq\-\-quiet\(aq)
+\fBquiet\fP (\fBboolean\fP, \fIoptional\fP) \-\- don\(aqt print informational messages (default, passed as
+\(aq\-\-quiet\(aq)
 .IP \(bu 2
 \fBvhost\-user\fP (\fBboolean\fP, \fIoptional\fP) \-\- enable vhost\-user
 .IP \(bu 2
@@ -12312,8 +12497,8 @@ prefix is given in the usual hexadecimal IPv6 address notation.
 .IP \(bu 2
 \fBsmbserver\fP (\fBstring\fP, \fIoptional\fP) \-\- IP address of the built\-in SMB server
 .IP \(bu 2
-\fBhostfwd\fP (\fB[\fP\fI\%String\fP\fB]\fP, \fIoptional\fP) \-\- redirect incoming TCP or UDP host connections to guest
-endpoints
+\fBhostfwd\fP (\fB[\fP\fI\%String\fP\fB]\fP, \fIoptional\fP) \-\- redirect incoming TCP, UDP or UNIX host connections to
+guest endpoints
 .IP \(bu 2
 \fBguestfwd\fP (\fB[\fP\fI\%String\fP\fB]\fP, \fIoptional\fP) \-\- forward guest TCP connections
 .IP \(bu 2
@@ -12545,7 +12730,8 @@ then \(aqnative\(aq will be tried first, then \(aqskb\(aq.
 (default: 0).
 .IP \(bu 2
 \fBinhibit\fP (\fBboolean\fP, \fIoptional\fP) \-\- Don\(aqt load a default XDP program, use one already loaded
-to the interface (default: false).  Requires \fBsock\-fds\fP or \fBmap\-path\fP\&.
+to the interface (default: false).  Requires \fBsock\-fds\fP or
+\fBmap\-path\fP\&.
 .IP \(bu 2
 \fBsock\-fds\fP (\fBstring\fP, \fIoptional\fP) \-\- A colon (:) separated list of file descriptors for
 already open but not bound AF_XDP sockets in the queue order.
@@ -12558,7 +12744,8 @@ for bound AF_XDP sockets into.  \fBmap\-path\fP and \fBsock\-fds\fP are
 mutually exclusive.  Requires \fBinhibit\fP\&.  (Since 10.1)
 .IP \(bu 2
 \fBmap\-start\-index\fP (\fBint\fP, \fIoptional\fP) \-\- Use \fBmap\-path\fP to insert xsk sockets starting from
-this index number (default: 0).  Requires \fBmap\-path\fP\&.  (Since 10.1)
+this index number (default: 0).  Requires \fBmap\-path\fP\&.
+(Since 10.1)
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -12728,27 +12915,14 @@ Configuration info for stream socket netdev
 .IP \(bu 2
 \fBserver\fP (\fBboolean\fP, \fIoptional\fP) \-\- create server socket (default: false)
 .IP \(bu 2
-\fBreconnect\fP (\fBint\fP, \fIoptional\fP) \-\- For a client socket, if a socket is disconnected, then
-attempt a reconnect after the given number of seconds.  Setting
-this to zero disables this function.  (default: 0) (since 8.0)
-.IP \(bu 2
-\fBreconnect\-ms\fP (\fBint\fP, \fIoptional\fP) \-\- For a client socket, if a socket is disconnected, then
-attempt a reconnect after the given number of milliseconds.  Setting
-this to zero disables this function.  This member is mutually
-exclusive with \fBreconnect\fP\&.  (default: 0) (Since: 9.2)
+\fBreconnect\-ms\fP (\fBint\fP, \fIoptional\fP) \-\- For a client socket, if a socket is disconnected,
+then attempt a reconnect after the given number of milliseconds.
+Setting this to zero disables this function.
+(default: 0) (Since: 9.2)
 .UNINDENT
 .UNINDENT
 .sp
 Only \fI\%SocketAddress\fP types \(aqunix\(aq, \(aqinet\(aq and \(aqfd\(aq are supported.
-.INDENT 7.0
-.TP
-.B Features
-.INDENT 7.0
-.IP \(bu 2
-\fBdeprecated\fP \-\- Member \fBreconnect\fP is deprecated.  Use \fBreconnect\-ms\fP
-instead.
-.UNINDENT
-.UNINDENT
 .UNINDENT
 .INDENT 0.0
 .TP
@@ -15486,10 +15660,10 @@ Send keys to guest.
 .B Arguments
 .INDENT 7.0
 .IP \(bu 2
-\fBkeys\fP (\fB[\fP\fI\%KeyValue\fP\fB]\fP) \-\- An array of \fI\%KeyValue\fP elements.  All \fBKeyValues\fP in this array
-are simultaneously sent to the guest.  A \fI\%KeyValue\fP\&.number value
-is sent directly to the guest, while \fI\%KeyValue\fP\&.qcode must be a
-valid \fI\%QKeyCode\fP value
+\fBkeys\fP (\fB[\fP\fI\%KeyValue\fP\fB]\fP) \-\- An array of \fI\%KeyValue\fP elements.  All \fBKeyValues\fP in this
+array are simultaneously sent to the guest.  A \fI\%KeyValue\fP\&.number
+value is sent directly to the guest, while \fI\%KeyValue\fP\&.qcode must
+be a valid \fI\%QKeyCode\fP value
 .IP \(bu 2
 \fBhold\-time\fP (\fBint\fP, \fIoptional\fP) \-\- time to delay key up events, milliseconds.  Defaults to
 100
@@ -15871,10 +16045,11 @@ devices) by default.  (Since 7.1)
 \fBshow\-menubar\fP (\fBboolean\fP, \fIoptional\fP) \-\- Display the main window menubar.  Defaults to \(dqon\(dq.
 (Since 8.0)
 .IP \(bu 2
-\fBkeep\-aspect\-ratio\fP (\fBboolean\fP, \fIoptional\fP) \-\- Keep width/height aspect ratio of guest content when
-resizing host window.  Defaults to \(dqon\(dq. (Since 10.1)
+\fBkeep\-aspect\-ratio\fP (\fBboolean\fP, \fIoptional\fP) \-\- Keep width/height aspect ratio of guest content
+when resizing host window.  Defaults to \(dqon\(dq.  (Since 10.1)
 .IP \(bu 2
-\fBscale\fP (\fBnumber\fP, \fIoptional\fP) \-\- Set preferred scale of the display.  Defaults to 1.0.  (Since 10.1)
+\fBscale\fP (\fBnumber\fP, \fIoptional\fP) \-\- Set preferred scale of the display.  Defaults to 1.0.
+(Since 10.1)
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -16518,6 +16693,12 @@ An enumeration of migration status.
 \fBpostcopy\-active\fP \-\- like active, but now in postcopy mode.
 (since 2.5)
 .IP \(bu 2
+\fBpostcopy\-device\fP \-\- like postcopy\-active, but the destination is still
+loading device state and is not running yet.  If migration fails
+during this state, the source side will resume.  If there is no
+return\-path from destination to source, this state is skipped.
+(since 10.2)
+.IP \(bu 2
 \fBpostcopy\-paused\fP \-\- during postcopy but paused.  (since 3.0)
 .IP \(bu 2
 \fBpostcopy\-recover\-setup\fP \-\- setup phase for a postcopy recovery
@@ -16528,7 +16709,10 @@ process, preparing for a recovery phase to start.  (since 9.1)
 .IP \(bu 2
 \fBcompleted\fP \-\- migration is finished.
 .IP \(bu 2
-\fBfailed\fP \-\- some error occurred during migration process.
+\fBfailing\fP \-\- error occurred during migration, clean\-up underway.
+(since 11.0)
+.IP \(bu 2
+\fBfailed\fP \-\- error occurred during migration, clean\-up done.
 .IP \(bu 2
 \fBcolo\fP \-\- VM is in the process of fault tolerance, VM can not get into
 this state unless colo capability is enabled for migration.
@@ -16536,11 +16720,11 @@ this state unless colo capability is enabled for migration.
 .IP \(bu 2
 \fBpre\-switchover\fP \-\- Paused before device serialisation.  (since 2.11)
 .IP \(bu 2
-\fBdevice\fP \-\- During device serialisation (also known as switchover phase).
-Before 9.2, this is only used when (1) in precopy, and (2) when
-pre\-switchover capability is enabled.  After 10.0, this state will
-always be present for every migration procedure as the switchover
-phase.  (since 2.11)
+\fBdevice\fP \-\- During device serialisation (also known as switchover
+phase).  Before 9.2, this is only used when (1) in precopy, and
+(2) when pre\-switchover capability is enabled.  After 10.0, this
+state will always be present for every migration procedure as
+the switchover phase.  (since 2.11)
 .IP \(bu 2
 \fBwait\-unplug\fP \-\- wait for device unplug request by guest OS to be
 completed.  (since 4.2)
@@ -16613,30 +16797,33 @@ postcopy\-blocktime migration capability is enabled.  (Since 3.0)
 This is only present when the postcopy\-blocktime migration
 capability is enabled.  (Since 3.0)
 .IP \(bu 2
-\fBpostcopy\-latency\fP (\fBint\fP, \fIoptional\fP) \-\- average remote page fault latency (in ns).  Note that
-this doesn\(aqt include all faults, but only the ones that require a
-remote page request.  So it should be always bigger than the real
-average page fault latency. This is only present when the
-postcopy\-blocktime migration capability is enabled.  (Since 10.1)
-.IP \(bu 2
-\fBpostcopy\-latency\-dist\fP (\fB[\fP\fBint\fP\fB]\fP, \fIoptional\fP) \-\- remote page fault latency distributions.  Each
-element of the array is the number of faults that fall into the
-bucket period.  For the N\-th bucket (N>=0), the latency window is
-[2^Nus, 2^(N+1)us).  For example, the 8th element stores how many
-remote faults got resolved within [256us, 512us) window. This is only
-present when the postcopy\-blocktime migration capability is enabled.
+\fBpostcopy\-latency\fP (\fBint\fP, \fIoptional\fP) \-\- average remote page fault latency (in ns).  Note
+that this doesn\(aqt include all faults, but only the ones that
+require a remote page request.  So it should be always bigger
+than the real average page fault latency.  This is only present
+when the postcopy\-blocktime migration capability is enabled.
 (Since 10.1)
 .IP \(bu 2
-\fBpostcopy\-vcpu\-latency\fP (\fB[\fP\fBint\fP\fB]\fP, \fIoptional\fP) \-\- average remote page fault latency per vCPU (in
-ns).  It has the same definition of \fBpostcopy\-latency\fP, but instead
-this is the per\-vCPU statistics.  This is only present when the
-postcopy\-blocktime migration capability is enabled.  (Since 10.1)
-.IP \(bu 2
-\fBpostcopy\-non\-vcpu\-latency\fP (\fBint\fP, \fIoptional\fP) \-\- average remote page fault latency for all
-faults happend in non\-vCPU threads (in ns).  It has the same
-definition of \fBpostcopy\-latency\fP but this only provides statistics to
-non\-vCPU faults.  This is only present when the postcopy\-blocktime
+\fBpostcopy\-latency\-dist\fP (\fB[\fP\fBint\fP\fB]\fP, \fIoptional\fP) \-\- remote page fault latency distributions.
+Each element of the array is the number of faults that fall into
+the bucket period.  For the N\-th bucket (N>=0), the latency
+window is [2^Nus, 2^(N+1)us).  For example, the 8th element
+stores how many remote faults got resolved within [256us, 512us)
+window.  This is only present when the postcopy\-blocktime
 migration capability is enabled.  (Since 10.1)
+.IP \(bu 2
+\fBpostcopy\-vcpu\-latency\fP (\fB[\fP\fBint\fP\fB]\fP, \fIoptional\fP) \-\- average remote page fault latency per vCPU
+(in ns).  It has the same definition of \fBpostcopy\-latency\fP, but
+instead this is the per\-vCPU statistics.  This is only present
+when the postcopy\-blocktime migration capability is enabled.
+(Since 10.1)
+.IP \(bu 2
+\fBpostcopy\-non\-vcpu\-latency\fP (\fBint\fP, \fIoptional\fP) \-\- average remote page fault latency for
+all faults happend in non\-vCPU threads (in ns).  It has the same
+definition of \fBpostcopy\-latency\fP but this only provides
+statistics to non\-vCPU faults.  This is only present when the
+postcopy\-blocktime migration capability is enabled.
+(Since 10.1)
 .IP \(bu 2
 \fBsocket\-address\fP (\fB[\fP\fI\%SocketAddress\fP\fB]\fP, \fIoptional\fP) \-\- Only used for tcp, to know what the real port is
 (Since 4.0)
@@ -16667,16 +16854,16 @@ zero means guest doesn\(aqt dirty memory.  (Since 8.1)
 .INDENT 7.0
 .IP \(bu 2
 \fBunstable\fP \-\- Members \fBpostcopy\-latency\fP, \fBpostcopy\-vcpu\-latency\fP,
-\fBpostcopy\-latency\-dist\fP, \fBpostcopy\-non\-vcpu\-latency\fP are experimental.
+\fBpostcopy\-latency\-dist\fP, \fBpostcopy\-non\-vcpu\-latency\fP are
+experimental.
 .UNINDENT
 .UNINDENT
 .UNINDENT
 .INDENT 0.0
 .TP
 .B Command query\-migrate (Since: 0.14)
-Return information about current migration process.  If migration
-is active there will be another json\-object with RAM migration
-status.
+Return information about current migration process.  If migration is
+active there will be another json\-object with RAM migration status.
 .INDENT 7.0
 .TP
 .B Return
@@ -16827,13 +17014,6 @@ pages
 footprint is mlock()\(aqd on demand or all at once.  Refer to
 docs/rdma.txt for usage.  Disabled by default.  (since 2.0)
 .IP \(bu 2
-\fBzero\-blocks\fP \-\- During storage migration encode blocks of zeroes
-efficiently.  This essentially saves 1MB of zeroes per block on
-the wire.  Enabling requires source and target VM to support
-this feature.  To enable it is sufficient to enable the
-capability on the source VM.  The feature is disabled by
-default.  (since 1.6)
-.IP \(bu 2
 \fBevents\fP \-\- generate events for each migration state change (since 2.4)
 .IP \(bu 2
 \fBauto\-converge\fP \-\- If enabled, QEMU will automatically throttle down
@@ -16919,9 +17099,6 @@ such as a file.  (since 9.0)
 .INDENT 7.0
 .IP \(bu 2
 \fBunstable\fP \-\- Members \fBx\-colo\fP and \fBx\-ignore\-shared\fP are experimental.
-.IP \(bu 2
-\fBdeprecated\fP \-\- Member \fBzero\-blocks\fP is deprecated as being part of
-block migration which was already removed.
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -16989,7 +17166,6 @@ Return information about the current migration capabilities status
       {\(dqstate\(dq: false, \(dqcapability\(dq: \(dqxbzrle\(dq},
       {\(dqstate\(dq: false, \(dqcapability\(dq: \(dqrdma\-pin\-all\(dq},
       {\(dqstate\(dq: false, \(dqcapability\(dq: \(dqauto\-converge\(dq},
-      {\(dqstate\(dq: false, \(dqcapability\(dq: \(dqzero\-blocks\(dq},
       {\(dqstate\(dq: true, \(dqcapability\(dq: \(dqevents\(dq},
       {\(dqstate\(dq: false, \(dqcapability\(dq: \(dqpostcopy\-ram\(dq},
       {\(dqstate\(dq: false, \(dqcapability\(dq: \(dqx\-colo\(dq}
@@ -17038,8 +17214,8 @@ decompression.  (Since 9.1)
 .IP \(bu 2
 \fBcpr\-reboot\fP \-\- 
 .sp
-The \fI\%migrate\fP command stops the VM and saves state to the
-URI.  After quitting QEMU, the user resumes by running QEMU
+The \fI\%migrate\fP command stops the VM and saves state to
+the URI.  After quitting QEMU, the user resumes by running QEMU
 \-incoming.
 .sp
 This mode allows the user to quit QEMU, optionally update and
@@ -17073,15 +17249,15 @@ new QEMU instance on the same host with minimal guest pause
 time by preserving guest RAM in place.
 .sp
 Devices and their pinned pages are also preserved for VFIO and
-IOMMUFD. (since 10.1)
+IOMMUFD.  (since 10.1)
 .sp
 The user starts new QEMU on the same host as old QEMU, with
 command\-line arguments to create the same machine, plus the
 \-incoming option for the main migration channel, like normal
 live migration.  In addition, the user adds a second \-incoming
 option with channel type \(dqcpr\(dq.  This CPR channel must support
-file descriptor transfer with SCM_RIGHTS, i.e. it must be a
-UNIX domain socket.
+file descriptor transfer with SCM_RIGHTS, i.e. it must be a UNIX
+domain socket.
 .sp
 To initiate CPR, the user issues a migrate command to old QEMU,
 adding a second migration channel of type \(dqcpr\(dq in the channels
@@ -17108,6 +17284,32 @@ However, new QEMU does not open and read the migration stream
 until you issue the \fI\%migrate\-incoming\fP command.
 .sp
 (since 10.0)
+
+.IP \(bu 2
+\fBcpr\-exec\fP \-\- 
+.sp
+The migrate command stops the VM, saves state to the
+migration channel, directly exec\(aqs a new version of QEMU on the
+same host, replacing the original process while retaining its
+PID, and loads state from the channel.  Guest RAM is preserved
+in place.  Devices and their pinned pages are also preserved for
+VFIO and IOMMUFD.
+.sp
+Old QEMU starts new QEMU by exec\(aqing the command specified by
+the \fBcpr\-exec\-command\fP parameter.  The command may be a direct
+invocation of new QEMU, or may be a wrapper that exec\(aqs the new
+QEMU binary.
+.sp
+Because old QEMU terminates when new QEMU starts, one cannot
+stream data between the two, so the channel must be a type, such
+as a file, that accepts all data before old QEMU exits.
+Otherwise, old QEMU may quietly block writing to the channel.
+.sp
+Memory\-backend objects must have the share=on attribute, but
+memory\-backend\-epc is not supported.  The VM must be started
+with the \(aq\-machine aux\-ram\-share=on\(aq option.
+.sp
+(since 10.2)
 
 .UNINDENT
 .UNINDENT
@@ -17183,164 +17385,74 @@ name on the opposite site).
 .INDENT 0.0
 .TP
 .B Enum MigrationParameter (Since: 2.4)
-Migration parameters enumeration
+Migration parameters enumeration.  The enumeration values mirror the
+members of \fBMigrationParameters\fP\&.
 .INDENT 7.0
 .TP
 .B Values
 .INDENT 7.0
 .IP \(bu 2
-\fBannounce\-initial\fP \-\- Initial delay (in milliseconds) before sending
-the first announce (Since 4.0)
+\fBcpr\-exec\-command\fP \-\- Command to start the new QEMU process when \fBmode\fP
+is \fBcpr\-exec\fP\&.  The first list element is the program\(aqs filename,
+the remainder its arguments.  (Since 10.2)
 .IP \(bu 2
-\fBannounce\-max\fP \-\- Maximum delay (in milliseconds) between packets in
-the announcement (Since 4.0)
+\fBannounce\-initial\fP \-\- Not documented
 .IP \(bu 2
-\fBannounce\-rounds\fP \-\- Number of self\-announce packets sent after
-migration (Since 4.0)
+\fBannounce\-max\fP \-\- Not documented
 .IP \(bu 2
-\fBannounce\-step\fP \-\- Increase in delay (in milliseconds) between
-subsequent packets in the announcement (Since 4.0)
+\fBannounce\-rounds\fP \-\- Not documented
 .IP \(bu 2
-\fBthrottle\-trigger\-threshold\fP \-\- The ratio of bytes_dirty_period and
-bytes_xfer_period to trigger throttling.  It is expressed as
-percentage.  The default value is 50.  (Since 5.0)
+\fBannounce\-step\fP \-\- Not documented
 .IP \(bu 2
-\fBcpu\-throttle\-initial\fP \-\- Initial percentage of time guest cpus are
-throttled when migration auto\-converge is activated.  The
-default value is 20.  (Since 2.7)
+\fBthrottle\-trigger\-threshold\fP \-\- Not documented
 .IP \(bu 2
-\fBcpu\-throttle\-increment\fP \-\- throttle percentage increase each time
-auto\-converge detects that migration is not making progress.
-The default value is 10.  (Since 2.7)
+\fBcpu\-throttle\-initial\fP \-\- Not documented
 .IP \(bu 2
-\fBcpu\-throttle\-tailslow\fP \-\- Make CPU throttling slower at tail stage.
-At the tail stage of throttling, the Guest is very sensitive to
-CPU percentage while the \fBcpu\-throttle\fP \-increment is excessive
-usually at tail stage.  If this parameter is true, we will
-compute the ideal CPU percentage used by the Guest, which may
-exactly make the dirty rate match the dirty rate threshold.
-Then we will choose a smaller throttle increment between the one
-specified by \fBcpu\-throttle\-increment\fP and the one generated by
-ideal CPU percentage.  Therefore, it is compatible to
-traditional throttling, meanwhile the throttle increment won\(aqt
-be excessive at tail stage.  The default value is false.
-(Since 5.1)
+\fBcpu\-throttle\-increment\fP \-\- Not documented
 .IP \(bu 2
-\fBtls\-creds\fP \-\- ID of the \(aqtls\-creds\(aq object that provides credentials
-for establishing a TLS connection over the migration data
-channel.  On the outgoing side of the migration, the credentials
-must be for a \(aqclient\(aq endpoint, while for the incoming side the
-credentials must be for a \(aqserver\(aq endpoint.  Setting this to a
-non\-empty string enables TLS for all migrations.  An empty
-string means that QEMU will use plain text mode for migration,
-rather than TLS.  (Since 2.7)
+\fBcpu\-throttle\-tailslow\fP \-\- Not documented
 .IP \(bu 2
-\fBtls\-hostname\fP \-\- 
-.sp
-migration target\(aqs hostname for validating the
-server\(aqs x509 certificate identity.  If empty, QEMU will use the
-hostname from the migration URI, if any.  A non\-empty value is
-required when using x509 based TLS credentials and the migration
-URI does not include a hostname, such as fd: or exec: based
-migration.  (Since 2.7)
-.sp
-Note: empty value works only since 2.9.
-
+\fBtls\-creds\fP \-\- Not documented
 .IP \(bu 2
-\fBtls\-authz\fP \-\- ID of the \(aqauthz\(aq object subclass that provides access
-control checking of the TLS x509 certificate distinguished name.
-This object is only resolved at time of use, so can be deleted
-and recreated on the fly while the migration server is active.
-If missing, it will default to denying access (Since 4.0)
+\fBtls\-hostname\fP \-\- Not documented
 .IP \(bu 2
-\fBmax\-bandwidth\fP \-\- maximum speed for migration, in bytes per second.
-(Since 2.8)
+\fBtls\-authz\fP \-\- Not documented
 .IP \(bu 2
-\fBavail\-switchover\-bandwidth\fP \-\- to set the available bandwidth that
-migration can use during switchover phase.  \fBNote:\fP this does
-not limit the bandwidth during switchover, but only for
-calculations when making decisions to switchover.  By default,
-this value is zero, which means QEMU will estimate the bandwidth
-automatically.  This can be set when the estimated value is not
-accurate, while the user is able to guarantee such bandwidth is
-available when switching over.  When specified correctly, this
-can make the switchover decision much more accurate.
-(Since 8.2)
+\fBmax\-bandwidth\fP \-\- Not documented
 .IP \(bu 2
-\fBdowntime\-limit\fP \-\- set maximum tolerated downtime for migration.
-maximum downtime in milliseconds (Since 2.8)
+\fBavail\-switchover\-bandwidth\fP \-\- Not documented
 .IP \(bu 2
-\fBx\-checkpoint\-delay\fP \-\- The delay time (in ms) between two COLO
-checkpoints in periodic mode.  (Since 2.8)
+\fBdowntime\-limit\fP \-\- Not documented
 .IP \(bu 2
-\fBmultifd\-channels\fP \-\- Number of channels used to migrate data in
-parallel.  This is the same number that the number of sockets
-used for migration.  The default value is 2 (since 4.0)
+\fBx\-checkpoint\-delay\fP \-\- Not documented
 .IP \(bu 2
-\fBxbzrle\-cache\-size\fP \-\- cache size to be used by XBZRLE migration.  It
-needs to be a multiple of the target page size and a power of 2
-(Since 2.11)
+\fBmultifd\-channels\fP \-\- Not documented
 .IP \(bu 2
-\fBmax\-postcopy\-bandwidth\fP \-\- Background transfer bandwidth during
-postcopy.  Defaults to 0 (unlimited).  In bytes per second.
-(Since 3.0)
+\fBxbzrle\-cache\-size\fP \-\- Not documented
 .IP \(bu 2
-\fBmax\-cpu\-throttle\fP \-\- maximum cpu throttle percentage.  Defaults to 99.
-(Since 3.1)
+\fBmax\-postcopy\-bandwidth\fP \-\- Not documented
 .IP \(bu 2
-\fBmultifd\-compression\fP \-\- Which compression method to use.  Defaults to
-none.  (Since 5.0)
+\fBmax\-cpu\-throttle\fP \-\- Not documented
 .IP \(bu 2
-\fBmultifd\-zlib\-level\fP \-\- Set the compression level to be used in live
-migration, the compression level is an integer between 0 and 9,
-where 0 means no compression, 1 means the best compression
-speed, and 9 means best compression ratio which will consume
-more CPU.  Defaults to 1.  (Since 5.0)
+\fBmultifd\-compression\fP \-\- Not documented
 .IP \(bu 2
-\fBmultifd\-qatzip\-level\fP \-\- Set the compression level to be used in live
-migration.  The level is an integer between 1 and 9, where 1 means
-the best compression speed, and 9 means the best compression
-ratio which will consume more CPU.  Defaults to 1.  (Since 9.2)
+\fBmultifd\-zlib\-level\fP \-\- Not documented
 .IP \(bu 2
-\fBmultifd\-zstd\-level\fP \-\- Set the compression level to be used in live
-migration, the compression level is an integer between 0 and 20,
-where 0 means no compression, 1 means the best compression
-speed, and 20 means best compression ratio which will consume
-more CPU.  Defaults to 1.  (Since 5.0)
+\fBmultifd\-zstd\-level\fP \-\- Not documented
 .IP \(bu 2
-\fBblock\-bitmap\-mapping\fP \-\- Maps block nodes and bitmaps on them to
-aliases for the purpose of dirty bitmap migration.  Such aliases
-may for example be the corresponding names on the opposite site.
-The mapping must be one\-to\-one, but not necessarily complete: On
-the source, unmapped bitmaps and all bitmaps on unmapped nodes
-will be ignored.  On the destination, encountering an unmapped
-alias in the incoming migration stream will result in a report,
-and all further bitmap migration data will then be discarded.
-Note that the destination does not know about bitmaps it does
-not receive, so there is no limitation or requirement regarding
-the number of bitmaps received, or how they are named, or on
-which nodes they are placed.  By default (when this parameter
-has never been set), bitmap names are mapped to themselves.
-Nodes are mapped to their block device name if there is one, and
-to their node name otherwise.  (Since 5.2)
+\fBmultifd\-qatzip\-level\fP \-\- Not documented
 .IP \(bu 2
-\fBx\-vcpu\-dirty\-limit\-period\fP \-\- Periodic time (in milliseconds) of dirty
-limit during live migration.  Should be in the range 1 to
-1000ms.  Defaults to 1000ms.  (Since 8.1)
+\fBblock\-bitmap\-mapping\fP \-\- Not documented
 .IP \(bu 2
-\fBvcpu\-dirty\-limit\fP \-\- Dirtyrate limit (MB/s) during live migration.
-Defaults to 1.  (Since 8.1)
+\fBx\-vcpu\-dirty\-limit\-period\fP \-\- Not documented
 .IP \(bu 2
-\fBmode\fP \-\- Migration mode.  See description in \fI\%MigMode\fP\&.  Default is
-\(aqnormal\(aq.  (Since 8.2)
+\fBvcpu\-dirty\-limit\fP \-\- Not documented
 .IP \(bu 2
-\fBzero\-page\-detection\fP \-\- Whether and how to detect zero pages.
-See description in \fI\%ZeroPageDetection\fP\&.  Default is \(aqmultifd\(aq.
-(since 9.0)
+\fBmode\fP \-\- Not documented
 .IP \(bu 2
-\fBdirect\-io\fP \-\- Open migration files with O_DIRECT when possible.  This
-only has effect if the \fBmapped\-ram\fP capability is enabled.
-(Since 9.1)
+\fBzero\-page\-detection\fP \-\- Not documented
+.IP \(bu 2
+\fBdirect\-io\fP \-\- Not documented
 .UNINDENT
 .TP
 .B Features
@@ -17353,7 +17465,35 @@ only has effect if the \fBmapped\-ram\fP capability is enabled.
 .UNINDENT
 .INDENT 0.0
 .TP
-.B Object MigrateSetParameters (Since: 2.4)
+.B Command migrate\-set\-parameters (Since: 2.4)
+Set migration parameters.  All arguments are optional.
+.INDENT 7.0
+.TP
+.B Arguments
+.INDENT 7.0
+.IP \(bu 2
+The members of \fI\%MigrationParameters\fP\&.
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.INDENT 3.5
+.IP "Example:"
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+\-> { \(dqexecute\(dq: \(dqmigrate\-set\-parameters\(dq ,
+     \(dqarguments\(dq: { \(dqmultifd\-channels\(dq: 5 } }
+<\- { \(dqreturn\(dq: {} }
+.EE
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B Object MigrationParameters (Since: 2.4)
 .INDENT 7.0
 .TP
 .B Members
@@ -17468,9 +17608,10 @@ speed, and 9 means best compression ratio which will consume
 more CPU.  Defaults to 1.  (Since 5.0)
 .IP \(bu 2
 \fBmultifd\-qatzip\-level\fP (\fBint\fP, \fIoptional\fP) \-\- Set the compression level to be used in live
-migration.  The level is an integer between 1 and 9, where 1 means
-the best compression speed, and 9 means the best compression
-ratio which will consume more CPU.  Defaults to 1.  (Since 9.2)
+migration.  The level is an integer between 1 and 9, where 1
+means the best compression speed, and 9 means the best
+compression ratio which will consume more CPU.  Defaults to 1.
+(Since 9.2)
 .IP \(bu 2
 \fBmultifd\-zstd\-level\fP (\fBint\fP, \fIoptional\fP) \-\- Set the compression level to be used in live
 migration, the compression level is an integer between 0 and 20,
@@ -17504,211 +17645,17 @@ Defaults to 1.  (Since 8.1)
 \fBmode\fP (\fI\%MigMode\fP, \fIoptional\fP) \-\- Migration mode.  See description in \fI\%MigMode\fP\&.  Default is
 \(aqnormal\(aq.  (Since 8.2)
 .IP \(bu 2
-\fBzero\-page\-detection\fP (\fI\%ZeroPageDetection\fP, \fIoptional\fP) \-\- Whether and how to detect zero pages.
-See description in \fI\%ZeroPageDetection\fP\&.  Default is \(aqmultifd\(aq.
+\fBzero\-page\-detection\fP (\fI\%ZeroPageDetection\fP, \fIoptional\fP) \-\- Whether and how to detect zero pages.  See
+description in \fI\%ZeroPageDetection\fP\&.  Default is \(aqmultifd\(aq.
 (since 9.0)
 .IP \(bu 2
 \fBdirect\-io\fP (\fBboolean\fP, \fIoptional\fP) \-\- Open migration files with O_DIRECT when possible.  This
 only has effect if the \fBmapped\-ram\fP capability is enabled.
 (Since 9.1)
-.UNINDENT
-.TP
-.B Features
-.INDENT 7.0
 .IP \(bu 2
-\fBunstable\fP \-\- Members \fBx\-checkpoint\-delay\fP and
-\fBx\-vcpu\-dirty\-limit\-period\fP are experimental.
-.UNINDENT
-.UNINDENT
-.UNINDENT
-.INDENT 0.0
-.TP
-.B Command migrate\-set\-parameters (Since: 2.4)
-Set various migration parameters.
-.INDENT 7.0
-.TP
-.B Arguments
-.INDENT 7.0
-.IP \(bu 2
-The members of \fI\%MigrateSetParameters\fP\&.
-.UNINDENT
-.UNINDENT
-.INDENT 7.0
-.INDENT 3.5
-.IP "Example:"
-.INDENT 0.0
-.INDENT 3.5
-.sp
-.EX
-\-> { \(dqexecute\(dq: \(dqmigrate\-set\-parameters\(dq ,
-     \(dqarguments\(dq: { \(dqmultifd\-channels\(dq: 5 } }
-<\- { \(dqreturn\(dq: {} }
-.EE
-.UNINDENT
-.UNINDENT
-.UNINDENT
-.UNINDENT
-.UNINDENT
-.INDENT 0.0
-.TP
-.B Object MigrationParameters (Since: 2.4)
-The optional members aren\(aqt actually optional.
-.INDENT 7.0
-.TP
-.B Members
-.INDENT 7.0
-.IP \(bu 2
-\fBannounce\-initial\fP (\fBint\fP, \fIoptional\fP) \-\- Initial delay (in milliseconds) before sending
-the first announce (Since 4.0)
-.IP \(bu 2
-\fBannounce\-max\fP (\fBint\fP, \fIoptional\fP) \-\- Maximum delay (in milliseconds) between packets in
-the announcement (Since 4.0)
-.IP \(bu 2
-\fBannounce\-rounds\fP (\fBint\fP, \fIoptional\fP) \-\- Number of self\-announce packets sent after
-migration (Since 4.0)
-.IP \(bu 2
-\fBannounce\-step\fP (\fBint\fP, \fIoptional\fP) \-\- Increase in delay (in milliseconds) between
-subsequent packets in the announcement (Since 4.0)
-.IP \(bu 2
-\fBthrottle\-trigger\-threshold\fP (\fBint\fP, \fIoptional\fP) \-\- The ratio of bytes_dirty_period and
-bytes_xfer_period to trigger throttling.  It is expressed as
-percentage.  The default value is 50.  (Since 5.0)
-.IP \(bu 2
-\fBcpu\-throttle\-initial\fP (\fBint\fP, \fIoptional\fP) \-\- Initial percentage of time guest cpus are
-throttled when migration auto\-converge is activated.
-(Since 2.7)
-.IP \(bu 2
-\fBcpu\-throttle\-increment\fP (\fBint\fP, \fIoptional\fP) \-\- throttle percentage increase each time
-auto\-converge detects that migration is not making progress.
-(Since 2.7)
-.IP \(bu 2
-\fBcpu\-throttle\-tailslow\fP (\fBboolean\fP, \fIoptional\fP) \-\- Make CPU throttling slower at tail stage.
-At the tail stage of throttling, the Guest is very sensitive to
-CPU percentage while the \fBcpu\-throttle\fP \-increment is excessive
-usually at tail stage.  If this parameter is true, we will
-compute the ideal CPU percentage used by the Guest, which may
-exactly make the dirty rate match the dirty rate threshold.
-Then we will choose a smaller throttle increment between the one
-specified by \fBcpu\-throttle\-increment\fP and the one generated by
-ideal CPU percentage.  Therefore, it is compatible to
-traditional throttling, meanwhile the throttle increment won\(aqt
-be excessive at tail stage.  The default value is false.
-(Since 5.1)
-.IP \(bu 2
-\fBtls\-creds\fP (\fBstring\fP, \fIoptional\fP) \-\- 
-.sp
-ID of the \(aqtls\-creds\(aq object that provides credentials
-for establishing a TLS connection over the migration data
-channel.  On the outgoing side of the migration, the credentials
-must be for a \(aqclient\(aq endpoint, while for the incoming side the
-credentials must be for a \(aqserver\(aq endpoint.  An empty string
-means that QEMU will use plain text mode for migration, rather
-than TLS.  (Since 2.7)
-.sp
-Note: 2.8 omits empty \fBtls\-creds\fP instead.
-
-.IP \(bu 2
-\fBtls\-hostname\fP (\fBstring\fP, \fIoptional\fP) \-\- 
-.sp
-migration target\(aqs hostname for validating the
-server\(aqs x509 certificate identity.  If empty, QEMU will use the
-hostname from the migration URI, if any.  (Since 2.7)
-.sp
-Note: 2.8 omits empty \fBtls\-hostname\fP instead.
-
-.IP \(bu 2
-\fBtls\-authz\fP (\fBstring\fP, \fIoptional\fP) \-\- ID of the \(aqauthz\(aq object subclass that provides access
-control checking of the TLS x509 certificate distinguished name.
-(Since 4.0)
-.IP \(bu 2
-\fBmax\-bandwidth\fP (\fBint\fP, \fIoptional\fP) \-\- maximum speed for migration, in bytes per second.
-(Since 2.8)
-.IP \(bu 2
-\fBavail\-switchover\-bandwidth\fP (\fBint\fP, \fIoptional\fP) \-\- to set the available bandwidth that
-migration can use during switchover phase.  \fBNote:\fP this does
-not limit the bandwidth during switchover, but only for
-calculations when making decisions to switchover.  By default,
-this value is zero, which means QEMU will estimate the bandwidth
-automatically.  This can be set when the estimated value is not
-accurate, while the user is able to guarantee such bandwidth is
-available when switching over.  When specified correctly, this
-can make the switchover decision much more accurate.
-(Since 8.2)
-.IP \(bu 2
-\fBdowntime\-limit\fP (\fBint\fP, \fIoptional\fP) \-\- set maximum tolerated downtime for migration.
-maximum downtime in milliseconds (Since 2.8)
-.IP \(bu 2
-\fBx\-checkpoint\-delay\fP (\fBint\fP, \fIoptional\fP) \-\- the delay time between two COLO checkpoints.
-(Since 2.8)
-.IP \(bu 2
-\fBmultifd\-channels\fP (\fBint\fP, \fIoptional\fP) \-\- Number of channels used to migrate data in
-parallel.  This is the same number that the number of sockets
-used for migration.  The default value is 2 (since 4.0)
-.IP \(bu 2
-\fBxbzrle\-cache\-size\fP (\fBint\fP, \fIoptional\fP) \-\- cache size to be used by XBZRLE migration.  It
-needs to be a multiple of the target page size and a power of 2
-(Since 2.11)
-.IP \(bu 2
-\fBmax\-postcopy\-bandwidth\fP (\fBint\fP, \fIoptional\fP) \-\- Background transfer bandwidth during
-postcopy.  Defaults to 0 (unlimited).  In bytes per second.
-(Since 3.0)
-.IP \(bu 2
-\fBmax\-cpu\-throttle\fP (\fBint\fP, \fIoptional\fP) \-\- maximum cpu throttle percentage.  Defaults to 99.
-(Since 3.1)
-.IP \(bu 2
-\fBmultifd\-compression\fP (\fI\%MultiFDCompression\fP, \fIoptional\fP) \-\- Which compression method to use.  Defaults to
-none.  (Since 5.0)
-.IP \(bu 2
-\fBmultifd\-zlib\-level\fP (\fBint\fP, \fIoptional\fP) \-\- Set the compression level to be used in live
-migration, the compression level is an integer between 0 and 9,
-where 0 means no compression, 1 means the best compression
-speed, and 9 means best compression ratio which will consume
-more CPU.  Defaults to 1.  (Since 5.0)
-.IP \(bu 2
-\fBmultifd\-qatzip\-level\fP (\fBint\fP, \fIoptional\fP) \-\- Set the compression level to be used in live
-migration.  The level is an integer between 1 and 9, where 1 means
-the best compression speed, and 9 means the best compression
-ratio which will consume more CPU.  Defaults to 1.  (Since 9.2)
-.IP \(bu 2
-\fBmultifd\-zstd\-level\fP (\fBint\fP, \fIoptional\fP) \-\- Set the compression level to be used in live
-migration, the compression level is an integer between 0 and 20,
-where 0 means no compression, 1 means the best compression
-speed, and 20 means best compression ratio which will consume
-more CPU.  Defaults to 1.  (Since 5.0)
-.IP \(bu 2
-\fBblock\-bitmap\-mapping\fP (\fB[\fP\fI\%BitmapMigrationNodeAlias\fP\fB]\fP, \fIoptional\fP) \-\- Maps block nodes and bitmaps on them to
-aliases for the purpose of dirty bitmap migration.  Such aliases
-may for example be the corresponding names on the opposite site.
-The mapping must be one\-to\-one, but not necessarily complete: On
-the source, unmapped bitmaps and all bitmaps on unmapped nodes
-will be ignored.  On the destination, encountering an unmapped
-alias in the incoming migration stream will result in a report,
-and all further bitmap migration data will then be discarded.
-Note that the destination does not know about bitmaps it does
-not receive, so there is no limitation or requirement regarding
-the number of bitmaps received, or how they are named, or on
-which nodes they are placed.  By default (when this parameter
-has never been set), bitmap names are mapped to themselves.
-Nodes are mapped to their block device name if there is one, and
-to their node name otherwise.  (Since 5.2)
-.IP \(bu 2
-\fBx\-vcpu\-dirty\-limit\-period\fP (\fBint\fP, \fIoptional\fP) \-\- Periodic time (in milliseconds) of dirty
-limit during live migration.  Should be in the range 1 to
-1000ms.  Defaults to 1000ms.  (Since 8.1)
-.IP \(bu 2
-\fBvcpu\-dirty\-limit\fP (\fBint\fP, \fIoptional\fP) \-\- Dirtyrate limit (MB/s) during live migration.
-Defaults to 1.  (Since 8.1)
-.IP \(bu 2
-\fBmode\fP (\fI\%MigMode\fP, \fIoptional\fP) \-\- Migration mode.  See description in \fI\%MigMode\fP\&.  Default is
-\(aqnormal\(aq.  (Since 8.2)
-.IP \(bu 2
-\fBzero\-page\-detection\fP (\fI\%ZeroPageDetection\fP, \fIoptional\fP) \-\- Whether and how to detect zero pages.
-See description in \fI\%ZeroPageDetection\fP\&.  Default is \(aqmultifd\(aq.
-(since 9.0)
-.IP \(bu 2
-\fBdirect\-io\fP (\fBboolean\fP, \fIoptional\fP) \-\- Open migration files with O_DIRECT when possible.  This
-only has effect if the \fBmapped\-ram\fP capability is enabled.
-(Since 9.1)
+\fBcpr\-exec\-command\fP (\fB[\fP\fBstring\fP\fB]\fP, \fIoptional\fP) \-\- Command to start the new QEMU process when \fBmode\fP
+is \fBcpr\-exec\fP\&.  The first list element is the program\(aqs filename,
+the remainder its arguments.  (Since 10.2)
 .UNINDENT
 .TP
 .B Features
@@ -17722,7 +17669,10 @@ only has effect if the \fBmapped\-ram\fP capability is enabled.
 .INDENT 0.0
 .TP
 .B Command query\-migrate\-parameters (Since: 2.4)
-Return information about the current migration parameters
+Return information about the current migration parameters.  Optional
+members of the return value are always present, except
+\fBblock\-bitmap\-mapping\fP, which is only present if it has been
+previously set.
 .INDENT 7.0
 .TP
 .B Return
@@ -18143,16 +18093,11 @@ Migrates the current running guest to another Virtual Machine.
 \fBchannels\fP (\fB[\fP\fI\%MigrationChannel\fP\fB]\fP, \fIoptional\fP) \-\- list of migration stream channels with each stream in the
 list connected to a destination interface endpoint.
 .IP \(bu 2
-\fBdetach\fP (\fBboolean\fP, \fIoptional\fP) \-\- this argument exists only for compatibility reasons and is
-ignored by QEMU
-.IP \(bu 2
-\fBresume\fP (\fBboolean\fP, \fIoptional\fP) \-\- resume one paused migration, default \(dqoff\(dq.  (since 3.0)
-.UNINDENT
-.TP
-.B Features
-.INDENT 7.0
-.IP \(bu 2
-\fBdeprecated\fP \-\- Argument \fBdetach\fP is deprecated.
+\fBresume\fP (\fBboolean\fP, \fIoptional\fP) \-\- when set, use the new uri/channels specified to resume
+paused postcopy migration.  This flag should only be used if
+the previous postcopy migration was interrupted.  The command
+will fail unless migration is in \(dqpostcopy\-paused\(dq state.
+(default: false, since 3.0)
 .UNINDENT
 .UNINDENT
 .INDENT 7.0
@@ -18241,9 +18186,9 @@ address to listen on
 list connected to a destination interface endpoint.
 .IP \(bu 2
 \fBexit\-on\-error\fP (\fBboolean\fP, \fIoptional\fP) \-\- Exit on incoming migration failure.  Default true.
-When set to false, the failure triggers a \fI\%MIGRATION\fP
-event, and error details could be retrieved with \fI\%query\-migrate\fP\&.
-(since 9.1)
+When set to false, the failure triggers a
+\fI\%MIGRATION\fP event, and error details could be
+retrieved with \fI\%query\-migrate\fP\&.  (since 9.1)
 .UNINDENT
 .UNINDENT
 .INDENT 7.0
@@ -18951,8 +18896,7 @@ support from dirty ring, same as the \fI\%set\-vcpu\-dirty\-limit\fP\&.
 .INDENT 0.0
 .TP
 .B Command query\-vcpu\-dirty\-limit (Since: 7.1)
-Return information about virtual CPU dirty page rate limits, if
-any.
+Return information about virtual CPU dirty page rate limits, if any.
 .INDENT 7.0
 .TP
 .B Return
@@ -18972,39 +18916,6 @@ any.
 .EE
 .UNINDENT
 .UNINDENT
-.UNINDENT
-.UNINDENT
-.UNINDENT
-.INDENT 0.0
-.TP
-.B Object MigrationThreadInfo (Since: 7.2)
-Information about migrationthreads
-.INDENT 7.0
-.TP
-.B Members
-.INDENT 7.0
-.IP \(bu 2
-\fBname\fP (\fBstring\fP) \-\- the name of migration thread
-.IP \(bu 2
-\fBthread\-id\fP (\fBint\fP) \-\- ID of the underlying host thread
-.UNINDENT
-.UNINDENT
-.UNINDENT
-.INDENT 0.0
-.TP
-.B Command query\-migrationthreads (Since: 7.2)
-This command is deprecated.
-.sp
-Return information of migration threads
-.INDENT 7.0
-.TP
-.B Return
-\fB[\fP\fI\%MigrationThreadInfo\fP\fB]\fP
-.TP
-.B Features
-.INDENT 7.0
-.IP \(bu 2
-\fBdeprecated\fP \-\- This command is deprecated with no replacement yet.
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -19115,8 +19026,8 @@ Note that execution of the guest CPUs will be stopped during the
 time it takes to load the snapshot.
 .sp
 It is strongly recommended that \fBdevices\fP contain all writable block
-device nodes that can have changed since the original \fI\%snapshot\-save\fP
-command execution.
+device nodes that can have changed since the original
+\fI\%snapshot\-save\fP command execution.
 .INDENT 7.0
 .INDENT 3.5
 .IP "Example:"
@@ -19959,10 +19870,10 @@ Command \fI\%query\-qmp\-schema\fP exposes the QMP wire ABI as an array of
 \fI\%SchemaInfo\fP\&.  This lets QMP clients figure out what commands and
 events are available in this QEMU, and their parameters and results.
 .sp
-However, the \fI\%SchemaInfo\fP can\(aqt reflect all the rules and restrictions
-that apply to QMP.  It\(aqs interface introspection (figuring out
-what\(aqs there), not interface specification.  The specification is in
-the QAPI schema.
+However, the \fI\%SchemaInfo\fP can\(aqt reflect all the rules and
+restrictions that apply to QMP.  It\(aqs interface introspection
+(figuring out what\(aqs there), not interface specification.  The
+specification is in the QAPI schema.
 .sp
 Furthermore, while we strive to keep the QMP wire format
 backwards\-compatible across QEMU versions, the introspection output
@@ -20331,7 +20242,8 @@ graph.
 .IP \(bu 2
 \fBname\fP (\fBstring\fP) \-\- the name of the property.
 .IP \(bu 2
-\fBtype\fP (\fBstring\fP) \-\- the type of the property, as described in \fI\%ObjectPropertyInfo\fP\&.
+\fBtype\fP (\fBstring\fP) \-\- the type of the property, as described in
+\fI\%ObjectPropertyInfo\fP\&.
 .IP \(bu 2
 \fBvalue\fP (\fBvalue\fP, \fIoptional\fP) \-\- the value of the property.  Absent when the property cannot
 be read.
@@ -20406,7 +20318,7 @@ supported paths\-\-absolute and partial paths.
 Absolute paths are derived from the root object and can follow
 child<> or link<> properties.  Since they can follow link<>
 properties, they can be arbitrarily long.  Absolute paths look
-like absolute filenames and are prefixed  with a leading slash.
+like absolute filenames and are prefixed with a leading slash.
 .sp
 Partial paths look like relative filenames.  They do not begin
 with a prefix.  The matching rules for partial paths are subtle
@@ -21249,14 +21161,14 @@ initiator to target characteristics this information must be
 combined with information retrieved from the discoverable part
 of the path.  An example would use CDAT (see UEFI.org)
 information read from devices and switches in conjunction with
-link characteristics read from PCIe Configuration space.
-To get the full path latency from CPU to CXL attached DRAM
-CXL device: Add the latency from CPU to Generic Port (from
-HMAT indexed via the node ID in this SRAT structure) to
-that for CXL bus links, the latency across intermediate switches
-and from the EP port to the actual memory.  Bandwidth is more
-complex as there may be interleaving across multiple devices
-and shared links in the path.
+link characteristics read from PCIe Configuration space.  To get
+the full path latency from CPU to CXL attached DRAM CXL device:
+Add the latency from CPU to Generic Port (from HMAT indexed via
+the node ID in this SRAT structure) to that for CXL bus links,
+the latency across intermediate switches and from the EP port to
+the actual memory.  Bandwidth is more complex as there may be
+interleaving across multiple devices and shared links in the
+path.
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -21352,6 +21264,13 @@ unavailable when SEV is enabled
 designated guest firmware page for measured boot with \-kernel
 (default: false) (since 6.2)
 .UNINDENT
+.TP
+.B Features
+.INDENT 7.0
+.IP \(bu 2
+\fBconfidential\-guest\-reset\fP \-\- If present, the hypervisor supports
+confidential guest resets (since 11.0).
+.UNINDENT
 .UNINDENT
 .UNINDENT
 .INDENT 0.0
@@ -21380,8 +21299,7 @@ versions that rely on legacy KVM_SEV_INIT behavior.  \(aqauto\(aq will
 behave identically to \(aqon\(aq, but will automatically switch to
 using KVM_SEV_INIT2 if the user specifies any additional options
 that require it.  If set to \(aqoff\(aq, QEMU will require
-KVM_SEV_INIT2 unconditionally.
-(default: off) (since 9.1)
+KVM_SEV_INIT2 unconditionally.  (default: off) (since 9.1)
 .IP \(bu 2
 The members of \fI\%SevCommonProperties\fP\&.
 .UNINDENT
@@ -21420,8 +21338,8 @@ SEV\-SNP firmware ABI (default: all\-zero)
 Authentication Information Structure\(aq for the SNP_LAUNCH_FINISH
 command defined in the SEV\-SNP firmware ABI (default: all\-zero)
 .IP \(bu 2
-\fBauthor\-key\-enabled\fP (\fBboolean\fP, \fIoptional\fP) \-\- true if \(aqid\-auth\(aq blob contains the \(aqAUTHOR_KEY\(aq
-field defined SEV\-SNP firmware ABI (default: false)
+\fBauthor\-key\-enabled\fP (\fBboolean\fP, \fIoptional\fP) \-\- true if \(aqid\-auth\(aq blob contains the
+\(aqAUTHOR_KEY\(aq field defined SEV\-SNP firmware ABI (default: false)
 .IP \(bu 2
 \fBhost\-data\fP (\fBstring\fP, \fIoptional\fP) \-\- 32\-byte, base64\-encoded, user\-defined blob to provide to
 the guest, as documented for the \(aqHOST_DATA\(aq parameter of the
@@ -21450,17 +21368,17 @@ Properties for tdx\-guest objects.
 \fBattributes\fP (\fBint\fP, \fIoptional\fP) \-\- The \(aqattributes\(aq of a TD guest that is passed to
 KVM_TDX_INIT_VM
 .IP \(bu 2
-\fBsept\-ve\-disable\fP (\fBboolean\fP, \fIoptional\fP) \-\- toggle bit 28 of TD attributes to control disabling
-of EPT violation conversion to #VE on guest TD access of PENDING
-pages.  Some guest OS (e.g., Linux TD guest) may require this to
-be set, otherwise they refuse to boot.
+\fBsept\-ve\-disable\fP (\fBboolean\fP, \fIoptional\fP) \-\- toggle bit 28 of TD attributes to control
+disabling of EPT violation conversion to #VE on guest TD access
+of PENDING pages.  Some guest OS (e.g., Linux TD guest) may
+require this to be set, otherwise they refuse to boot.
 .IP \(bu 2
 \fBmrconfigid\fP (\fBstring\fP, \fIoptional\fP) \-\- ID for non\-owner\-defined configuration of the guest TD,
-e.g., run\-time or OS configuration (base64 encoded SHA384 digest).
-Defaults to all zeros.
+e.g., run\-time or OS configuration (base64 encoded SHA384
+digest).  Defaults to all zeros.
 .IP \(bu 2
-\fBmrowner\fP (\fBstring\fP, \fIoptional\fP) \-\- ID for the guest TD’s owner (base64 encoded SHA384 digest).
-Defaults to all zeros.
+\fBmrowner\fP (\fBstring\fP, \fIoptional\fP) \-\- ID for the guest TD’s owner (base64 encoded SHA384
+digest).  Defaults to all zeros.
 .IP \(bu 2
 \fBmrownerconfig\fP (\fBstring\fP, \fIoptional\fP) \-\- ID for owner\-defined configuration of the guest TD,
 e.g., specific to the workload rather than the run\-time or OS
@@ -21470,6 +21388,13 @@ e.g., specific to the workload rather than the run\-time or OS
 Service (QGS).  QGS is a daemon running on the host.  Without
 it, the guest will not be able to get a TD quote for
 attestation.
+.UNINDENT
+.TP
+.B Features
+.INDENT 7.0
+.IP \(bu 2
+\fBconfidential\-guest\-reset\fP \-\- If present, the hypervisor supports
+confidential guest resets (since 11.0).
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -21912,8 +21837,8 @@ the hot removal process.  Completion of the device removal
 process is signaled with a \fI\%DEVICE_DELETED\fP event.  Guest reset
 will automatically complete removal for all devices.  If a
 guest\-side error in the hot removal process is detected, the
-device will not be removed and a \fI\%DEVICE_UNPLUG_GUEST_ERROR\fP event
-is sent.  Some errors cannot be detected.
+device will not be removed and a \fI\%DEVICE_UNPLUG_GUEST_ERROR\fP
+event is sent.  Some errors cannot be detected.
 .UNINDENT
 .UNINDENT
 .INDENT 7.0
@@ -22133,8 +22058,8 @@ Cache information for SMP system.
 .B Members
 .INDENT 7.0
 .IP \(bu 2
-\fBcache\fP (\fI\%CacheLevelAndType\fP) \-\- Cache name, which is the combination of cache level
-and cache type.
+\fBcache\fP (\fI\%CacheLevelAndType\fP) \-\- Cache name, which is the combination of cache level and
+cache type.
 .IP \(bu 2
 \fBtopology\fP (\fI\%CpuTopologyLevel\fP) \-\- Cache topology level.  It accepts the CPU topology
 enumeration as the parameter, i.e., CPUs in the same
@@ -22177,6 +22102,8 @@ time being.
 .IP \(bu 2
 \fBloongarch64\fP \-\- since 7.1
 .IP \(bu 2
+\fBhexagon\fP \-\- since 11.0
+.IP \(bu 2
 \fBaarch64\fP \-\- Not documented
 .IP \(bu 2
 \fBalpha\fP \-\- Not documented
@@ -22190,8 +22117,6 @@ time being.
 \fBm68k\fP \-\- Not documented
 .IP \(bu 2
 \fBmicroblaze\fP \-\- Not documented
-.IP \(bu 2
-\fBmicroblazeel\fP \-\- Not documented
 .IP \(bu 2
 \fBmips\fP \-\- Not documented
 .IP \(bu 2
@@ -22919,8 +22844,8 @@ internally
 .INDENT 0.0
 .TP
 .B Object NumaCpuOptions (Since: 2.10)
-Option \(dq\-numa cpu\(dq overrides default cpu to node mapping.  It accepts
-the same set of cpu properties as returned by
+Option \(dq\-numa cpu\(dq overrides default cpu to node mapping.  It
+accepts the same set of cpu properties as returned by
 \fI\%query\-hotpluggable\-cpus[].props\fP, where
 node\-id could be used to override default node mapping.
 .INDENT 7.0
@@ -22988,8 +22913,8 @@ Table 5\-146: Field \(dqData Type\(dq of ACPI 6.3 spec.
 Set the system locality latency and bandwidth information between
 Initiator and Target proximity Domains.
 .sp
-For more information about \fI\%NumaHmatLBOptions\fP, see chapter 5.2.27.4:
-Table 5\-146 of ACPI 6.3 spec.
+For more information about \fI\%NumaHmatLBOptions\fP, see chapter
+5.2.27.4: Table 5\-146 of ACPI 6.3 spec.
 .INDENT 7.0
 .TP
 .B Members
@@ -23041,8 +22966,8 @@ associativity unknown)
 Cache write policy in the Memory Side Cache Information Structure of
 HMAT
 .sp
-For more information of \fI\%HmatCacheWritePolicy\fP, see chapter 5.2.27.5:
-Table 5\-147: Field \(dqCache Attributes\(dq of ACPI 6.3 spec.
+For more information of \fI\%HmatCacheWritePolicy\fP, see chapter
+5.2.27.5: Table 5\-147: Field \(dqCache Attributes\(dq of ACPI 6.3 spec.
 .INDENT 7.0
 .TP
 .B Values
@@ -23062,8 +22987,8 @@ write policy unknown)
 .B Object NumaHmatCacheOptions (Since: 5.0)
 Set the memory side cache information for a given memory domain.
 .sp
-For more information of \fI\%NumaHmatCacheOptions\fP, see chapter 5.2.27.5:
-Table 5\-147: Field \(dqCache Attributes\(dq of ACPI 6.3 spec.
+For more information of \fI\%NumaHmatCacheOptions\fP, see chapter
+5.2.27.5: Table 5\-147: Field \(dqCache Attributes\(dq of ACPI 6.3 spec.
 .INDENT 7.0
 .TP
 .B Members
@@ -24289,6 +24214,39 @@ Query information on interrupt controller devices
 .UNINDENT
 .INDENT 0.0
 .TP
+.B Object FirmwareLog (Since: 10.2)
+.INDENT 7.0
+.TP
+.B Members
+.INDENT 7.0
+.IP \(bu 2
+\fBversion\fP (\fBstring\fP, \fIoptional\fP) \-\- Firmware version.
+.IP \(bu 2
+\fBlog\fP (\fBstring\fP) \-\- Firmware debug log, in base64 encoding.  First and last log
+line might be incomplete.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B Command query\-firmware\-log (Since: 10.2)
+Find firmware memory log buffer in guest memory, return content.
+.INDENT 7.0
+.TP
+.B Arguments
+.INDENT 7.0
+.IP \(bu 2
+\fBmax\-size\fP (\fBint\fP, \fIoptional\fP) \-\- limit the amount of log data returned.  Up to 1 MiB of
+log data is allowed.  In case the amount of log data is larger
+than \fBmax\-size\fP the tail of the log is returned.
+.UNINDENT
+.TP
+.B Return
+\fI\%FirmwareLog\fP
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
 .B Command dump\-skeys (Since: 2.5)
 Dump the storage keys for an s390x guest
 .INDENT 7.0
@@ -24441,11 +24399,11 @@ definition not identical and cannot be made identical.
 .TP
 .B Command query\-cpu\-model\-comparison (Since: 2.8)
 Compares two CPU models, \fBmodela\fP and \fBmodelb\fP, returning how they
-compare in a specific configuration.  The results indicates how
-both models compare regarding runnability.  This result can be
-used by tooling to make decisions if a certain CPU model will
-run in a certain configuration or if a compatible CPU model has
-to be created by baselining.
+compare in a specific configuration.  The results indicates how both
+models compare regarding runnability.  This result can be used by
+tooling to make decisions if a certain CPU model will run in a
+certain configuration or if a compatible CPU model has to be created
+by baselining.
 .sp
 Usually, a CPU model is compared against the maximum possible CPU
 model of a certain configuration (e.g. the \(dqhost\(dq model for KVM).
@@ -24470,7 +24428,8 @@ options.  (Except for CPU models reported as \(dqstatic\(dq in
 .IP \(bu 2
 \(dq\-cpu\(dq arguments and global properties: arguments to the \-cpu
 option and global properties may affect expansion of CPU models.
-Using \fI\%query\-cpu\-model\-expansion\fP while using these is not advised.
+Using \fI\%query\-cpu\-model\-expansion\fP while using these is not
+advised.
 .UNINDENT
 .sp
 Some architectures may not support comparing CPU models.  s390x
@@ -24536,7 +24495,8 @@ options.  (Except for CPU models reported as \(dqstatic\(dq in
 .IP \(bu 2
 \(dq\-cpu\(dq arguments and global properties: arguments to the \-cpu
 option and global properties may affect expansion of CPU models.
-Using \fI\%query\-cpu\-model\-expansion\fP while using these is not advised.
+Using \fI\%query\-cpu\-model\-expansion\fP while using these is not
+advised.
 .UNINDENT
 .sp
 Some architectures may not support baselining CPU models.  s390x
@@ -24578,8 +24538,8 @@ The result of a cpu model expansion.
 .IP \(bu 2
 \fBmodel\fP (\fI\%CpuModelInfo\fP) \-\- the expanded \fI\%CpuModelInfo\fP\&.
 .IP \(bu 2
-\fBdeprecated\-props\fP (\fB[\fP\fBstring\fP\fB]\fP, \fIoptional\fP) \-\- an optional list of properties that are flagged as
-deprecated by the CPU vendor.  The list depends on the
+\fBdeprecated\-props\fP (\fB[\fP\fBstring\fP\fB]\fP, \fIoptional\fP) \-\- an optional list of properties that are flagged
+as deprecated by the CPU vendor.  The list depends on the
 \fI\%CpuModelExpansionType\fP: \(dqstatic\(dq properties are a subset of the
 enabled\-properties for the expanded model; \(dqfull\(dq properties are
 a set of properties that are deprecated across all models for
@@ -24615,7 +24575,8 @@ options.  (Except for CPU models reported as \(dqstatic\(dq in
 .IP \(bu 2
 \(dq\-cpu\(dq arguments and global properties: arguments to the \-cpu
 option and global properties may affect expansion of CPU models.
-Using \fI\%query\-cpu\-model\-expansion\fP while using these is not advised.
+Using \fI\%query\-cpu\-model\-expansion\fP while using these is not
+advised.
 .UNINDENT
 .sp
 Some architectures may not support all expansion types.  s390x
@@ -24838,6 +24799,36 @@ This command is unstable/experimental..INDENT 7.0
 .TP
 .B Return
 \fI\%CpuPolarizationInfo\fP \-\- the machine\(aqs CPU polarization
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B Event SCLP_CPI_INFO_AVAILABLE (Since: 10.2)
+This event is unstable/experimental.
+.sp
+Emitted when the Control\-Program Identification data is available in
+the QOM tree.
+.INDENT 7.0
+.TP
+.B Features
+.INDENT 7.0
+.IP \(bu 2
+\fBunstable\fP \-\- This event is experimental.
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.INDENT 3.5
+.IP "Example:"
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+<\- { \(dqevent\(dq: \(dqSCLP_CPI_INFO_AVAILABLE\(dq,
+     \(dqtimestamp\(dq: { \(dqseconds\(dq: 1401385907, \(dqmicroseconds\(dq: 422329 } }
+.EE
+.UNINDENT
+.UNINDENT
+.UNINDENT
 .UNINDENT
 .UNINDENT
 .SH RECORD/REPLAY
@@ -26010,6 +26001,92 @@ technology is not applicable.
 .UNINDENT
 .INDENT 0.0
 .TP
+.B Enum SsidSizeMode (Since: 11.0)
+SMMUv3 SubstreamID size configuration mode.
+.INDENT 7.0
+.TP
+.B Values
+.INDENT 7.0
+.IP \(bu 2
+\fBauto\fP \-\- derive from host IOMMU capabilities
+.IP \(bu 2
+\fB0\fP \-\- Not documented
+.IP \(bu 2
+\fB1\fP \-\- Not documented
+.IP \(bu 2
+\fB2\fP \-\- Not documented
+.IP \(bu 2
+\fB3\fP \-\- Not documented
+.IP \(bu 2
+\fB4\fP \-\- Not documented
+.IP \(bu 2
+\fB5\fP \-\- Not documented
+.IP \(bu 2
+\fB6\fP \-\- Not documented
+.IP \(bu 2
+\fB7\fP \-\- Not documented
+.IP \(bu 2
+\fB8\fP \-\- Not documented
+.IP \(bu 2
+\fB9\fP \-\- Not documented
+.IP \(bu 2
+\fB10\fP \-\- Not documented
+.IP \(bu 2
+\fB11\fP \-\- Not documented
+.IP \(bu 2
+\fB12\fP \-\- Not documented
+.IP \(bu 2
+\fB13\fP \-\- Not documented
+.IP \(bu 2
+\fB14\fP \-\- Not documented
+.IP \(bu 2
+\fB15\fP \-\- Not documented
+.IP \(bu 2
+\fB16\fP \-\- Not documented
+.IP \(bu 2
+\fB17\fP \-\- Not documented
+.IP \(bu 2
+\fB18\fP \-\- Not documented
+.IP \(bu 2
+\fB19\fP \-\- Not documented
+.IP \(bu 2
+\fB20\fP \-\- Not documented
+.UNINDENT
+.UNINDENT
+.sp
+Values 0\-20: SSIDSIZE value in bits.  0 disables SubstreamID.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B Enum OasMode (Since: 11.0)
+SMMUv3 Output Address Size configuration mode.
+.INDENT 7.0
+.TP
+.B Values
+.INDENT 7.0
+.IP \(bu 2
+\fBauto\fP \-\- derive from host IOMMU capabilities
+.IP \(bu 2
+\fB32\fP \-\- 32\-bit output address size
+.IP \(bu 2
+\fB36\fP \-\- 36\-bit output address size
+.IP \(bu 2
+\fB40\fP \-\- 40\-bit output address size
+.IP \(bu 2
+\fB42\fP \-\- 42\-bit output address size
+.IP \(bu 2
+\fB44\fP \-\- 44\-bit output address size
+.IP \(bu 2
+\fB48\fP \-\- 48\-bit output address size
+.IP \(bu 2
+\fB52\fP \-\- 52\-bit output address size
+.IP \(bu 2
+\fB56\fP \-\- 56\-bit output address size
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
 .B Command rtc\-reset\-reinjection (Since: 2.1)
 Reset the RTC interrupt reinjection backlog.  Can be used if another
 mechanism to synchronize guest time is in effect, for example QEMU
@@ -26628,11 +26705,10 @@ Options of the D\-Bus audio backend.
 .IP \(bu 2
 \fBout\fP (\fI\%AudiodevPerDirectionOptions\fP, \fIoptional\fP) \-\- options of the playback stream
 .IP \(bu 2
-\fBnsamples\fP (\fBint\fP, \fIoptional\fP) \-\- set the number of samples per read/write calls (default to 480,
+\fBnsamples\fP (\fBint\fP, \fIoptional\fP) \-\- set the number of samples per read/write calls
+(default to 480, 10ms at 48kHz).
 .UNINDENT
 .UNINDENT
-.sp
-10ms at 48kHz).
 .UNINDENT
 .INDENT 0.0
 .TP
@@ -27224,6 +27300,37 @@ Emitted when guest executes ACPI _OST method.
 .UNINDENT
 .UNINDENT
 .UNINDENT
+.sp
+== GHESv2 CPER Error Injection
+.sp
+Defined since ACPI Specification 6.1, section 18.3.2.8 Generic
+Hardware Error Source version 2.  See:
+.sp
+\X'tty: link https://uefi.org/sites/default/files/resources/ACPI_6_1.pdf'\fI\%https://uefi.org/sites/default/files/resources/ACPI_6_1.pdf\fP\X'tty: link'
+.INDENT 0.0
+.TP
+.B Command inject\-ghes\-v2\-error (Since: 10.2)
+This command is unstable/experimental.
+.sp
+Inject an error with additional ACPI 6.1 GHESv2 error information
+.INDENT 7.0
+.TP
+.B Arguments
+.INDENT 7.0
+.IP \(bu 2
+\fBcper\fP (\fBstring\fP) \-\- contains a base64 encoded string with raw data for a single
+CPER record with Generic Error Status Block, Generic Error Data
+Entry and generic error data payload, as described at
+\X'tty: link https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#format'\fI\%https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#format\fP\X'tty: link'
+.UNINDENT
+.TP
+.B Features
+.INDENT 7.0
+.IP \(bu 2
+\fBunstable\fP \-\- This command is experimental.
+.UNINDENT
+.UNINDENT
+.UNINDENT
 .SH PCI
 .INDENT 0.0
 .TP
@@ -27722,8 +27829,8 @@ if the object is exposed in the QOM tree
 Return runtime\-collected statistics for objects such as the VM or
 its vCPUs.
 .sp
-The arguments are a \fI\%StatsFilter\fP and specify the provider and objects
-to return statistics about.
+The arguments are a \fI\%StatsFilter\fP and specify the provider and
+objects to return statistics about.
 .INDENT 7.0
 .TP
 .B Arguments
@@ -28052,6 +28159,7 @@ Poll for the status of virtio\-crypto (no vhost\-crypto active)
          },
          \(dqhost\-features\(dq: {
              \(dqunknown\-dev\-features\(dq: 1073741824,
+             \(dqunknown\-dev\-features2\(dq: 0,
              \(dqdev\-features\(dq: [],
              \(dqtransports\(dq: [
                  \(dqVIRTIO_RING_F_EVENT_IDX: Used & avail. event fields enabled\(dq,
@@ -28306,7 +28414,10 @@ may not have their own device\-specific features (e.g. virtio\-rng).
 unique features)
 .IP \(bu 2
 \fBunknown\-dev\-features\fP (\fBint\fP, \fIoptional\fP) \-\- Virtio device features bitmap that have not
-been decoded
+been decoded (bits 0\-63)
+.IP \(bu 2
+\fBunknown\-dev\-features2\fP (\fBint\fP, \fIoptional\fP) \-\- Virtio device features bitmap that have not
+been decoded (bits 64\-127) (since 10.2)
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -28822,21 +28933,30 @@ have it.
 .INDENT 0.0
 .TP
 .B Object VirtIOGPUOutput (Since: 10.1)
-Describes configuration of a VirtIO GPU output.
+Describes configuration of a VirtIO GPU output.  If both \fBxres\fP and
+\fByres\fP are set, they take precedence over root virtio\-gpu resolution
+configuration and enable the corresponding output.  If none of \fBxres\fP
+and \fByres\fP are set, root virtio\-gpu resolution configuration takes
+precedence and only the first output is enabled.  Only setting one
+of \fBxres\fP or \fByres\fP is an error.
 .INDENT 7.0
 .TP
 .B Members
 .INDENT 7.0
 .IP \(bu 2
 \fBname\fP (\fBstring\fP) \-\- the name of the output
+.IP \(bu 2
+\fBxres\fP (\fBint\fP, \fIoptional\fP) \-\- horizontal resolution of the output in pixels (since 11.0)
+.IP \(bu 2
+\fByres\fP (\fBint\fP, \fIoptional\fP) \-\- vertical resolution of the output in pixels (since 11.0)
 .UNINDENT
 .UNINDENT
 .UNINDENT
 .INDENT 0.0
 .TP
 .B Object DummyVirtioForceArrays (Since: 9.0)
-Not used by QMP; hack to let us use IOThreadVirtQueueMappingList
-and VirtIOGPUOutputList internally
+Not used by QMP; hack to let us use IOThreadVirtQueueMappingList and
+VirtIOGPUOutputList internally
 .INDENT 7.0
 .TP
 .B Members
@@ -28888,7 +29008,13 @@ and VirtIOGPUOutputList internally
 .INDENT 0.0
 .TP
 .B Enum QapiVfioMigrationState (Since: 9.1)
-An enumeration of the VFIO device migration states.
+An enumeration of the VFIO device migration states.  In addition to
+the regular states, there are prepare states (with \(aqprepare\(aq suffix)
+which indicate that the device is just about to transition to the
+corresponding state.  Note that seeing a prepare state for state X
+doesn\(aqt guarantee that the next state will be X, as the state
+transition can fail and the device may transition to a different
+state instead.
 .INDENT 7.0
 .TP
 .B Values
@@ -28912,6 +29038,9 @@ its internal state is available for reading.
 \fBpre\-copy\-p2p\fP \-\- The device is running in the P2P quiescent state,
 tracking its internal state and its internal state is available
 for reading.
+.IP \(bu 2
+\fBpre\-copy\-p2p\-prepare\fP \-\- The device is just about to move to
+pre\-copy\-p2p state.  (since 11.0)
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -29069,36 +29198,57 @@ events.  Each such event log is handled and signaled independently.
 .UNINDENT
 .INDENT 0.0
 .TP
-.B Command cxl\-inject\-general\-media\-event (Since: 8.1)
-Inject an event record for a General Media Event (CXL r3.0
-8.2.9.2.1.1).  This event type is reported via one of the event logs
-specified via the log parameter.
+.B Object CXLCommonEventBase (Since: 8.1)
+Common event base for a CXL Event (CXL r3.2 8.2.10.2.1
+Table 8\-55 Common Event Record Format).
 .INDENT 7.0
 .TP
-.B Arguments
+.B Members
 .INDENT 7.0
 .IP \(bu 2
 \fBpath\fP (\fBstring\fP) \-\- CXL type 3 device canonical QOM path
 .IP \(bu 2
 \fBlog\fP (\fI\%CxlEventLog\fP) \-\- event log to add the event to
 .IP \(bu 2
-\fBflags\fP (\fBint\fP) \-\- Event Record Flags.  See CXL r3.0 Table 8\-42 Common Event
+\fBflags\fP (\fBint\fP) \-\- Event Record Flags.  See CXL r3.2 Table 8\-55 Common Event
 Record Format, Event Record Flags for subfield definitions.
 .IP \(bu 2
+\fBmaint\-op\-class\fP (\fBint\fP, \fIoptional\fP) \-\- Maintenance operation class the device requests to
+initiate.
+.IP \(bu 2
+\fBmaint\-op\-subclass\fP (\fBint\fP, \fIoptional\fP) \-\- Maintenance operation subclass the device
+requests to initiate.
+.IP \(bu 2
+\fBld\-id\fP (\fBint\fP, \fIoptional\fP) \-\- Logical Device (LD) ID of LD from where the event
+originated.
+.IP \(bu 2
+\fBhead\-id\fP (\fBint\fP, \fIoptional\fP) \-\- ID of the device head from where the event originated.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B Object CXLGeneralMediaEvent (Since: 8.1)
+Event record for a General Media Event (CXL r3.2 8.2.10.2.1.1).
+.INDENT 7.0
+.TP
+.B Members
+.INDENT 7.0
+.IP \(bu 2
 \fBdpa\fP (\fBint\fP) \-\- Device Physical Address (relative to \fBpath\fP device).  Note
-lower bits include some flags.  See CXL r3.0 Table 8\-43 General
+lower bits include some flags.  See CXL r3.2 Table 8\-57 General
 Media Event Record, Physical Address.
 .IP \(bu 2
 \fBdescriptor\fP (\fBint\fP) \-\- Memory Event Descriptor with additional memory event
-information.  See CXL r3.0 Table 8\-43 General Media Event
+information.  See CXL r3.2 Table 8\-57 General Media Event
 Record, Memory Event Descriptor for bit definitions.
 .IP \(bu 2
-\fBtype\fP (\fBint\fP) \-\- Type of memory event that occurred.  See CXL r3.0 Table 8\-43
+\fBtype\fP (\fBint\fP) \-\- Type of memory event that occurred.  See CXL r3.2 Table 8\-57
 General Media Event Record, Memory Event Type for possible
 values.
 .IP \(bu 2
 \fBtransaction\-type\fP (\fBint\fP) \-\- Type of first transaction that caused the event
-to occur.  See CXL r3.0 Table 8\-43 General Media Event Record,
+to occur.  See CXL r3\-2 Table 8\-57 General Media Event Record,
 Transaction Type for possible values.
 .IP \(bu 2
 \fBchannel\fP (\fBint\fP, \fIoptional\fP) \-\- The channel of the memory event location.  A channel is an
@@ -29112,40 +29262,58 @@ with the memory event location.
 .IP \(bu 2
 \fBcomponent\-id\fP (\fBstring\fP, \fIoptional\fP) \-\- Device specific component identifier for the event.
 May describe a field replaceable sub\-component of the device.
+.IP \(bu 2
+\fBis\-comp\-id\-pldm\fP (\fBboolean\fP, \fIoptional\fP) \-\- This flag specifies whether the device\-specific
+component identifier format follows PLDM.
+.IP \(bu 2
+\fBcme\-ev\-flags\fP (\fBint\fP, \fIoptional\fP) \-\- Advanced programmable corrected memory error
+threshold event flags.
+.IP \(bu 2
+\fBcme\-count\fP (\fBint\fP, \fIoptional\fP) \-\- Corrected memory error count at event.
+.IP \(bu 2
+\fBsub\-type\fP (\fBint\fP) \-\- Memory event sub\-type.
+.IP \(bu 2
+The members of \fI\%CXLCommonEventBase\fP\&.
 .UNINDENT
 .UNINDENT
 .UNINDENT
 .INDENT 0.0
 .TP
-.B Command cxl\-inject\-dram\-event (Since: 8.1)
-Inject an event record for a DRAM Event (CXL r3.0 8.2.9.2.1.2).
-This event type is reported via one of the event logs specified via
-the log parameter.
+.B Command cxl\-inject\-general\-media\-event (Since: 8.1)
+Inject an event record for a General Media Event (CXL r3.2
+8.2.10.2.1.1).  This event type is reported via one of the event
+logs specified via the log parameter.
 .INDENT 7.0
 .TP
 .B Arguments
 .INDENT 7.0
 .IP \(bu 2
-\fBpath\fP (\fBstring\fP) \-\- CXL type 3 device canonical QOM path
-.IP \(bu 2
-\fBlog\fP (\fI\%CxlEventLog\fP) \-\- Event log to add the event to
-.IP \(bu 2
-\fBflags\fP (\fBint\fP) \-\- Event Record Flags.  See CXL r3.0 Table 8\-42 Common Event
-Record Format, Event Record Flags for subfield definitions.
+The members of \fI\%CXLGeneralMediaEvent\fP\&.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B Object CXLDRAMEvent (Since: 8.1)
+Event record for a DRAM Event (CXL r3.2 8.2.10.2.1.2).
+.INDENT 7.0
+.TP
+.B Members
+.INDENT 7.0
 .IP \(bu 2
 \fBdpa\fP (\fBint\fP) \-\- Device Physical Address (relative to \fBpath\fP device).  Note
-lower bits include some flags.  See CXL r3.0 Table 8\-44 DRAM
+lower bits include some flags.  See CXL r3.2 Table 8\-58 DRAM
 Event Record, Physical Address.
 .IP \(bu 2
 \fBdescriptor\fP (\fBint\fP) \-\- Memory Event Descriptor with additional memory event
-information.  See CXL r3.0 Table 8\-44 DRAM Event Record, Memory
+information.  See CXL r3.2 Table 8\-58 DRAM Event Record, Memory
 Event Descriptor for bit definitions.
 .IP \(bu 2
-\fBtype\fP (\fBint\fP) \-\- Type of memory event that occurred.  See CXL r3.0 Table 8\-44
+\fBtype\fP (\fBint\fP) \-\- Type of memory event that occurred.  See CXL r3.2 Table 8\-58
 DRAM Event Record, Memory Event Type for possible values.
 .IP \(bu 2
 \fBtransaction\-type\fP (\fBint\fP) \-\- Type of first transaction that caused the event
-to occur.  See CXL r3.0 Table 8\-44 DRAM Event Record,
+to occur.  See CXL r3.2 Table 8\-58 DRAM Event Record,
 Transaction Type for possible values.
 .IP \(bu 2
 \fBchannel\fP (\fBint\fP, \fIoptional\fP) \-\- The channel of the memory event location.  A channel is an
@@ -29168,39 +29336,62 @@ per read or write of the memory.
 .IP \(bu 2
 \fBcorrection\-mask\fP (\fB[\fP\fBint\fP\fB]\fP, \fIoptional\fP) \-\- Bits within each nibble.  Used in order of bits
 set in the nibble\-mask.  Up to 4 nibbles may be covered.
+.IP \(bu 2
+\fBcomponent\-id\fP (\fBstring\fP, \fIoptional\fP) \-\- Device specific component identifier for the event.
+May describe a field replaceable sub\-component of the device.
+.IP \(bu 2
+\fBis\-comp\-id\-pldm\fP (\fBboolean\fP, \fIoptional\fP) \-\- This flag specifies whether the device\-specific
+component identifier format follows PLDM.
+.IP \(bu 2
+\fBsub\-channel\fP (\fBint\fP, \fIoptional\fP) \-\- The sub\-channel of the memory event location.
+.IP \(bu 2
+\fBcme\-ev\-flags\fP (\fBint\fP, \fIoptional\fP) \-\- Advanced programmable corrected memory error
+threshold event flags.
+.IP \(bu 2
+\fBcvme\-count\fP (\fBint\fP, \fIoptional\fP) \-\- Corrected volatile memory error count at event.
+.IP \(bu 2
+\fBsub\-type\fP (\fBint\fP) \-\- Memory event sub\-type.
+.IP \(bu 2
+The members of \fI\%CXLCommonEventBase\fP\&.
 .UNINDENT
 .UNINDENT
 .UNINDENT
 .INDENT 0.0
 .TP
-.B Command cxl\-inject\-memory\-module\-event (Since: 8.1)
-Inject an event record for a Memory Module Event (CXL r3.0
-8.2.9.2.1.3).  This event includes a copy of the Device Health info
-at the time of the event.
+.B Command cxl\-inject\-dram\-event (Since: 8.1)
+Inject an event record for a DRAM Event (CXL r3.2 8.2.10.2.1.2).
+This event type is reported via one of the event logs
+specified via the log parameter.
 .INDENT 7.0
 .TP
 .B Arguments
 .INDENT 7.0
 .IP \(bu 2
-\fBpath\fP (\fBstring\fP) \-\- CXL type 3 device canonical QOM path
+The members of \fI\%CXLDRAMEvent\fP\&.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B Object CXLMemModuleEvent (Since: 8.1)
+Event record for a Memory Module Event (CXL r3.2 8.2.10.2.1.3).
+.INDENT 7.0
+.TP
+.B Members
+.INDENT 7.0
 .IP \(bu 2
-\fBlog\fP (\fI\%CxlEventLog\fP) \-\- Event Log to add the event to
-.IP \(bu 2
-\fBflags\fP (\fBint\fP) \-\- Event Record Flags.  See CXL r3.0 Table 8\-42 Common Event
-Record Format, Event Record Flags for subfield definitions.
-.IP \(bu 2
-\fBtype\fP (\fBint\fP) \-\- Device Event Type.  See CXL r3.0 Table 8\-45 Memory Module
+\fBtype\fP (\fBint\fP) \-\- Device Event Type.  See CXL r3.2 Table 8\-59 Memory Module
 Event Record for bit definitions for bit definiions.
 .IP \(bu 2
-\fBhealth\-status\fP (\fBint\fP) \-\- Overall health summary bitmap.  See CXL r3.0 Table
-8\-100 Get Health Info Output Payload, Health Status for bit
+\fBhealth\-status\fP (\fBint\fP) \-\- Overall health summary bitmap.  See CXL r3.2 Table
+8\-148 Get Health Info Output Payload, Health Status for bit
 definitions.
 .IP \(bu 2
-\fBmedia\-status\fP (\fBint\fP) \-\- Overall media health summary.  See CXL r3.0 Table
-8\-100 Get Health Info Output Payload, Media Status for bit
+\fBmedia\-status\fP (\fBint\fP) \-\- Overall media health summary.  See CXL r3.2 Table
+8\-148 Get Health Info Output Payload, Media Status for bit
 definitions.
 .IP \(bu 2
-\fBadditional\-status\fP (\fBint\fP) \-\- See CXL r3.0 Table 8\-100 Get Health Info Output
+\fBadditional\-status\fP (\fBint\fP) \-\- See CXL r3.2 Table 8\-148 Get Health Info Output
 Payload, Additional Status for subfield definitions.
 .IP \(bu 2
 \fBlife\-used\fP (\fBint\fP) \-\- Percentage (0\-100) of factory expected life span.
@@ -29215,6 +29406,31 @@ in volatile memory.
 .IP \(bu 2
 \fBcorrected\-persistent\-error\-count\fP (\fBint\fP) \-\- Total number of correctable
 errors in persistent memory
+.IP \(bu 2
+\fBcomponent\-id\fP (\fBstring\fP, \fIoptional\fP) \-\- Device specific component identifier for the event.
+May describe a field replaceable sub\-component of the device.
+.IP \(bu 2
+\fBis\-comp\-id\-pldm\fP (\fBboolean\fP, \fIoptional\fP) \-\- This flag specifies whether the device\-specific
+component identifier format follows PLDM.
+.IP \(bu 2
+\fBsub\-type\fP (\fBint\fP) \-\- Device event sub\-type.
+.IP \(bu 2
+The members of \fI\%CXLCommonEventBase\fP\&.
+.UNINDENT
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B Command cxl\-inject\-memory\-module\-event (Since: 8.1)
+Inject an event record for a Memory Module Event (CXL r3.2
+8.2.10.2.1.3).  This event includes a copy of the Device Health info
+at the time of the event.
+.INDENT 7.0
+.TP
+.B Arguments
+.INDENT 7.0
+.IP \(bu 2
+The members of \fI\%CXLMemModuleEvent\fP\&.
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -29552,7 +29768,7 @@ projects, specifically \X'tty: link https://gitlab.com/kraxel/virt-firmware'\fI\
 .INDENT 0.0
 .TP
 .B Object UefiVariable (Since: 10.0)
-UEFI Variable.  Check the UEFI specifification for more detailed
+UEFI Variable.  Check the UEFI specification for more detailed
 information on the fields.
 .INDENT 7.0
 .TP
@@ -29597,6 +29813,6 @@ updates must be signed with the same certificate.
 .UNINDENT
 .UNINDENT
 .SH COPYRIGHT
-2025, The QEMU Project Developers
+2026, The QEMU Project Developers
 .\" Generated by docutils manpage writer.
 .

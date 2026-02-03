@@ -9,7 +9,7 @@
   <title>Supported build platforms &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -133,25 +133,22 @@ though it does not cover all distros listed below.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>Arm</p></td>
-<td><p>hvf (64 bit only), kvm (64 bit only), tcg, xen</p></td>
+<td><p>hvf, kvm, tcg, whpx, xen</p></td>
 </tr>
-<tr class="row-odd"><td><p>MIPS (64 bit little endian only)</p></td>
+<tr class="row-odd"><td><p>PPC</p></td>
 <td><p>kvm, tcg</p></td>
 </tr>
-<tr class="row-even"><td><p>PPC</p></td>
+<tr class="row-even"><td><p>RISC-V</p></td>
 <td><p>kvm, tcg</p></td>
 </tr>
-<tr class="row-odd"><td><p>RISC-V</p></td>
+<tr class="row-odd"><td><p>s390x</p></td>
 <td><p>kvm, tcg</p></td>
 </tr>
-<tr class="row-even"><td><p>s390x</p></td>
-<td><p>kvm, tcg</p></td>
-</tr>
-<tr class="row-odd"><td><p>SPARC</p></td>
+<tr class="row-even"><td><p>SPARC</p></td>
 <td><p>tcg</p></td>
 </tr>
-<tr class="row-even"><td><p>x86</p></td>
-<td><p>hvf (64 bit only), kvm, nvmm, tcg, whpx (64 bit only), xen</p></td>
+<tr class="row-odd"><td><p>x86</p></td>
+<td><p>hvf, mshv, kvm, nvmm, tcg, whpx, xen</p></td>
 </tr>
 </tbody>
 </table>
@@ -192,7 +189,7 @@ to any newer python that is available as an option from the vendor.
 In this case, it will be necessary to use the <code class="docutils literal notranslate"><span class="pre">--python</span></code> command line
 option of the <code class="docutils literal notranslate"><span class="pre">configure</span></code> script to point QEMU to a supported
 version of the Python runtime.</p>
-<p>As of QEMU 10.1.0, the minimum supported version of Python is 3.9.</p>
+<p>As of QEMU 10.2.94, the minimum supported version of Python is 3.9.</p>
 </dd>
 <dt>Python build dependencies</dt><dd><p>Some of QEMU’s build dependencies are written in Python.  Usually these
 are only packaged by distributions for the default Python runtime.
@@ -205,14 +202,15 @@ of them are included in the distributed tarballs.  One exception is the
 bindgen tool, which is too big to package and distribute.  The minimum
 supported version of bindgen is 0.60.x.  For distributions that do not
 include bindgen or have an older version, it is recommended to install
-a newer version using <code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">install</span> <span class="pre">bindgen-cli</span></code>.</p>
-<p>QEMU requires Rust 1.77.0.  This is available on all supported platforms
-with one exception, namely the <code class="docutils literal notranslate"><span class="pre">mips64el</span></code> architecture on Debian bookworm.
-For all other architectures, Debian bookworm provides a new-enough Rust
-compiler in the <code class="docutils literal notranslate"><span class="pre">rustc-web</span></code> package.</p>
-<p>Also, on Ubuntu 22.04 or 24.04 this requires the <code class="docutils literal notranslate"><span class="pre">rustc-1.77</span></code>
-(or newer) package.  The path to <code class="docutils literal notranslate"><span class="pre">rustc</span></code> and <code class="docutils literal notranslate"><span class="pre">rustdoc</span></code> must be
-provided manually to the configure script.</p>
+a newer version using <code class="docutils literal notranslate"><span class="pre">cargo</span> <span class="pre">install</span> <span class="pre">--locked</span> <span class="pre">bindgen-cli</span></code>.</p>
+<p>QEMU requires Rust 1.83.0.  This is available on all supported platforms
+except for the <code class="docutils literal notranslate"><span class="pre">mips64el</span></code> architecture on Debian bookworm.  For all other
+architectures, Debian bookworm provides a new-enough Rust compiler
+in the <code class="docutils literal notranslate"><span class="pre">rustc-web</span></code> package.</p>
+<p>For Ubuntu 22.04 (“Jammy”) and 24.04 (“Noble”) updated versions of
+Rust are available through packages such as <code class="docutils literal notranslate"><span class="pre">rustc-1.83</span></code> package;
+the path to <code class="docutils literal notranslate"><span class="pre">rustc</span></code> and <code class="docutils literal notranslate"><span class="pre">rustdoc</span></code> has to be provided manually to
+the configure script.</p>
 <p>Some distros prefer to avoid vendored crate sources, and instead use
 local sources from e.g. <code class="docutils literal notranslate"><span class="pre">/usr/share/cargo/registry</span></code>.  QEMU includes a
 script, <code class="docutils literal notranslate"><span class="pre">scripts/get-wraps-from-cargo-registry.py</span></code>, that automatically
@@ -265,7 +263,7 @@ privilege is required, or the process must be run as an administrator.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -276,7 +274,7 @@ privilege is required, or the process must be run as an administrator.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="license.html">QEMU and this manual are released under the

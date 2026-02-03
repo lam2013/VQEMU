@@ -9,7 +9,7 @@
   <title>Security &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -95,8 +95,11 @@
 <li class="toctree-l2"><a class="reference internal" href="multi-process.html">Multi-process QEMU</a></li>
 <li class="toctree-l2"><a class="reference internal" href="confidential-guest-support.html">Confidential Guest Support</a></li>
 <li class="toctree-l2"><a class="reference internal" href="igvm.html">Independent Guest Virtual Machine (IGVM) support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nitro.html">AWS Nitro Enclaves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="whpx.html">Windows Hypervisor Platform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vm-templating.html">QEMU VM templating</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sriov.html">Compsable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sriov.html">Composable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qemu-colo.html">Qemu COLO Fault Tolerance</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Mode Emulation</a></li>
@@ -162,6 +165,31 @@ malicious:</p>
 </ul>
 <p>Bugs affecting these entities are evaluated on whether they can cause damage in
 real-world use cases and treated as security bugs if this is the case.</p>
+<p>To be covered by this security support policy you must:</p>
+<ul class="simple">
+<li><p>use a virtualization accelerator like KVM or HVF</p></li>
+<li><p>use one of the machine types listed below</p></li>
+</ul>
+<p>It may be possible to use other machine types with a virtualization
+accelerator to provide improved performance with a trusted guest
+workload, but any machine type not listed here should not be
+considered to be providing guest isolation or security guarantees,
+and falls under the “non-virtualization use case”.</p>
+<p>Supported machine types for the virtualization use case, by target architecture:</p>
+<dl class="simple">
+<dt>aarch64</dt><dd><p><code class="docutils literal notranslate"><span class="pre">virt</span></code></p>
+</dd>
+<dt>i386, x86_64</dt><dd><p><code class="docutils literal notranslate"><span class="pre">microvm</span></code>, <code class="docutils literal notranslate"><span class="pre">xenfv</span></code>, <code class="docutils literal notranslate"><span class="pre">xenpv</span></code>, <code class="docutils literal notranslate"><span class="pre">xenpvh</span></code>, <code class="docutils literal notranslate"><span class="pre">pc</span></code>, <code class="docutils literal notranslate"><span class="pre">q35</span></code></p>
+</dd>
+<dt>s390x</dt><dd><p><code class="docutils literal notranslate"><span class="pre">s390-ccw-virtio</span></code></p>
+</dd>
+<dt>loongarch64:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">virt</span></code></p>
+</dd>
+<dt>ppc64:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">pseries</span></code></p>
+</dd>
+<dt>riscv32, riscv64:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">virt</span></code></p>
+</dd>
+</dl>
 </section>
 <section id="non-virtualization-use-case">
 <h3>Non-virtualization Use Case<a class="headerlink" href="#non-virtualization-use-case" title="Link to this heading"></a></h3>
@@ -292,7 +320,7 @@ application or user.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -303,7 +331,7 @@ application or user.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

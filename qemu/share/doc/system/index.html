@@ -9,7 +9,7 @@
   <title>System Emulation &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -77,8 +77,11 @@
 <li class="toctree-l2"><a class="reference internal" href="multi-process.html">Multi-process QEMU</a></li>
 <li class="toctree-l2"><a class="reference internal" href="confidential-guest-support.html">Confidential Guest Support</a></li>
 <li class="toctree-l2"><a class="reference internal" href="igvm.html">Independent Guest Virtual Machine (IGVM) support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nitro.html">AWS Nitro Enclaves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="whpx.html">Windows Hypervisor Platform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vm-templating.html">QEMU VM templating</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sriov.html">Compsable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sriov.html">Composable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qemu-colo.html">Qemu COLO Fault Tolerance</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Mode Emulation</a></li>
@@ -151,25 +154,22 @@ or Hypervisor.Framework.</p>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="device-emulation.html#emulated-devices">Emulated Devices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="devices/virtio/index.html">VirtIO Devices</a></li>
 <li class="toctree-l3"><a class="reference internal" href="devices/can.html">CAN Bus Emulation Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="devices/canokey.html">CanoKey QEMU</a></li>
 <li class="toctree-l3"><a class="reference internal" href="devices/ccid.html">Chip Card Interface Device (CCID)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="devices/cxl.html">Compute Express Link (CXL)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="devices/vfio-user.html">vfio-user</a></li>
-<li class="toctree-l3"><a class="reference internal" href="devices/ivshmem.html">Inter-VM Shared Memory device</a></li>
+<li class="toctree-l3"><a class="reference internal" href="devices/emmc.html">eMMC Emulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="devices/igb.html">igb</a></li>
 <li class="toctree-l3"><a class="reference internal" href="devices/ivshmem-flat.html">Inter-VM Shared Memory Flat Device</a></li>
+<li class="toctree-l3"><a class="reference internal" href="devices/ivshmem.html">Inter-VM Shared Memory device</a></li>
 <li class="toctree-l3"><a class="reference internal" href="devices/keyboard.html">Sparc32 keyboard</a></li>
 <li class="toctree-l3"><a class="reference internal" href="devices/net.html">Network emulation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="devices/nvme.html">NVMe Emulation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="devices/usb.html">USB emulation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="devices/vhost-user.html">vhost-user back ends</a></li>
-<li class="toctree-l3"><a class="reference internal" href="devices/virtio-gpu.html">virtio-gpu</a></li>
-<li class="toctree-l3"><a class="reference internal" href="devices/virtio-pmem.html">virtio pmem</a></li>
-<li class="toctree-l3"><a class="reference internal" href="devices/virtio-snd.html">virtio sound</a></li>
-<li class="toctree-l3"><a class="reference internal" href="devices/vhost-user-input.html">QEMU vhost-user-input - Input emulation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="devices/vhost-user-rng.html">QEMU vhost-user-rng - RNG emulation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="devices/canokey.html">CanoKey QEMU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="devices/scsi/index.html">SCSI Devices</a></li>
 <li class="toctree-l3"><a class="reference internal" href="devices/usb-u2f.html">Universal Second Factor (U2F) USB Key Device</a></li>
-<li class="toctree-l3"><a class="reference internal" href="devices/igb.html">igb</a></li>
+<li class="toctree-l3"><a class="reference internal" href="devices/usb.html">USB emulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="devices/vfio-user.html">vfio-user</a></li>
 </ul>
 </li>
 </ul>
@@ -216,7 +216,6 @@ or Hypervisor.Framework.</p>
 <li class="toctree-l2"><a class="reference internal" href="generic-loader.html#loading-data-into-memory-values">Loading Data into Memory Values</a></li>
 <li class="toctree-l2"><a class="reference internal" href="generic-loader.html#setting-a-cpu-s-program-counter">Setting a CPU’s Program Counter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="generic-loader.html#loading-files">Loading Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="generic-loader.html#restrictions-and-todos">Restrictions and ToDos</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guest-loader.html">Guest Loader</a><ul>
@@ -236,10 +235,16 @@ or Hypervisor.Framework.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tls.html">TLS setup for network services</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tls.html#certificate-file-naming">Certificate file naming</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tls.html#setup-the-certificate-authority">Setup the Certificate Authority</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tls.html#issuing-server-certificates">Issuing server certificates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tls.html#issuing-client-certificates">Issuing client certificates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tls.html#tls-x509-credential-configuration">TLS x509 credential configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tls.html#tls-certificates-for-post-quantum-cryptography">TLS certificates for Post-Quantum Cryptography</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tls.html#key-generation-parameters">Key generation parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tls.html#force-disabling-pqc-via-crypto-priority">Force disabling PQC via crypto priority</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="tls.html#tls-pre-shared-keys-psk">TLS Pre-Shared Keys (PSK)</a></li>
 </ul>
 </li>
@@ -324,15 +329,15 @@ or Hypervisor.Framework.</p>
 <li class="toctree-l3"><a class="reference internal" href="target-mips.html#nanomips-system-emulator">nanoMIPS System emulator</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="target-ppc.html">PowerPC System emulator</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="target-ppc.html#board-specific-documentation">Board-specific documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="target-or1k.html">OpenRISC System emulator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="target-or1k.html#choosing-a-board-model">Choosing a board model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="target-or1k.html#board-specific-documentation">Board-specific documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="target-or1k.html#emulated-cpu-architecture-support">Emulated CPU architecture support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="target-or1k.html#openrisc-cpu-features">OpenRISC CPU features</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="target-openrisc.html">OpenRISC System emulator</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="target-openrisc.html#choosing-a-board-model">Choosing a board model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="target-openrisc.html#board-specific-documentation">Board-specific documentation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="target-openrisc.html#emulated-cpu-architecture-support">Emulated CPU architecture support</a></li>
-<li class="toctree-l3"><a class="reference internal" href="target-openrisc.html#openrisc-cpu-features">OpenRISC CPU features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="target-ppc.html">PowerPC System emulator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="target-ppc.html#board-specific-documentation">Board-specific documentation</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="target-riscv.html">RISC-V System emulator</a><ul>
@@ -397,6 +402,46 @@ or Hypervisor.Framework.</p>
 <li class="toctree-l2"><a class="reference internal" href="igvm.html#references">References</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="nitro.html">AWS Nitro Enclaves</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nitro.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nitro.html#quick-start">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nitro.html#accelerator">Accelerator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nitro.html#machine">Machine</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nitro.html#eif-image-format">EIF Image Format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nitro.html#cpu-requirements">CPU Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nitro.html#memory-requirements">Memory Requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nitro.html#emulated-nitro-enclaves">Emulated Nitro Enclaves</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="whpx.html">Windows Hypervisor Platform</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="whpx.html#prerequisites">Prerequisites</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="whpx.html#installation">Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="whpx.html#minimum-os-version">Minimum OS version</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="whpx.html#quick-start">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="whpx.html#some-tracing-options">Some tracing options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="whpx.html#x86-64">x86_64</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="whpx.html#known-issues-on-x86-64">Known issues on x86_64</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="whpx.html#guests-using-legacy-vga-modes">Guests using legacy VGA modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="whpx.html#guests-using-mmx-sse-or-avx-instructions-for-mmio">Guests using MMX, SSE or AVX instructions for MMIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="whpx.html#m-isapc"><code class="docutils literal notranslate"><span class="pre">-M</span> <span class="pre">isapc</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="whpx.html#gdbstub">gdbstub</a></li>
+<li class="toctree-l3"><a class="reference internal" href="whpx.html#cpu-type-ignored"><code class="docutils literal notranslate"><span class="pre">-cpu</span> <span class="pre">type</span></code> ignored</a></li>
+<li class="toctree-l3"><a class="reference internal" href="whpx.html#pic-interrupts-on-windows-10">PIC interrupts on Windows 10</a></li>
+<li class="toctree-l3"><a class="reference internal" href="whpx.html#known-issues-on-windows-11">Known issues on Windows 11</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="whpx.html#arm64">arm64</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="whpx.html#isa-feature-support">ISA feature support</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="vm-templating.html">QEMU VM templating</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="vm-templating.html#overview">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vm-templating.html#security-alert">!!! Security Alert !!!</a></li>
@@ -410,7 +455,22 @@ or Hypervisor.Framework.</p>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="sriov.html">Compsable SR-IOV device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sriov.html">Composable SR-IOV device</a></li>
+<li class="toctree-l1"><a class="reference internal" href="qemu-colo.html">Qemu COLO Fault Tolerance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="qemu-colo.html#background">Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qemu-colo.html#architecture">Architecture</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="qemu-colo.html#components">Components</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qemu-colo.html#colo-operation-status">COLO operation status</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="qemu-colo.html#test-procedure">Test procedure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="qemu-colo.html#setup">Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qemu-colo.html#startup-qemu">Startup qemu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qemu-colo.html#failover-test">Failover test</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 </section>
@@ -426,7 +486,7 @@ or Hypervisor.Framework.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -437,7 +497,7 @@ or Hypervisor.Framework.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

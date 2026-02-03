@@ -9,7 +9,7 @@
   <title>CheckPoint and Restart (CPR) &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../../_static/qemu_32x32.png"/>
@@ -127,7 +127,7 @@
 VM is migrated to a new QEMU instance on the same host.  It is
 intended for use when the goal is to update host software components
 that run the VM, such as QEMU or even the host kernel.  At this time,
-the cpr-reboot and cpr-transfer modes are available.</p>
+the cpr-reboot, cpr-transfer, and cpr-exec modes are available.</p>
 <p>Because QEMU is restarted on the same host, with access to the same
 local devices, CPR is allowed in certain cases where normal migration
 would be blocked.  However, the user must not modify the contents of
@@ -429,6 +429,109 @@ preserving those devices and their kernel state without interruption,
 even if they do not explicitly support live migration.</p>
 </section>
 </section>
+<section id="cpr-exec-mode">
+<h2>cpr-exec mode<a class="headerlink" href="#cpr-exec-mode" title="Link to this heading"></a></h2>
+<p>In this mode, QEMU stops the VM, writes VM state to the migration
+URI, and directly exec’s a new version of QEMU on the same host,
+replacing the original process while retaining its PID.  Guest RAM is
+preserved in place, albeit with new virtual addresses.  The user
+completes the migration by specifying the <code class="docutils literal notranslate"><span class="pre">-incoming</span></code> option, and
+by issuing the <code class="docutils literal notranslate"><span class="pre">migrate-incoming</span></code> command if necessary; see details
+below.</p>
+<p>This mode supports VFIO/IOMMUFD devices by preserving device
+descriptors and hence kernel state across the exec, even for devices
+that do not support live migration.</p>
+<p>Because the old and new QEMU instances are not active concurrently,
+the URI cannot be a type that streams data from one instance to the
+other.</p>
+<p>This mode does not require a channel of type <code class="docutils literal notranslate"><span class="pre">cpr</span></code>.  The information
+that is passed over that channel for cpr-transfer mode is instead
+serialized to a memfd, the number of the fd is saved in the
+QEMU_CPR_EXEC_STATE environment variable during the exec of new QEMU.
+and new QEMU mmaps the memfd.</p>
+<section id="id3">
+<h3>Usage<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<p>Arguments for the new QEMU process are taken from the
+&#64;cpr-exec-command parameter.  The first argument should be the
+path of a new QEMU binary, or a prefix command that exec’s the
+new QEMU binary, and the arguments should include the ‘’-incoming’’
+option.</p>
+<p>Memory backend objects must have the <code class="docutils literal notranslate"><span class="pre">share=on</span></code> attribute.
+The VM must be started with the <code class="docutils literal notranslate"><span class="pre">-machine</span> <span class="pre">aux-ram-share=on</span></code> option.</p>
+<dl class="simple">
+<dt>Outgoing:</dt><dd><ul class="simple">
+<li><p>Set the migration mode parameter to <code class="docutils literal notranslate"><span class="pre">cpr-exec</span></code>.</p></li>
+<li><p>Set the <code class="docutils literal notranslate"><span class="pre">cpr-exec-command</span></code> parameter.</p></li>
+<li><p>Issue the <code class="docutils literal notranslate"><span class="pre">migrate</span></code> command.  It is recommended that the URI be
+a <code class="docutils literal notranslate"><span class="pre">file</span></code> type, but one can use other types such as <code class="docutils literal notranslate"><span class="pre">exec</span></code>,
+provided the command captures all the data from the outgoing side,
+and provides all the data to the incoming side.</p></li>
+</ul>
+</dd>
+<dt>Incoming:</dt><dd><ul class="simple">
+<li><p>You do not need to explicitly start new QEMU.  It is started as
+a side effect of the migrate command above.</p></li>
+<li><p>If the VM was running when the outgoing <code class="docutils literal notranslate"><span class="pre">migrate</span></code> command was
+issued, then QEMU automatically resumes VM execution.</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="example-1-incoming-uri">
+<h3>Example 1: incoming URI<a class="headerlink" href="#example-1-incoming-uri" title="Link to this heading"></a></h3>
+<p>In these examples, we simply restart the same version of QEMU, but in
+a real scenario one would set a new QEMU binary path in
+cpr-exec-command.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># qemu-kvm -monitor stdio</span>
+<span class="o">-</span><span class="nb">object</span> <span class="n">memory</span><span class="o">-</span><span class="n">backend</span><span class="o">-</span><span class="n">memfd</span><span class="p">,</span><span class="nb">id</span><span class="o">=</span><span class="n">ram0</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="n">G</span>
+<span class="o">-</span><span class="n">machine</span> <span class="n">memory</span><span class="o">-</span><span class="n">backend</span><span class="o">=</span><span class="n">ram0</span>
+<span class="o">-</span><span class="n">machine</span> <span class="n">aux</span><span class="o">-</span><span class="n">ram</span><span class="o">-</span><span class="n">share</span><span class="o">=</span><span class="n">on</span>
+<span class="o">...</span>
+
+<span class="n">QEMU</span> <span class="mf">10.2.50</span> <span class="n">monitor</span> <span class="o">-</span> <span class="nb">type</span> <span class="s1">&#39;help&#39;</span> <span class="k">for</span> <span class="n">more</span> <span class="n">information</span>
+<span class="p">(</span><span class="n">qemu</span><span class="p">)</span> <span class="n">info</span> <span class="n">status</span>
+<span class="n">VM</span> <span class="n">status</span><span class="p">:</span> <span class="n">running</span>
+<span class="p">(</span><span class="n">qemu</span><span class="p">)</span> <span class="n">migrate_set_parameter</span> <span class="n">mode</span> <span class="n">cpr</span><span class="o">-</span><span class="n">exec</span>
+<span class="p">(</span><span class="n">qemu</span><span class="p">)</span> <span class="n">migrate_set_parameter</span> <span class="n">cpr</span><span class="o">-</span><span class="n">exec</span><span class="o">-</span><span class="n">command</span> <span class="n">qemu</span><span class="o">-</span><span class="n">kvm</span> <span class="o">...</span> <span class="o">-</span><span class="n">incoming</span> <span class="n">file</span><span class="p">:</span><span class="n">vm</span><span class="o">.</span><span class="n">state</span>
+<span class="p">(</span><span class="n">qemu</span><span class="p">)</span> <span class="n">migrate</span> <span class="o">-</span><span class="n">d</span> <span class="n">file</span><span class="p">:</span><span class="n">vm</span><span class="o">.</span><span class="n">state</span>
+<span class="p">(</span><span class="n">qemu</span><span class="p">)</span> <span class="n">QEMU</span> <span class="mf">10.2.50</span> <span class="n">monitor</span> <span class="o">-</span> <span class="nb">type</span> <span class="s1">&#39;help&#39;</span> <span class="k">for</span> <span class="n">more</span> <span class="n">information</span>
+<span class="p">(</span><span class="n">qemu</span><span class="p">)</span> <span class="n">info</span> <span class="n">status</span>
+<span class="n">VM</span> <span class="n">status</span><span class="p">:</span> <span class="n">running</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3>Example 2: incoming defer<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># qemu-kvm -monitor stdio</span>
+<span class="o">-</span><span class="nb">object</span> <span class="n">memory</span><span class="o">-</span><span class="n">backend</span><span class="o">-</span><span class="n">memfd</span><span class="p">,</span><span class="nb">id</span><span class="o">=</span><span class="n">ram0</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="n">G</span>
+<span class="o">-</span><span class="n">machine</span> <span class="n">memory</span><span class="o">-</span><span class="n">backend</span><span class="o">=</span><span class="n">ram0</span>
+<span class="o">-</span><span class="n">machine</span> <span class="n">aux</span><span class="o">-</span><span class="n">ram</span><span class="o">-</span><span class="n">share</span><span class="o">=</span><span class="n">on</span>
+<span class="o">...</span>
+
+<span class="n">QEMU</span> <span class="mf">10.2.50</span> <span class="n">monitor</span> <span class="o">-</span> <span class="nb">type</span> <span class="s1">&#39;help&#39;</span> <span class="k">for</span> <span class="n">more</span> <span class="n">information</span>
+<span class="p">(</span><span class="n">qemu</span><span class="p">)</span> <span class="n">info</span> <span class="n">status</span>
+<span class="n">VM</span> <span class="n">status</span><span class="p">:</span> <span class="n">running</span>
+<span class="p">(</span><span class="n">qemu</span><span class="p">)</span> <span class="n">migrate_set_parameter</span> <span class="n">mode</span> <span class="n">cpr</span><span class="o">-</span><span class="n">exec</span>
+<span class="p">(</span><span class="n">qemu</span><span class="p">)</span> <span class="n">migrate_set_parameter</span> <span class="n">cpr</span><span class="o">-</span><span class="n">exec</span><span class="o">-</span><span class="n">command</span> <span class="n">qemu</span><span class="o">-</span><span class="n">kvm</span> <span class="o">...</span> <span class="o">-</span><span class="n">incoming</span> <span class="n">defer</span>
+<span class="p">(</span><span class="n">qemu</span><span class="p">)</span> <span class="n">migrate</span> <span class="o">-</span><span class="n">d</span> <span class="n">file</span><span class="p">:</span><span class="n">vm</span><span class="o">.</span><span class="n">state</span>
+<span class="p">(</span><span class="n">qemu</span><span class="p">)</span> <span class="n">QEMU</span> <span class="mf">10.2.50</span> <span class="n">monitor</span> <span class="o">-</span> <span class="nb">type</span> <span class="s1">&#39;help&#39;</span> <span class="k">for</span> <span class="n">more</span> <span class="n">information</span>
+<span class="p">(</span><span class="n">qemu</span><span class="p">)</span> <span class="n">info</span> <span class="n">status</span>
+<span class="n">status</span><span class="p">:</span> <span class="n">paused</span> <span class="p">(</span><span class="n">inmigrate</span><span class="p">)</span>
+<span class="p">(</span><span class="n">qemu</span><span class="p">)</span> <span class="n">migrate_incoming</span> <span class="n">file</span><span class="p">:</span><span class="n">vm</span><span class="o">.</span><span class="n">state</span>
+<span class="p">(</span><span class="n">qemu</span><span class="p">)</span> <span class="n">info</span> <span class="n">status</span>
+<span class="n">VM</span> <span class="n">status</span><span class="p">:</span> <span class="n">running</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3>Caveats<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<p>cpr-exec mode may not be used with postcopy, background-snapshot,
+or COLO.</p>
+<p>cpr-exec mode requires permission to use the exec system call, which
+is denied by certain sandbox options, such as spawn.</p>
+<p>The guest pause time increases for large guest RAM backed by small pages.</p>
+</section>
+</section>
 </section>
 
 
@@ -442,7 +545,7 @@ even if they do not explicitly support live migration.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -453,7 +556,7 @@ even if they do not explicitly support live migration.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../../about/license.html">QEMU and this manual are released under the

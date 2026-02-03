@@ -9,7 +9,7 @@
   <title>Network emulation &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../../_static/qemu_32x32.png"/>
@@ -55,25 +55,22 @@
 <li class="toctree-l2 current"><a class="reference internal" href="../device-emulation.html">Device Emulation</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="../device-emulation.html#common-terms">Common Terms</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="../device-emulation.html#emulated-devices">Emulated Devices</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="virtio/index.html">VirtIO Devices</a></li>
 <li class="toctree-l4"><a class="reference internal" href="can.html">CAN Bus Emulation Support</a></li>
+<li class="toctree-l4"><a class="reference internal" href="canokey.html">CanoKey QEMU</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ccid.html">Chip Card Interface Device (CCID)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cxl.html">Compute Express Link (CXL)</a></li>
-<li class="toctree-l4"><a class="reference internal" href="vfio-user.html">vfio-user</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ivshmem.html">Inter-VM Shared Memory device</a></li>
+<li class="toctree-l4"><a class="reference internal" href="emmc.html">eMMC Emulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="igb.html">igb</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ivshmem-flat.html">Inter-VM Shared Memory Flat Device</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ivshmem.html">Inter-VM Shared Memory device</a></li>
 <li class="toctree-l4"><a class="reference internal" href="keyboard.html">Sparc32 keyboard</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">Network emulation</a></li>
 <li class="toctree-l4"><a class="reference internal" href="nvme.html">NVMe Emulation</a></li>
-<li class="toctree-l4"><a class="reference internal" href="usb.html">USB emulation</a></li>
-<li class="toctree-l4"><a class="reference internal" href="vhost-user.html">vhost-user back ends</a></li>
-<li class="toctree-l4"><a class="reference internal" href="virtio-gpu.html">virtio-gpu</a></li>
-<li class="toctree-l4"><a class="reference internal" href="virtio-pmem.html">virtio pmem</a></li>
-<li class="toctree-l4"><a class="reference internal" href="virtio-snd.html">virtio sound</a></li>
-<li class="toctree-l4"><a class="reference internal" href="vhost-user-input.html">QEMU vhost-user-input - Input emulation</a></li>
-<li class="toctree-l4"><a class="reference internal" href="vhost-user-rng.html">QEMU vhost-user-rng - RNG emulation</a></li>
-<li class="toctree-l4"><a class="reference internal" href="canokey.html">CanoKey QEMU</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scsi/index.html">SCSI Devices</a></li>
 <li class="toctree-l4"><a class="reference internal" href="usb-u2f.html">Universal Second Factor (U2F) USB Key Device</a></li>
-<li class="toctree-l4"><a class="reference internal" href="igb.html">igb</a></li>
+<li class="toctree-l4"><a class="reference internal" href="usb.html">USB emulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="vfio-user.html">vfio-user</a></li>
 </ul>
 </li>
 </ul>
@@ -102,8 +99,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../multi-process.html">Multi-process QEMU</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../confidential-guest-support.html">Confidential Guest Support</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../igvm.html">Independent Guest Virtual Machine (IGVM) support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nitro.html">AWS Nitro Enclaves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../whpx.html">Windows Hypervisor Platform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vm-templating.html">QEMU VM templating</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../sriov.html">Compsable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sriov.html">Composable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../qemu-colo.html">Qemu COLO Fault Tolerance</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Mode Emulation</a></li>
@@ -207,7 +207,7 @@ those sockets. To allow ping for GID 100 (usually users group):</p>
 </pre></div>
 </div>
 <p>When using the built-in TFTP server, the router is also the TFTP server.</p>
-<p>When using the <code class="docutils literal notranslate"><span class="pre">'-netdev</span> <span class="pre">user,hostfwd=...'</span></code> option, TCP or UDP
+<p>When using the <code class="docutils literal notranslate"><span class="pre">'-netdev</span> <span class="pre">user,hostfwd=...'</span></code> option, TCP, UDP or UNIX
 connections can be redirected from the host to the guest. It allows for
 example to redirect X11, telnet or SSH connections.</p>
 </section>
@@ -354,7 +354,7 @@ example.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -365,7 +365,7 @@ example.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../../about/license.html">QEMU and this manual are released under the

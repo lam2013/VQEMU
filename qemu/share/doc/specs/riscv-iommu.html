@@ -9,7 +9,7 @@
   <title>RISC-V IOMMU support for RISC-V machines &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -92,6 +92,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="riscv-aia.html">RISC-V AIA support for RISC-V machines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aspeed-intc.html">ASPEED Interrupt Controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iommu-testdev.html">iommu-testdev — IOMMU test device for bare-metal testing</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../devel/index.html">Developer Information</a></li>
@@ -144,21 +145,20 @@ so it uses a generic default PCI ID given by QEMU: 1b36:0014.</p>
 <p>This will add a RISC-V IOMMU PCI device in the board following any additional
 PCI parameters (like PCI bus address).  The behavior of the RISC-V IOMMU is
 defined by the spec but its operation is OS dependent.</p>
-<p>As of this writing the existing Linux kernel support <a class="reference external" href="https://lore.kernel.org/linux-riscv/cover.1718388908.git.tjeznach&#64;rivosinc.com/">linux-v8</a>, not yet merged,
-does not have support for features like VFIO passthrough.  The IOMMU emulation
-was tested using a public Ventana Micro Systems kernel repository in
-<a class="reference external" href="https://github.com/ventanamicro/linux/tree/dev-upstream">ventana-linux</a>.  This kernel is based on <a class="reference external" href="https://lore.kernel.org/linux-riscv/cover.1718388908.git.tjeznach&#64;rivosinc.com/">linux-v8</a> with additional patches that
-enable features like KVM VFIO passthrough with irqbypass.  Until the kernel support
-is feature complete feel free to use the kernel available in the Ventana Micro Systems
-mirror.</p>
-<p>The current Linux kernel support will use the IOMMU device to create IOMMU groups
+<p>Linux kernel iommu support was merged in v6.13. QEMU IOMMU emulation can be
+used with mainline kernels for simple IOMMU PCIe support.</p>
+<p>As of v6.17, it does not have support for features like VFIO passthrough.
+There is a <a class="reference external" href="https://lore.kernel.org/linux-riscv/20241114161845.502027-17-ajones&#64;ventanamicro.com/">VFIO</a> RFC series that is not yet merged. The public Ventana Micro
+Systems kernel repository in <a class="reference external" href="https://github.com/ventanamicro/linux/tree/dev-upstream">ventana-linux</a> can be used for testing the VFIO
+functions.</p>
+<p>The v6.13+ Linux kernel support uses the IOMMU device to create IOMMU groups
 with any eligible cards available in the system, regardless of factors such as the
 order in which the devices are added in the command line.</p>
 <p>This means that these command lines are equivalent as far as the current
 IOMMU kernel driver behaves:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>qemu-system-riscv64<span class="w"> </span><span class="se">\</span>
 <span class="w">      </span>-M<span class="w"> </span>virt,aia<span class="o">=</span>aplic-imsic,aia-guests<span class="o">=</span><span class="m">5</span><span class="w"> </span><span class="se">\</span>
-<span class="w">      </span>-device<span class="w"> </span>riscv-iommu-pci,addr<span class="o">=</span><span class="m">1</span>.0,vendor-id<span class="o">=</span>0x1efd,device-id<span class="o">=</span>0xedf1<span class="w"> </span><span class="se">\</span>
+<span class="w">      </span>-device<span class="w"> </span>riscv-iommu-pci,addr<span class="o">=</span><span class="m">1</span>.0<span class="w"> </span><span class="se">\</span>
 <span class="w">      </span>-device<span class="w"> </span>e1000e,netdev<span class="o">=</span>net1<span class="w"> </span>-netdev<span class="w"> </span>user,id<span class="o">=</span>net1,net<span class="o">=</span><span class="m">192</span>.168.0.0/24<span class="w"> </span><span class="se">\</span>
 <span class="w">      </span>-device<span class="w"> </span>e1000e,netdev<span class="o">=</span>net2<span class="w"> </span>-netdev<span class="w"> </span>user,id<span class="o">=</span>net2,net<span class="o">=</span><span class="m">192</span>.168.200.0/24<span class="w"> </span><span class="se">\</span>
 <span class="w">      </span><span class="o">(</span>...<span class="o">)</span>
@@ -167,19 +167,11 @@ $<span class="w"> </span>qemu-system-riscv64<span class="w"> </span><span class=
 <span class="w">      </span>-M<span class="w"> </span>virt,aia<span class="o">=</span>aplic-imsic,aia-guests<span class="o">=</span><span class="m">5</span><span class="w"> </span><span class="se">\</span>
 <span class="w">      </span>-device<span class="w"> </span>e1000e,netdev<span class="o">=</span>net1<span class="w"> </span>-netdev<span class="w"> </span>user,id<span class="o">=</span>net1,net<span class="o">=</span><span class="m">192</span>.168.0.0/24<span class="w"> </span><span class="se">\</span>
 <span class="w">      </span>-device<span class="w"> </span>e1000e,netdev<span class="o">=</span>net2<span class="w"> </span>-netdev<span class="w"> </span>user,id<span class="o">=</span>net2,net<span class="o">=</span><span class="m">192</span>.168.200.0/24<span class="w"> </span><span class="se">\</span>
-<span class="w">      </span>-device<span class="w"> </span>riscv-iommu-pci,addr<span class="o">=</span><span class="m">1</span>.0,vendor-id<span class="o">=</span>0x1efd,device-id<span class="o">=</span>0xedf1<span class="w"> </span><span class="se">\</span>
+<span class="w">      </span>-device<span class="w"> </span>riscv-iommu-pci,addr<span class="o">=</span><span class="m">3</span>.0<span class="w"> </span><span class="se">\</span>
 <span class="w">      </span><span class="o">(</span>...<span class="o">)</span>
 </pre></div>
 </div>
 <p>Both will create iommu groups for the two e1000e cards.</p>
-<p>Another thing to notice on <a class="reference external" href="https://lore.kernel.org/linux-riscv/cover.1718388908.git.tjeznach&#64;rivosinc.com/">linux-v8</a> and <a class="reference external" href="https://github.com/ventanamicro/linux/tree/dev-upstream">ventana-linux</a> is that the kernel driver
-considers an IOMMU identified as a Rivos device, i.e. it uses Rivos vendor ID.  To
-use the riscv-iommu-pci device with the existing kernel support we need to emulate
-a Rivos PCI IOMMU by setting ‘vendor-id’ and ‘device-id’:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>qemu-system-riscv64<span class="w"> </span>-M<span class="w"> </span>virt<span class="w"> </span><span class="se">\</span>
-<span class="w">   </span>-device<span class="w"> </span>riscv-iommu-pci,vendor-id<span class="o">=</span>0x1efd,device-id<span class="o">=</span>0xedf1<span class="w"> </span><span class="o">(</span>...<span class="o">)</span>
-</pre></div>
-</div>
 <p>Several options are available to control the capabilities of the device, namely:</p>
 <ul class="simple">
 <li><p>“bus”: the bus that the IOMMU device uses</p></li>
@@ -191,6 +183,7 @@ a Rivos PCI IOMMU by setting ‘vendor-id’ and ‘device-id’:</p>
 <li><p>“g-stage”: enable g-stage support</p></li>
 <li><p>“hpm-counters”: number of hardware performance counters available. Maximum value is 31.
 Default value is 31. Use 0 (zero) to disable HPM support</p></li>
+<li><p>“vendor-id”/”device-id”: pci device ID. Defaults to 1b36:0014 (Redhat)</p></li>
 </ul>
 </section>
 <section id="riscv-iommu-sys-device">
@@ -227,7 +220,7 @@ riscv-iommu options:</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -238,7 +231,7 @@ riscv-iommu options:</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

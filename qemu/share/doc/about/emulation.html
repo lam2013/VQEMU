@@ -9,7 +9,7 @@
   <title>Emulation &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -109,8 +109,8 @@
 number of CPU architectures on any supported host platform. Both
 <a class="reference internal" href="../system/index.html#system-emulation"><span class="std std-ref">System Emulation</span></a> and <a class="reference internal" href="../user/index.html#user-mode-emulation"><span class="std std-ref">User Mode Emulation</span></a> are supported
 depending on the guest architecture.</p>
-<table class="docutils align-default" id="id3">
-<caption><span class="caption-text">Supported Guest Architectures for Emulation</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id4">
+<caption><span class="caption-text">Supported Guest Architectures for Emulation</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
 <colgroup>
 <col style="width: 30.0%" />
 <col style="width: 10.0%" />
@@ -176,7 +176,7 @@ depending on the guest architecture.</p>
 <td><p>Venerable RISC architecture originally out of Stanford University</p></td>
 </tr>
 <tr class="row-even"><td><p>OpenRISC</p></td>
-<td><p><a class="reference internal" href="../system/target-openrisc.html#openrisc-system-emulator"><span class="std std-ref">Yes</span></a></p></td>
+<td><p><a class="reference internal" href="../system/target-or1k.html#openrisc-system-emulator"><span class="std std-ref">Yes</span></a></p></td>
 <td><p>Yes</p></td>
 <td><p>Open source RISC architecture developed by the OpenRISC community</p></td>
 </tr>
@@ -276,8 +276,8 @@ is performed on input or output. This is because gdb semihosting
 support doesn’t make the distinction between the modes and
 magically processing line endings can be confusing.</p>
 </div>
-<table class="docutils align-default" id="id4">
-<caption><span class="caption-text">Guest Architectures supporting Semihosting</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id5">
+<caption><span class="caption-text">Guest Architectures supporting Semihosting</span><a class="headerlink" href="#id5" title="Link to this table"></a></caption>
 <colgroup>
 <col style="width: 10.0%" />
 <col style="width: 10.0%" />
@@ -384,8 +384,8 @@ bb&#39;s: 2277338, insns: 158483046
 </pre></div>
 </div>
 <p>Behaviour can be tweaked with the following arguments:</p>
-<table class="docutils align-default" id="id5">
-<caption><span class="caption-text">Basic Block plugin arguments</span><a class="headerlink" href="#id5" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id6">
+<caption><span class="caption-text">Basic Block plugin arguments</span><a class="headerlink" href="#id6" title="Link to this table"></a></caption>
 <colgroup>
 <col style="width: 20.0%" />
 <col style="width: 80.0%" />
@@ -410,8 +410,8 @@ bb&#39;s: 2277338, insns: 158483046
 <p><code class="docutils literal notranslate"><span class="pre">contrib/plugins/bbv.c</span></code></p>
 <p>The bbv plugin allows you to generate basic block vectors for use with the
 <a class="reference external" href="https://cseweb.ucsd.edu/~calder/simpoint/">SimPoint</a> analysis tool.</p>
-<table class="docutils align-default" id="id6">
-<caption><span class="caption-text">Basic block vectors arguments</span><a class="headerlink" href="#id6" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id7">
+<caption><span class="caption-text">Basic block vectors arguments</span><a class="headerlink" href="#id7" title="Link to this table"></a></caption>
 <colgroup>
 <col style="width: 20.0%" />
 <col style="width: 80.0%" />
@@ -463,8 +463,8 @@ total insns: 63135
 </pre></div>
 </div>
 <p>Behaviour can be tweaked with the following arguments:</p>
-<table class="docutils align-default" id="id7">
-<caption><span class="caption-text">Instruction plugin arguments</span><a class="headerlink" href="#id7" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id8">
+<caption><span class="caption-text">Instruction plugin arguments</span><a class="headerlink" href="#id8" title="Link to this table"></a></caption>
 <colgroup>
 <col style="width: 20.0%" />
 <col style="width: 80.0%" />
@@ -516,8 +516,8 @@ inline mem accesses: 79525013
 </pre></div>
 </div>
 <p>Behaviour can be tweaked with the following arguments:</p>
-<table class="docutils align-default" id="id8">
-<caption><span class="caption-text">Memory plugin arguments</span><a class="headerlink" href="#id8" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id9">
+<caption><span class="caption-text">Memory plugin arguments</span><a class="headerlink" href="#id9" title="Link to this table"></a></caption>
 <colgroup>
 <col style="width: 20.0%" />
 <col style="width: 80.0%" />
@@ -572,8 +572,8 @@ syscall no.  calls  errors
 </pre></div>
 </div>
 <p>Behaviour can be tweaked with the following arguments:</p>
-<table class="docutils align-default" id="id9">
-<caption><span class="caption-text">Syscall plugin arguments</span><a class="headerlink" href="#id9" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id10">
+<caption><span class="caption-text">Syscall plugin arguments</span><a class="headerlink" href="#id10" title="Link to this table"></a></caption>
 <colgroup>
 <col style="width: 20.0%" />
 <col style="width: 80.0%" />
@@ -621,6 +621,27 @@ pc, tcount, icount, ecount
 ...
 </pre></div>
 </div>
+<p>Behaviour can be tweaked with the following arguments:</p>
+<table class="docutils align-default" id="id11">
+<caption><span class="caption-text">Hot Blocks plugin arguments</span><a class="headerlink" href="#id11" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>inline=true|false</p></td>
+<td><p>Use faster inline addition of a single counter.</p></td>
+</tr>
+<tr class="row-odd"><td><p>limit=N</p></td>
+<td><p>The number of blocks to be printed. (Default: N = 20, use 0 for no limit).</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="hot-pages">
 <h4>Hot Pages<a class="headerlink" href="#hot-pages" title="Link to this heading"></a></h4>
@@ -639,8 +660,8 @@ Addr, RCPUs, Reads, WCPUs, Writes
 </pre></div>
 </div>
 <p>The hotpages plugin can be configured using the following arguments:</p>
-<table class="docutils align-default" id="id10">
-<caption><span class="caption-text">Hot pages arguments</span><a class="headerlink" href="#id10" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id12">
+<caption><span class="caption-text">Hot pages arguments</span><a class="headerlink" href="#id12" title="Link to this table"></a></caption>
 <colgroup>
 <col style="width: 20.0%" />
 <col style="width: 80.0%" />
@@ -764,8 +785,8 @@ communicate over:</p>
 <p><code class="docutils literal notranslate"><span class="pre">contrib/plugins/hwprofile.c</span></code></p>
 <p>The hwprofile tool can only be used with system emulation and allows
 the user to see what hardware is accessed how often. It has a number of options:</p>
-<table class="docutils align-default" id="id11">
-<caption><span class="caption-text">Hardware Profile arguments</span><a class="headerlink" href="#id11" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id13">
+<caption><span class="caption-text">Hardware Profile arguments</span><a class="headerlink" href="#id13" title="Link to this table"></a></caption>
 <colgroup>
 <col style="width: 20.0%" />
 <col style="width: 80.0%" />
@@ -889,8 +910,8 @@ address, fetch misses, instruction
 </pre></div>
 </div>
 <p>The plugin has a number of arguments, all of them are optional:</p>
-<table class="docutils align-default" id="id12">
-<caption><span class="caption-text">Cache modelling arguments</span><a class="headerlink" href="#id12" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id14">
+<caption><span class="caption-text">Cache modelling arguments</span><a class="headerlink" href="#id14" title="Link to this table"></a></caption>
 <colgroup>
 <col style="width: 20.0%" />
 <col style="width: 80.0%" />
@@ -980,8 +1001,8 @@ $ time ./build/qemu-x86_64 -plugin ./build/contrib/plugins/libips.so,ips=$(($num
 real 10.000s
 </pre></div>
 </div>
-<table class="docutils align-default" id="id13">
-<caption><span class="caption-text">IPS arguments</span><a class="headerlink" href="#id13" title="Link to this table"></a></caption>
+<table class="docutils align-default" id="id15">
+<caption><span class="caption-text">IPS arguments</span><a class="headerlink" href="#id15" title="Link to this table"></a></caption>
 <colgroup>
 <col style="width: 20.0%" />
 <col style="width: 80.0%" />
@@ -1004,6 +1025,219 @@ Defaults to ips/10</p></td>
 </tbody>
 </table>
 </section>
+<section id="uftrace">
+<h4>Uftrace<a class="headerlink" href="#uftrace" title="Link to this heading"></a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">contrib/plugins/uftrace.c</span></code></p>
+<p>This plugin generates a binary trace compatible with
+<a class="reference external" href="https://github.com/namhyung/uftrace">uftrace</a>.</p>
+<p>Plugin supports aarch64, x64 and riscv64, and works in user and system mode,
+allowing to trace a system boot, which is not something possible usually.</p>
+<p>In user mode, the memory mapping is directly copied from <code class="docutils literal notranslate"><span class="pre">/proc/self/maps</span></code> at
+the end of execution. Uftrace should be able to retrieve symbols by itself,
+without any additional step.
+In system mode, the default memory mapping is empty, and you can generate
+one (and associated symbols) using <code class="docutils literal notranslate"><span class="pre">contrib/plugins/uftrace_symbols.py</span></code>.
+Symbols must be present in ELF binaries.</p>
+<p>It tracks the call stack (based on frame pointer analysis). Thus, your program
+and its dependencies must be compiled using <code class="docutils literal notranslate"><span class="pre">-fno-omit-frame-pointer</span>
+<span class="pre">-mno-omit-leaf-frame-pointer</span></code>. In 2024, <a class="reference external" href="https://www.brendangregg.com/blog/2024-03-17/the-return-of-the-frame-pointers.html">Ubuntu and Fedora enabled it by
+default again on 64-bit platforms</a>.
+On aarch64, this is less of a problem, as they are usually part of the ABI,
+except for leaf functions. That’s true for user space applications, but not
+necessarily for bare metal code. You can read this <a class="reference internal" href="#uftrace-build-system-example"><span class="std std-ref">section</span></a> to easily build a system with frame pointers.</p>
+<p>When tracing long scenarios (&gt; 1 min), the generated trace can become very long,
+making it hard to extract data from it. In this case, a simple solution is to
+trace execution while generating a timestamped output log using
+<code class="docutils literal notranslate"><span class="pre">qemu-system-aarch64</span> <span class="pre">...</span> <span class="pre">|</span> <span class="pre">ts</span> <span class="pre">&quot;%s&quot;</span></code>. Then, <code class="docutils literal notranslate"><span class="pre">uftrace</span> <span class="pre">--time-range=start~end</span></code>
+can be used to reduce trace for only this part of execution.</p>
+<p>Performance wise, overhead compared to normal tcg execution is around x5-x15.</p>
+<table class="docutils align-default" id="id16">
+<caption><span class="caption-text">Uftrace plugin arguments</span><a class="headerlink" href="#id16" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>trace-privilege-level=[on|off]</p></td>
+<td><p>Generate separate traces for each privilege level (Exception Level +
+Security State on aarch64, Privilege levels on riscv64 and Rings on x64).</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default" id="id17">
+<caption><span class="caption-text">uftrace_symbols.py arguments</span><a class="headerlink" href="#id17" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Option</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>elf_file [elf_file …]</p></td>
+<td><p>path to an ELF file. Use /path/to/<a class="reference external" href="file:0xdeadbeef">file:0xdeadbeef</a> to add a mapping offset.</p></td>
+</tr>
+<tr class="row-odd"><td><p>–prefix-symbols</p></td>
+<td><p>prepend binary name to symbols</p></td>
+</tr>
+</tbody>
+</table>
+<section id="example-user-trace">
+<h5>Example user trace<a class="headerlink" href="#example-user-trace" title="Link to this heading"></a></h5>
+<p>As an example, we can trace qemu itself running git:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./build/qemu-aarch64 -plugin \
+  build/contrib/plugins/libuftrace.so \
+  ./build/qemu-aarch64 /usr/bin/git --help
+
+# and generate a chrome trace directly
+$ uftrace dump --chrome | gzip &gt; ~/qemu_aarch64_git_help.json.gz
+</pre></div>
+</div>
+<p>For convenience, you can download this trace <a class="reference external" href="https://github.com/p-b-o/qemu-assets/raw/refs/heads/master/qemu-uftrace/qemu_aarch64_git_help.json.gz">qemu_aarch64_git_help.json.gz</a>.
+Download it and open this trace on <a class="reference external" href="https://ui.perfetto.dev/">https://ui.perfetto.dev/</a>. You can zoom in/out
+using <kbd class="kbd docutils literal notranslate">W</kbd>, <kbd class="kbd docutils literal notranslate">A</kbd>, <kbd class="kbd docutils literal notranslate">S</kbd>, <kbd class="kbd docutils literal notranslate">D</kbd> keys.
+Some sequences taken from this trace:</p>
+<ul class="simple">
+<li><p>Loading program and its interpreter</p></li>
+</ul>
+<a class="reference internal image-reference" href="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/loader_exec.png?raw=true"><img alt="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/loader_exec.png?raw=true" src="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/loader_exec.png?raw=true" style="height: 200px;" />
+</a>
+<ul class="simple">
+<li><p>open syscall</p></li>
+</ul>
+<a class="reference internal image-reference" href="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/open_syscall.png?raw=true"><img alt="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/open_syscall.png?raw=true" src="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/open_syscall.png?raw=true" style="height: 200px;" />
+</a>
+<ul class="simple">
+<li><p>TB creation</p></li>
+</ul>
+<a class="reference internal image-reference" href="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/tb_translation.png?raw=true"><img alt="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/tb_translation.png?raw=true" src="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/tb_translation.png?raw=true" style="height: 200px;" />
+</a>
+<p>It’s usually better to use <code class="docutils literal notranslate"><span class="pre">uftrace</span> <span class="pre">record</span></code> directly. However, tracing
+binaries through qemu-user can be convenient when you don’t want to recompile
+them (<code class="docutils literal notranslate"><span class="pre">uftrace</span> <span class="pre">record</span></code> requires instrumentation), as long as symbols are
+present.</p>
+</section>
+<section id="example-system-trace">
+<h5>Example system trace<a class="headerlink" href="#example-system-trace" title="Link to this heading"></a></h5>
+<p>A full trace example (chrome trace, from instructions below) generated from a
+system boot can be found <a class="reference external" href="https://github.com/p-b-o/qemu-assets/raw/refs/heads/master/qemu-uftrace/aarch64_boot.json.gz">here</a>.
+Download it and open this trace on <a class="reference external" href="https://ui.perfetto.dev/">https://ui.perfetto.dev/</a>. You can see code
+executed for all privilege levels, and zoom in/out using
+<kbd class="kbd docutils literal notranslate">W</kbd>, <kbd class="kbd docutils literal notranslate">A</kbd>, <kbd class="kbd docutils literal notranslate">S</kbd>, <kbd class="kbd docutils literal notranslate">D</kbd> keys. You can find below some sequences
+taken from this trace:</p>
+<ul class="simple">
+<li><p>Two first stages of boot sequence in Arm Trusted Firmware (EL3 and S-EL1)</p></li>
+</ul>
+<a class="reference internal image-reference" href="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/bl3_to_bl1.png?raw=true"><img alt="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/bl3_to_bl1.png?raw=true" src="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/bl3_to_bl1.png?raw=true" style="height: 200px;" />
+</a>
+<ul class="simple">
+<li><p>U-boot initialization (until code relocation, after which we can’t track it)</p></li>
+</ul>
+<a class="reference internal image-reference" href="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/uboot.png?raw=true"><img alt="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/uboot.png?raw=true" src="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/uboot.png?raw=true" style="height: 200px;" />
+</a>
+<ul class="simple">
+<li><p>Stat and open syscalls in kernel</p></li>
+</ul>
+<a class="reference internal image-reference" href="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/stat.png?raw=true"><img alt="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/stat.png?raw=true" src="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/stat.png?raw=true" style="height: 200px;" />
+</a>
+<ul class="simple">
+<li><p>Timer interrupt</p></li>
+</ul>
+<a class="reference internal image-reference" href="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/timer_interrupt.png?raw=true"><img alt="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/timer_interrupt.png?raw=true" src="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/timer_interrupt.png?raw=true" style="height: 200px;" />
+</a>
+<ul class="simple">
+<li><p>Poweroff sequence (from kernel back to firmware, NS-EL2 to EL3)</p></li>
+</ul>
+<a class="reference internal image-reference" href="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/poweroff.png?raw=true"><img alt="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/poweroff.png?raw=true" src="https://github.com/p-b-o/qemu-assets/blob/master/qemu-uftrace/poweroff.png?raw=true" style="height: 200px;" />
+</a>
+</section>
+<section id="build-and-run-system-example">
+<h5>Build and run system example<a class="headerlink" href="#build-and-run-system-example" title="Link to this heading"></a></h5>
+<p id="uftrace-build-system-example">Building a full system image with frame pointers is not trivial.</p>
+<p>We provide a <a class="reference external" href="https://github.com/p-b-o/qemu-linux-stack">simple way</a> to
+build an aarch64 system, combining Arm Trusted firmware, U-boot, Linux kernel
+and debian userland. It’s based on containers (<code class="docutils literal notranslate"><span class="pre">podman</span></code> only) and
+<code class="docutils literal notranslate"><span class="pre">qemu-user-static</span> <span class="pre">(binfmt)</span></code> to make sure it’s easily reproducible and does not depend
+on machine where you build it.</p>
+<p>You can follow the exact same instructions for a x64 system, combining edk2,
+Linux, and Ubuntu, simply by switching to
+<a class="reference external" href="https://github.com/p-b-o/qemu-linux-stack/tree/x86_64">x86_64</a> branch.</p>
+<p>You can follow the exact same instructions for a riscv64 system, combining
+opensbi, Linux, and Ubuntu, simply by switching to
+<a class="reference external" href="https://github.com/p-b-o/qemu-linux-stack/tree/riscv64">riscv64</a> branch.</p>
+<p>To build and run the system:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># Install dependencies
+$ sudo apt install -y podman qemu-user-static
+
+$ git clone https://github.com/p-b-o/qemu-linux-stack
+$ cd qemu-linux-stack
+$ ./build.sh
+
+# system can be started using:
+$ ./run.sh /path/to/qemu-system-aarch64
+
+# generate a uftrace for execution (collect symbols automatically)
+$ ./trace.sh /path/to/qemu-system-aarch64
+# show output log to read timestamps
+$ cat uftrace.data/exec.log
+# generate final trace (compressed) for perfetto
+$ ./perfetto.sh &lt;start_timestamp&gt; &lt;end_timestamp&gt; ~/trace.gz
+</pre></div>
+</div>
+<p>To generate manually the same trace:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># run true and poweroff the system
+$ env INIT=true ./run.sh path/to/qemu-system-aarch64 \
+  -plugin path/to/contrib/plugins/libuftrace.so,trace-privilege-level=on
+
+# generate symbols and memory mapping
+$ path/to/contrib/plugins/uftrace_symbols.py \
+  --prefix-symbols \
+  arm-trusted-firmware/build/qemu/debug/bl1/bl1.elf \
+  arm-trusted-firmware/build/qemu/debug/bl2/bl2.elf \
+  arm-trusted-firmware/build/qemu/debug/bl31/bl31.elf \
+  u-boot/u-boot:0x60000000 \
+  linux/vmlinux
+
+# inspect trace with
+$ uftrace replay
+</pre></div>
+</div>
+<p>Uftrace allows to filter the trace, and dump flamegraphs, or a chrome trace.
+This last one is very interesting to see visually the boot process:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ uftrace dump --chrome &gt; boot.json
+# Open your browser, and load boot.json on https://ui.perfetto.dev/.
+</pre></div>
+</div>
+<p>Long visual chrome traces can’t be easily opened, thus, it might be
+interesting to generate them around a particular point of execution:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># execute qemu and timestamp output log
+$ env INIT=true ./run.sh path/to/qemu-system-aarch64 \
+  -plugin path/to/contrib/plugins/libuftrace.so,trace-privilege-level=on |&amp;
+  ts &quot;%s&quot; | tee exec.log
+
+$ cat exec.log  | grep &#39;Run /init&#39;
+  1753122320 [   11.834391] Run /init as init process
+  # init was launched at 1753122320
+
+# generate trace around init execution (2 seconds):
+$ uftrace dump --chrome --time-range=1753122320~1753122322 &gt; init.json
+</pre></div>
+</div>
+</section>
+</section>
+<section id="count-traps">
+<h4>Count traps<a class="headerlink" href="#count-traps" title="Link to this heading"></a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">contrib/plugins/traps.c</span></code></p>
+<p>This plugin counts the number of interrupts (asynchronous events), exceptions
+(synchronous events) and host calls (e.g. semihosting) per cpu.</p>
+</section>
 </section>
 </section>
 <section id="other-emulation-features">
@@ -1025,7 +1259,7 @@ execution which allows for repeatable record/replay debugging. See
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -1036,7 +1270,7 @@ execution which allows for repeatable record/replay debugging. See
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="license.html">QEMU and this manual are released under the

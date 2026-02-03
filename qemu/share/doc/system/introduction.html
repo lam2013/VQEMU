@@ -9,7 +9,7 @@
   <title>Introduction &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -82,8 +82,11 @@
 <li class="toctree-l2"><a class="reference internal" href="multi-process.html">Multi-process QEMU</a></li>
 <li class="toctree-l2"><a class="reference internal" href="confidential-guest-support.html">Confidential Guest Support</a></li>
 <li class="toctree-l2"><a class="reference internal" href="igvm.html">Independent Guest Virtual Machine (IGVM) support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nitro.html">AWS Nitro Enclaves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="whpx.html">Windows Hypervisor Platform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vm-templating.html">QEMU VM templating</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sriov.html">Compsable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sriov.html">Composable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qemu-colo.html">Qemu COLO Fault Tolerance</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Mode Emulation</a></li>
@@ -138,25 +141,29 @@ Tiny Code Generator (TCG) capable of emulating many CPUs.</p>
 <tbody>
 <tr class="row-even"><td><p>KVM</p></td>
 <td><p>Linux</p></td>
-<td><p>Arm (64 bit only), MIPS, PPC, RISC-V, s390x, x86</p></td>
+<td><p>Arm, MIPS, PPC, RISC-V, s390x, x86</p></td>
 </tr>
 <tr class="row-odd"><td><p>Xen</p></td>
 <td><p>Linux (as dom0)</p></td>
 <td><p>Arm, x86</p></td>
 </tr>
-<tr class="row-even"><td><p>Hypervisor Framework (hvf)</p></td>
-<td><p>MacOS</p></td>
-<td><p>x86 (64 bit only), Arm (64 bit only)</p></td>
-</tr>
-<tr class="row-odd"><td><p>Windows Hypervisor Platform (whpx)</p></td>
-<td><p>Windows</p></td>
+<tr class="row-even"><td><p>MSHV</p></td>
+<td><p>Linux (as dom0)</p></td>
 <td><p>x86</p></td>
 </tr>
-<tr class="row-even"><td><p>NetBSD Virtual Machine Monitor (nvmm)</p></td>
+<tr class="row-odd"><td><p>Hypervisor Framework (hvf)</p></td>
+<td><p>MacOS</p></td>
+<td><p>x86, Arm</p></td>
+</tr>
+<tr class="row-even"><td><p>Windows Hypervisor Platform (whpx)</p></td>
+<td><p>Windows</p></td>
+<td><p>Arm, x86</p></td>
+</tr>
+<tr class="row-odd"><td><p>NetBSD Virtual Machine Monitor (nvmm)</p></td>
 <td><p>NetBSD</p></td>
 <td><p>x86</p></td>
 </tr>
-<tr class="row-odd"><td><p>Tiny Code Generator (tcg)</p></td>
+<tr class="row-even"><td><p>Tiny Code Generator (tcg)</p></td>
 <td><p>Linux, other POSIX, Windows, MacOS</p></td>
 <td><p>Arm, x86, Loongarch64, MIPS, PPC, s390x, Sparc64</p></td>
 </tr>
@@ -278,10 +285,8 @@ names so we can override the defaults later.</p>
 </pre></div>
 </div>
 <p>We then define the 4 vCPUs using the <code class="docutils literal notranslate"><span class="pre">max</span></code> option which gives us all
-the Arm features QEMU is capable of emulating. We enable a more
-emulation friendly implementation of Arm’s pointer authentication
-algorithm. We explicitly specify TCG acceleration even though QEMU
-would default to it anyway.</p>
+the Arm features QEMU is capable of emulating. We explicitly specify
+TCG acceleration even though QEMU would default to it anyway.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">cpu</span> <span class="nb">max</span> \
 <span class="o">-</span><span class="n">smp</span> <span class="mi">4</span> \
 <span class="o">-</span><span class="n">accel</span> <span class="n">tcg</span> \
@@ -335,7 +340,7 @@ our system.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -346,7 +351,7 @@ our system.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

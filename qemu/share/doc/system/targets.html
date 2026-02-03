@@ -9,7 +9,7 @@
   <title>QEMU System Emulator Targets &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -78,8 +78,8 @@
 <li class="toctree-l3"><a class="reference internal" href="target-loongarch.html">LoongArch System emulator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="target-m68k.html">ColdFire System emulator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="target-mips.html">MIPS System emulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="target-or1k.html">OpenRISC System emulator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="target-ppc.html">PowerPC System emulator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="target-openrisc.html">OpenRISC System emulator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="target-riscv.html">RISC-V System emulator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="target-rx.html">RX System emulator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="target-s390x.html">s390x System emulator</a></li>
@@ -93,8 +93,11 @@
 <li class="toctree-l2"><a class="reference internal" href="multi-process.html">Multi-process QEMU</a></li>
 <li class="toctree-l2"><a class="reference internal" href="confidential-guest-support.html">Confidential Guest Support</a></li>
 <li class="toctree-l2"><a class="reference internal" href="igvm.html">Independent Guest Virtual Machine (IGVM) support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nitro.html">AWS Nitro Enclaves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="whpx.html">Windows Hypervisor Platform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vm-templating.html">QEMU VM templating</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sriov.html">Compsable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sriov.html">Composable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qemu-colo.html">Qemu COLO Fault Tolerance</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Mode Emulation</a></li>
@@ -172,7 +175,7 @@ various targets are mentioned in the following sections.</p>
 <li class="toctree-l4"><a class="reference internal" href="arm/vexpress.html#booting-a-linux-kernel">Booting a Linux kernel</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="arm/aspeed.html">Aspeed family boards (<code class="docutils literal notranslate"><span class="pre">ast2500-evb</span></code>, <code class="docutils literal notranslate"><span class="pre">ast2600-evb</span></code>, <code class="docutils literal notranslate"><span class="pre">ast2700-evb</span></code>, <code class="docutils literal notranslate"><span class="pre">bletchley-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">fuji-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">gb200nvl-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">fby35-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">fp5280g2-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">g220a-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">palmetto-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">qcom-dc-scm-v1-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">qcom-firework-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">quanta-q71l-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">rainier-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">romulus-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">sonorapass-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">supermicrox11-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">supermicrox11spi-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">tiogapass-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">witherspoon-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">yosemitev2-bmc</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="arm/aspeed.html">Aspeed family boards (<code class="docutils literal notranslate"><span class="pre">ast2500-evb</span></code>, <code class="docutils literal notranslate"><span class="pre">ast2600-evb</span></code>, <code class="docutils literal notranslate"><span class="pre">bletchley-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">fuji-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">gb200nvl-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">fby35-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">fp5280g2-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">g220a-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">palmetto-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">qcom-dc-scm-v1-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">qcom-firework-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">quanta-q71l-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">rainier-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">romulus-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">sonorapass-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">supermicrox11-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">supermicrox11spi-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">tiogapass-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">witherspoon-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">yosemitev2-bmc</span></code>)</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="arm/aspeed.html#supported-devices">Supported devices</a></li>
 <li class="toctree-l4"><a class="reference internal" href="arm/aspeed.html#missing-devices">Missing devices</a></li>
 <li class="toctree-l4"><a class="reference internal" href="arm/aspeed.html#boot-options">Boot options</a><ul>
@@ -180,11 +183,12 @@ various targets are mentioned in the following sections.</p>
 <li class="toctree-l5"><a class="reference internal" href="arm/aspeed.html#booting-from-a-flash-image">Booting from a flash image</a></li>
 <li class="toctree-l5"><a class="reference internal" href="arm/aspeed.html#booting-from-an-emmc-image">Booting from an eMMC image</a></li>
 <li class="toctree-l5"><a class="reference internal" href="arm/aspeed.html#other-booting-options">Other booting options</a></li>
+<li class="toctree-l5"><a class="reference internal" href="arm/aspeed.html#otp-option">OTP Option</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="arm/aspeed.html#aspeed-2700-family-boards-ast2700-evb">Aspeed 2700 family boards (<code class="docutils literal notranslate"><span class="pre">ast2700-evb</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="arm/aspeed.html#aspeed-2700-family-boards-ast2700-evb-ast2700fc">Aspeed 2700 family boards (<code class="docutils literal notranslate"><span class="pre">ast2700-evb</span></code>, <code class="docutils literal notranslate"><span class="pre">ast2700fc</span></code>)</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="arm/aspeed.html#id1">Supported devices</a></li>
 <li class="toctree-l4"><a class="reference internal" href="arm/aspeed.html#id2">Missing devices</a></li>
 <li class="toctree-l4"><a class="reference internal" href="arm/aspeed.html#id3">Boot options</a><ul>
@@ -194,7 +198,7 @@ various targets are mentioned in the following sections.</p>
 </li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="arm/aspeed.html#aspeed-minibmc-family-boards-ast1030-evb">Aspeed minibmc family boards (<code class="docutils literal notranslate"><span class="pre">ast1030-evb</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="arm/aspeed.html#aspeed-minibmc-and-platform-root-of-trust-processor-family-boards-ast1030-evb-ast1060-evb">Aspeed MiniBMC and Platform Root of Trust processor family boards (<code class="docutils literal notranslate"><span class="pre">ast1030-evb</span></code>, <code class="docutils literal notranslate"><span class="pre">ast1060-evb</span></code>)</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="arm/aspeed.html#id4">Supported devices</a></li>
 <li class="toctree-l4"><a class="reference internal" href="arm/aspeed.html#id5">Missing devices</a></li>
 <li class="toctree-l4"><a class="reference internal" href="arm/aspeed.html#id6">Boot options</a></li>
@@ -223,7 +227,6 @@ various targets are mentioned in the following sections.</p>
 <li class="toctree-l4"><a class="reference internal" href="arm/sabrelite.html#running-u-boot">Running U-Boot</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="arm/highbank.html">Calxeda Highbank and Midway (<code class="docutils literal notranslate"><span class="pre">highbank</span></code>, <code class="docutils literal notranslate"><span class="pre">midway</span></code>)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="arm/digic.html">Canon A1100 (<code class="docutils literal notranslate"><span class="pre">canon-a1100</span></code>)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="arm/cubieboard.html">Cubietech Cubieboard (<code class="docutils literal notranslate"><span class="pre">cubieboard</span></code>)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="arm/emcraft-sf2.html">Emcraft SmartFusion2 SOM kit (<code class="docutils literal notranslate"><span class="pre">emcraft-sf2</span></code>)</a></li>
@@ -252,6 +255,7 @@ various targets are mentioned in the following sections.</p>
 <li class="toctree-l5"><a class="reference internal" href="arm/imx8mp-evk.html#direct-linux-kernel-boot">Direct Linux Kernel Boot</a></li>
 </ul>
 </li>
+<li class="toctree-l4"><a class="reference internal" href="arm/imx8mp-evk.html#kvm-acceleration">KVM Acceleration</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="arm/orangepi.html">Orange Pi PC (<code class="docutils literal notranslate"><span class="pre">orangepi-pc</span></code>)</a><ul>
@@ -283,6 +287,7 @@ various targets are mentioned in the following sections.</p>
 <li class="toctree-l3"><a class="reference internal" href="arm/virt.html">‘virt’ generic virtual platform (<code class="docutils literal notranslate"><span class="pre">virt</span></code>)</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="arm/virt.html#supported-devices">Supported devices</a></li>
 <li class="toctree-l4"><a class="reference internal" href="arm/virt.html#machine-specific-options">Machine-specific options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="arm/virt.html#smmu-configuration">SMMU configuration</a></li>
 <li class="toctree-l4"><a class="reference internal" href="arm/virt.html#linux-guest-kernel-configuration">Linux guest kernel configuration</a></li>
 <li class="toctree-l4"><a class="reference internal" href="arm/virt.html#hardware-configuration-information-for-bare-metal-programming">Hardware configuration information for bare-metal programming</a></li>
 </ul>
@@ -293,7 +298,9 @@ various targets are mentioned in the following sections.</p>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="arm/xenpvh.html">Xen Device Emulation Backend (<code class="docutils literal notranslate"><span class="pre">xenpvh</span></code>)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="arm/xlnx-versal-virt.html">Xilinx Versal Virt (<code class="docutils literal notranslate"><span class="pre">xlnx-versal-virt</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="arm/xlnx-versal-virt.html">AMD Versal Virt (<code class="docutils literal notranslate"><span class="pre">amd-versal-virt</span></code>, <code class="docutils literal notranslate"><span class="pre">amd-versal2-virt</span></code>)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="arm/xlnx-versal-virt.html#versal">Versal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="arm/xlnx-versal-virt.html#versal-gen-2">Versal Gen 2</a></li>
 <li class="toctree-l4"><a class="reference internal" href="arm/xlnx-versal-virt.html#running">Running</a></li>
 <li class="toctree-l4"><a class="reference internal" href="arm/xlnx-versal-virt.html#bbram-file-backend">BBRAM File Backend</a></li>
 <li class="toctree-l4"><a class="reference internal" href="arm/xlnx-versal-virt.html#efuse-file-backend">eFUSE File Backend</a></li>
@@ -372,16 +379,49 @@ various targets are mentioned in the following sections.</p>
 <li class="toctree-l2"><a class="reference internal" href="target-mips.html#nanomips-system-emulator">nanoMIPS System emulator</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="target-or1k.html">OpenRISC System emulator</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="target-or1k.html#choosing-a-board-model">Choosing a board model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="target-or1k.html#board-specific-documentation">Board-specific documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="or1k/or1k-sim.html">Or1ksim board</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="or1k/or1k-sim.html#supported-devices">Supported devices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="or1k/or1k-sim.html#boot-options">Boot options</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="or1k/or1k-sim.html#linux-guest-kernel-configuration">Linux guest kernel configuration</a></li>
+<li class="toctree-l5"><a class="reference internal" href="or1k/or1k-sim.html#hardware-configuration-information">Hardware configuration information</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="or1k/virt.html">‘virt’ generic virtual platform</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="or1k/virt.html#supported-devices">Supported devices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="or1k/virt.html#boot-options">Boot options</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="or1k/virt.html#linux-guest-kernel-configuration">Linux guest kernel configuration</a></li>
+<li class="toctree-l5"><a class="reference internal" href="or1k/virt.html#hardware-configuration-information">Hardware configuration information</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="target-or1k.html#emulated-cpu-architecture-support">Emulated CPU architecture support</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="or1k/emulation.html">OpenRISC 1000 CPU architecture support</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="target-or1k.html#openrisc-cpu-features">OpenRISC CPU features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="or1k/cpu-features.html">CPU Features</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="target-ppc.html">PowerPC System emulator</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="target-ppc.html#board-specific-documentation">Board-specific documentation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="ppc/amigang.html">AmigaNG boards (<code class="docutils literal notranslate"><span class="pre">amigaone</span></code>, <code class="docutils literal notranslate"><span class="pre">pegasos2</span></code>, <code class="docutils literal notranslate"><span class="pre">sam460ex</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ppc/amigang.html">AmigaNG boards (<code class="docutils literal notranslate"><span class="pre">amigaone</span></code>, <code class="docutils literal notranslate"><span class="pre">pegasos1</span></code>, <code class="docutils literal notranslate"><span class="pre">pegasos2</span></code>, <code class="docutils literal notranslate"><span class="pre">sam460ex</span></code>)</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="ppc/amigang.html#eyetech-amigaone-mai-logic-teron-amigaone">Eyetech AmigaOne/Mai Logic Teron (<code class="docutils literal notranslate"><span class="pre">amigaone</span></code>)</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="ppc/amigang.html#emulated-devices">Emulated devices</a></li>
 <li class="toctree-l5"><a class="reference internal" href="ppc/amigang.html#firmware">Firmware</a></li>
 <li class="toctree-l5"><a class="reference internal" href="ppc/amigang.html#running-linux">Running Linux</a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="ppc/amigang.html#genesi-bplan-pegasos-ii-pegasos2">Genesi/bPlan Pegasos II (<code class="docutils literal notranslate"><span class="pre">pegasos2</span></code>)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ppc/amigang.html#genesi-bplan-pegasos-pegasos1-pegasos2">Genesi/bPlan Pegasos (<code class="docutils literal notranslate"><span class="pre">pegasos1</span></code>, <code class="docutils literal notranslate"><span class="pre">pegasos2</span></code>)</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="ppc/amigang.html#id1">Emulated devices</a></li>
 <li class="toctree-l5"><a class="reference internal" href="ppc/amigang.html#id2">Firmware</a></li>
 <li class="toctree-l5"><a class="reference internal" href="ppc/amigang.html#id3">Running Linux</a></li>
@@ -402,7 +442,7 @@ various targets are mentioned in the following sections.</p>
 <li class="toctree-l4"><a class="reference internal" href="ppc/powermac.html#firmware">Firmware</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="ppc/powernv.html">PowerNV family boards (<code class="docutils literal notranslate"><span class="pre">powernv8</span></code>, <code class="docutils literal notranslate"><span class="pre">powernv9</span></code>, <code class="docutils literal notranslate"><span class="pre">powernv10</span></code>)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ppc/powernv.html">PowerNV family boards (<code class="docutils literal notranslate"><span class="pre">powernv8</span></code>, <code class="docutils literal notranslate"><span class="pre">powernv9</span></code>, <code class="docutils literal notranslate"><span class="pre">powernv10</span></code>, <code class="docutils literal notranslate"><span class="pre">powernv11</span></code>)</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="ppc/powernv.html#supported-devices">Supported devices</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ppc/powernv.html#missing-devices">Missing devices</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ppc/powernv.html#firmware">Firmware</a></li>
@@ -529,39 +569,6 @@ various targets are mentioned in the following sections.</p>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="target-openrisc.html">OpenRISC System emulator</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="target-openrisc.html#choosing-a-board-model">Choosing a board model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="target-openrisc.html#board-specific-documentation">Board-specific documentation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="openrisc/or1k-sim.html">Or1ksim board</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="openrisc/or1k-sim.html#supported-devices">Supported devices</a></li>
-<li class="toctree-l4"><a class="reference internal" href="openrisc/or1k-sim.html#boot-options">Boot options</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="openrisc/or1k-sim.html#linux-guest-kernel-configuration">Linux guest kernel configuration</a></li>
-<li class="toctree-l5"><a class="reference internal" href="openrisc/or1k-sim.html#hardware-configuration-information">Hardware configuration information</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="openrisc/virt.html">‘virt’ generic virtual platform</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="openrisc/virt.html#supported-devices">Supported devices</a></li>
-<li class="toctree-l4"><a class="reference internal" href="openrisc/virt.html#boot-options">Boot options</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="openrisc/virt.html#linux-guest-kernel-configuration">Linux guest kernel configuration</a></li>
-<li class="toctree-l5"><a class="reference internal" href="openrisc/virt.html#hardware-configuration-information">Hardware configuration information</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="target-openrisc.html#emulated-cpu-architecture-support">Emulated CPU architecture support</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="openrisc/emulation.html">OpenRISC 1000 CPU architecture support</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="target-openrisc.html#openrisc-cpu-features">OpenRISC CPU features</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="openrisc/cpu-features.html">CPU Features</a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="target-riscv.html">RISC-V System emulator</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="target-riscv.html#choosing-a-board-model">Choosing a board model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="target-riscv.html#board-specific-documentation">Board-specific documentation</a><ul>
@@ -574,6 +581,10 @@ various targets are mentioned in the following sections.</p>
 <li class="toctree-l4"><a class="reference internal" href="riscv/microchip-icicle-kit.html#boot-options">Boot options</a></li>
 <li class="toctree-l4"><a class="reference internal" href="riscv/microchip-icicle-kit.html#direct-kernel-boot">Direct Kernel Boot</a></li>
 <li class="toctree-l4"><a class="reference internal" href="riscv/microchip-icicle-kit.html#running-hss">Running HSS</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="riscv/mips.html">Boards for RISC-V Processors by MIPS</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="riscv/mips.html#running-linux-kernel">Running Linux kernel</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="riscv/shakti-c.html">Shakti C Reference Platform (<code class="docutils literal notranslate"><span class="pre">shakti_c</span></code>)</a><ul>
@@ -841,7 +852,7 @@ various targets are mentioned in the following sections.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -852,7 +863,7 @@ various targets are mentioned in the following sections.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

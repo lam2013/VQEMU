@@ -9,7 +9,7 @@
   <title>QEMU&lt;-&gt;ACPI BIOS CPU hotplug interface &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -67,7 +67,6 @@
 <li class="toctree-l2"><a class="reference internal" href="tpm.html">QEMU TPM Device</a></li>
 <li class="toctree-l2"><a class="reference internal" href="acpi_hest_ghes.html">APEI tables generating and CPER record</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">QEMU&lt;-&gt;ACPI BIOS CPU hotplug interface</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#legacy-acpi-cpu-hotplug-interface-registers">Legacy ACPI CPU hotplug interface registers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#modern-acpi-cpu-hotplug-interface-registers">Modern ACPI CPU hotplug interface registers</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#read-access-behavior">Read access behavior</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#write-access-behavior">Write access behavior</a></li>
@@ -102,6 +101,7 @@
 <li class="toctree-l2"><a class="reference internal" href="riscv-iommu.html">RISC-V IOMMU support for RISC-V machines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="riscv-aia.html">RISC-V AIA support for RISC-V machines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aspeed-intc.html">ASPEED Interrupt Controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iommu-testdev.html">iommu-testdev — IOMMU test device for bare-metal testing</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../devel/index.html">Developer Information</a></li>
@@ -139,20 +139,6 @@
 describes the interface between QEMU and the ACPI BIOS.</p>
 <p>ACPI BIOS GPE.2 handler is dedicated for notifying OS about CPU hot-add
 and hot-remove events.</p>
-<section id="legacy-acpi-cpu-hotplug-interface-registers">
-<h2>Legacy ACPI CPU hotplug interface registers<a class="headerlink" href="#legacy-acpi-cpu-hotplug-interface-registers" title="Link to this heading"></a></h2>
-<p>CPU present bitmap for:</p>
-<ul class="simple">
-<li><p>ICH9-LPC (IO port 0x0cd8-0xcf7, 1-byte access)</p></li>
-<li><p>PIIX-PM  (IO port 0xaf00-0xaf1f, 1-byte access)</p></li>
-<li><p>One bit per CPU. Bit position reflects corresponding CPU APIC ID. Read-only.</p></li>
-<li><p>The first DWORD in bitmap is used in write mode to switch from legacy
-to modern CPU hotplug interface, write 0 into it to do switch.</p></li>
-</ul>
-<p>QEMU sets corresponding CPU bit on hot-add event and issues SCI
-with GPE.2 event set. CPU present map is read by ACPI BIOS GPE.2 handler
-to notify OS about CPU hot-add events. CPU hot-remove isn’t supported.</p>
-</section>
 <section id="modern-acpi-cpu-hotplug-interface-registers">
 <h2>Modern ACPI CPU hotplug interface registers<a class="headerlink" href="#modern-acpi-cpu-hotplug-interface-registers" title="Link to this heading"></a></h2>
 <p>Register block base address:</p>
@@ -307,20 +293,14 @@ with current values of OST event and status registers.</p>
 <h2>Typical usecases<a class="headerlink" href="#typical-usecases" title="Link to this heading"></a></h2>
 <section id="x86-detecting-and-enabling-modern-cpu-hotplug-interface">
 <h3>(x86) Detecting and enabling modern CPU hotplug interface<a class="headerlink" href="#x86-detecting-and-enabling-modern-cpu-hotplug-interface" title="Link to this heading"></a></h3>
-<p>QEMU starts with legacy CPU hotplug interface enabled. Detecting and
-switching to modern interface is based on the 2 legacy CPU hotplug features:</p>
+<p>QEMU starts with modern CPU hotplug interface enabled. Use following steps to
+detect modern CPU hotplug interface:</p>
 <ol class="arabic simple">
-<li><p>Writes into CPU bitmap are ignored.</p></li>
-<li><p>CPU bitmap always has bit #0 set, corresponding to boot CPU.</p></li>
-</ol>
-<p>Use following steps to detect and enable modern CPU hotplug interface:</p>
-<ol class="arabic simple">
-<li><p>Store 0x0 to the ‘CPU selector’ register, attempting to switch to modern mode</p></li>
 <li><p>Store 0x0 to the ‘CPU selector’ register, to ensure valid selector value</p></li>
 <li><p>Store 0x0 to the ‘Command field’ register</p></li>
 <li><p>Read the ‘Command data 2’ register.
 If read value is 0x0, the modern interface is enabled.
-Otherwise legacy or no CPU hotplug interface available</p></li>
+Otherwise no CPU hotplug interface available</p></li>
 </ol>
 </section>
 <section id="get-a-cpu-with-pending-event">
@@ -369,7 +349,7 @@ The iterator at this point equals “max_cpus”.</p></li>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -380,7 +360,7 @@ The iterator at this point equals “max_cpus”.</p></li>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

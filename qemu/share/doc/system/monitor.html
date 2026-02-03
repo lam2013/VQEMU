@@ -9,7 +9,7 @@
   <title>QEMU Monitor &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -81,8 +81,11 @@
 <li class="toctree-l2"><a class="reference internal" href="multi-process.html">Multi-process QEMU</a></li>
 <li class="toctree-l2"><a class="reference internal" href="confidential-guest-support.html">Confidential Guest Support</a></li>
 <li class="toctree-l2"><a class="reference internal" href="igvm.html">Independent Guest Virtual Machine (IGVM) support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nitro.html">AWS Nitro Enclaves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="whpx.html">Windows Hypervisor Platform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vm-templating.html">QEMU VM templating</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sriov.html">Compsable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sriov.html">Composable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qemu-colo.html">Qemu COLO Fault Tolerance</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Mode Emulation</a></li>
@@ -359,11 +362,13 @@ can be obtained with:</p>
 <li><p>Bits = 16</p></li>
 <li><p>Number of channels = 2 - Stereo</p></li>
 </ul>
+<p>Deprecated.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">stopcapture</span></code> <em>index</em></dt><dd><p>Stop capture with a given <em>index</em>, index can be obtained with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">info</span> <span class="n">capture</span>
 </pre></div>
 </div>
+<p>Deprecated.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">memsave</span></code> <em>addr</em> <em>size</em> <em>file</em></dt><dd><p>save to disk virtual memory dump starting at <em>addr</em> of size <em>size</em>.</p>
 </dd>
@@ -637,8 +642,6 @@ command.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">info</span> <span class="pre">jit</span></code></dt><dd><p>Show dynamic compiler info.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">info</span> <span class="pre">accel</span></code></dt><dd><p>Show accelerator info.</p>
-</dd>
 <dt><code class="docutils literal notranslate"><span class="pre">info</span> <span class="pre">sync-profile</span> <span class="pre">[-m|-n]</span></code> [<em>max</em>]</dt><dd><p>Show synchronization profiling info, up to <em>max</em> entries (default: 10),
 sorted by total wait time.</p>
 <dl class="simple">
@@ -651,7 +654,16 @@ sorted by total wait time.</p>
 the “Object” field shows—enclosed in brackets—the number of objects
 being coalesced.</p>
 </dd>
+<dt><code class="docutils literal notranslate"><span class="pre">info</span> <span class="pre">accel</span></code></dt><dd><p>Show accelerator statistics.</p>
+</dd>
 <dt><code class="docutils literal notranslate"><span class="pre">info</span> <span class="pre">kvm</span></code></dt><dd><p>Show KVM information.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">info</span> <span class="pre">accelerators</span></code></dt><dd><p>Show which accelerators are compiled into a QEMU binary, and what accelerator
+is in use. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">kvm</span> <span class="n">qtest</span> <span class="p">[</span><span class="n">tcg</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>indicates that TCG in use, and that KVM and qtest are also available.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">info</span> <span class="pre">numa</span></code></dt><dd><p>Show NUMA information.</p>
 </dd>
@@ -659,7 +671,7 @@ being coalesced.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">info</span> <span class="pre">usbhost</span></code></dt><dd><p>Show host USB devices.</p>
 </dd>
-<dt><code class="docutils literal notranslate"><span class="pre">info</span> <span class="pre">capture</span></code></dt><dd><p>Show capture information.</p>
+<dt><code class="docutils literal notranslate"><span class="pre">info</span> <span class="pre">capture</span></code></dt><dd><p>Show capture information (deprecated).</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">info</span> <span class="pre">snapshots</span></code></dt><dd><p>Show the currently saved VM snapshots.</p>
 </dd>
@@ -753,6 +765,8 @@ enabled) memory in bytes.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">info</span> <span class="pre">cryptodev</span></code></dt><dd><p>Show the crypto devices.</p>
 </dd>
+<dt><code class="docutils literal notranslate"><span class="pre">info</span> <span class="pre">firmware-log</span></code></dt><dd><p>Show the firmware (ovmf) debug log.</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -776,7 +790,7 @@ by prefixing them with <em>$</em>.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -787,7 +801,7 @@ by prefixing them with <em>$</em>.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

@@ -9,7 +9,7 @@
   <title>Removed features &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -121,10 +121,13 @@
 <li class="toctree-l4"><a class="reference internal" href="#fsdev-proxy-and-virtfs-proxy-removed-in-9-2"><code class="docutils literal notranslate"><span class="pre">-fsdev</span> <span class="pre">proxy</span></code> and <code class="docutils literal notranslate"><span class="pre">-virtfs</span> <span class="pre">proxy</span></code> (removed in 9.2)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#portrait-and-rotate-removed-in-9-2"><code class="docutils literal notranslate"><span class="pre">-portrait</span></code> and <code class="docutils literal notranslate"><span class="pre">-rotate</span></code> (removed in 9.2)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#runas-removed-in-10-0"><code class="docutils literal notranslate"><span class="pre">-runas</span></code> (removed in 10.0)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#old-param-option-for-booting-arm-kernels-via-param-struct-removed-in-10-2"><code class="docutils literal notranslate"><span class="pre">-old-param</span></code> option for booting Arm kernels via param_struct (removed in 10.2)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bit-host-operating-systems-removed-in-11-0">32-bit host operating systems (removed in 11.0)</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#user-mode-emulator-command-line-arguments">User-mode emulator command line arguments</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">-singlestep</span></code> (removed in 9.0)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#p-removed-in-10-2"><code class="docutils literal notranslate"><span class="pre">-p</span></code> (removed in 10.2)</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#qemu-machine-protocol-qmp-commands">QEMU Machine Protocol (QMP) commands</a><ul>
@@ -147,13 +150,17 @@
 <li class="toctree-l4"><a class="reference internal" href="#query-migrate-return-value-member-skipped-removed-in-9-1"><code class="docutils literal notranslate"><span class="pre">query-migrate</span></code> return value member <code class="docutils literal notranslate"><span class="pre">skipped</span></code> (removed in 9.1)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#migrate-command-option-inc-removed-in-9-1"><code class="docutils literal notranslate"><span class="pre">migrate</span></code> command option <code class="docutils literal notranslate"><span class="pre">inc</span></code> (removed in 9.1)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#migrate-command-option-blk-removed-in-9-1"><code class="docutils literal notranslate"><span class="pre">migrate</span></code> command option <code class="docutils literal notranslate"><span class="pre">blk</span></code> (removed in 9.1)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#migrate-command-with-file-based-fd-uri-removed-in-11-0"><code class="docutils literal notranslate"><span class="pre">migrate</span></code> command with file-based <code class="docutils literal notranslate"><span class="pre">fd:</span></code> URI (removed in 11.0)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#migrate-set-capabilities-block-option-removed-in-9-1"><code class="docutils literal notranslate"><span class="pre">migrate-set-capabilities</span></code> <code class="docutils literal notranslate"><span class="pre">block</span></code> option (removed in 9.1)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#migrate-set-capabilities-zero-blocks-option-removed-in-11-0"><code class="docutils literal notranslate"><span class="pre">migrate-set-capabilities</span></code> <code class="docutils literal notranslate"><span class="pre">zero-blocks</span></code> option (removed in 11.0)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#migrate-set-parameter-compress-level-option-removed-in-9-1"><code class="docutils literal notranslate"><span class="pre">migrate-set-parameter</span></code> <code class="docutils literal notranslate"><span class="pre">compress-level</span></code> option (removed in 9.1)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#migrate-set-parameter-compress-threads-option-removed-in-9-1"><code class="docutils literal notranslate"><span class="pre">migrate-set-parameter</span></code> <code class="docutils literal notranslate"><span class="pre">compress-threads</span></code> option (removed in 9.1)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#migrate-set-parameter-compress-wait-thread-option-removed-in-9-1"><code class="docutils literal notranslate"><span class="pre">migrate-set-parameter</span></code> <code class="docutils literal notranslate"><span class="pre">compress-wait-thread</span></code> option (removed in 9.1)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#migrate-set-parameter-decompress-threads-option-removed-in-9-1"><code class="docutils literal notranslate"><span class="pre">migrate-set-parameter</span></code> <code class="docutils literal notranslate"><span class="pre">decompress-threads</span></code> option (removed in 9.1)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#migrate-set-capability-compress-option-removed-in-9-1"><code class="docutils literal notranslate"><span class="pre">migrate-set-capability</span></code> <code class="docutils literal notranslate"><span class="pre">compress</span></code> option (removed in 9.1)</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#incorrectly-typed-device-add-arguments-since-9-2">Incorrectly typed <code class="docutils literal notranslate"><span class="pre">device_add</span></code> arguments (since 9.2)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#incorrectly-typed-device-add-arguments-removed-in-9-2">Incorrectly typed <code class="docutils literal notranslate"><span class="pre">device_add</span></code> arguments (removed in 9.2)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#query-migrationthreads-removed-in-11-0"><code class="docutils literal notranslate"><span class="pre">query-migrationthreads</span></code> (removed in 11.0)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#migrate-argument-detach-removed-in-11-0"><code class="docutils literal notranslate"><span class="pre">migrate</span></code> argument <code class="docutils literal notranslate"><span class="pre">detach</span></code> (removed in 11.0)</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#qemu-machine-protocol-qmp-events">QEMU Machine Protocol (QMP) events</a><ul>
@@ -185,6 +192,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#host-architectures">Host Architectures</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#system-emulation-on-32-bit-windows-hosts-removed-in-9-0">System emulation on 32-bit Windows hosts (removed in 9.0)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#bit-hosts-for-64-bit-guests-removed-in-10-0">32-bit hosts for 64-bit guests (removed in 10.0)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bit-mips-removed-in-10-2">32-bit MIPS (removed in 10.2)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bit-ppc-removed-in-10-2">32-bit PPC (removed in 10.2)</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#guest-emulator-isas">Guest Emulator ISAs</a><ul>
@@ -228,16 +237,24 @@
 <li class="toctree-l4"><a class="reference internal" href="#aspeed-tacoma-bmc-machine-removed-in-10-0">Aspeed <code class="docutils literal notranslate"><span class="pre">tacoma-bmc</span></code> machine (removed in 10.0)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#ppc-ref405ep-machine-removed-in-10-0">ppc <code class="docutils literal notranslate"><span class="pre">ref405ep</span></code> machine (removed in 10.0)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#big-endian-variants-of-petalogix-ml605-and-xlnx-zynqmp-pmu-machines-removed-in-10-1">Big-Endian variants of <code class="docutils literal notranslate"><span class="pre">petalogix-ml605</span></code> and <code class="docutils literal notranslate"><span class="pre">xlnx-zynqmp-pmu</span></code> machines (removed in 10.1)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mips-mipssim-machine-removed-in-10-2">Mips <code class="docutils literal notranslate"><span class="pre">mipssim</span></code> machine (removed in 10.2)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#arm-ast2700a0-evb-machine-removed-in-11-0">Arm <code class="docutils literal notranslate"><span class="pre">ast2700a0-evb</span></code> machine (removed in 11.0)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#arm-highbank-and-midway-machines-removed-in-11-0">Arm <code class="docutils literal notranslate"><span class="pre">highbank</span></code> and <code class="docutils literal notranslate"><span class="pre">midway</span></code> machines (removed in 11.0)</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#linux-user-mode-cpus">linux-user mode CPUs</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#tilegx-cpus-removed-in-6-0"><code class="docutils literal notranslate"><span class="pre">tilegx</span></code> CPUs (removed in 6.0)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#ppc64abi32-cpus-removed-in-7-0"><code class="docutils literal notranslate"><span class="pre">ppc64abi32</span></code> CPUs (removed in 7.0)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#nios2-cpu-removed-in-9-1"><code class="docutils literal notranslate"><span class="pre">nios2</span></code> CPU (removed in 9.1)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#iwmmxt-emulation-and-the-pxa-cpus-removed-in-10-2">iwMMXt emulation and the <code class="docutils literal notranslate"><span class="pre">pxa</span></code> CPUs (removed in 10.2)</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#tcg-introspection-features">TCG introspection features</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#tcg-trace-events-removed-in-7-0">TCG trace-events (removed in 7.0)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#firmware-acpi-device-tree">Firmware, ACPI, Device Tree</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#risc-v-virt-board-riscv-delegate-dt-property-removed-in-11-0">RISC-V “virt” board “riscv,delegate” DT property (removed in 11.0)</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#system-emulator-devices">System emulator devices</a><ul>
@@ -247,6 +264,11 @@
 <li class="toctree-l4"><a class="reference internal" href="#scsi-disk-removed-in-6-0"><code class="docutils literal notranslate"><span class="pre">scsi-disk</span></code> (removed in 6.0)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#sga-removed-in-8-0"><code class="docutils literal notranslate"><span class="pre">sga</span></code> (removed in 8.0)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pvrdma-and-the-rdma-subsystem-removed-in-9-1"><code class="docutils literal notranslate"><span class="pre">pvrdma</span></code> and the RDMA subsystem (removed in 9.1)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#device-sd-card-spec-version-1-removed-in-10-2"><code class="docutils literal notranslate"><span class="pre">-device</span> <span class="pre">sd-card,spec_version=1</span></code> (removed in 10.2)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#system-emulator-binaries">System emulator binaries</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#qemu-system-microblazeel-removed-in-11-0"><code class="docutils literal notranslate"><span class="pre">qemu-system-microblazeel</span></code> (removed in 11.0)</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#related-binaries">Related binaries</a><ul>
@@ -262,6 +284,12 @@
 <li class="toctree-l4"><a class="reference internal" href="#sheepdog-driver-removed-in-6-0"><code class="docutils literal notranslate"><span class="pre">sheepdog</span></code> driver (removed in 6.0)</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#vfio-devices">VFIO devices</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#device-vfio-calxeda-xgmac-removed-in-10-2"><code class="docutils literal notranslate"><span class="pre">-device</span> <span class="pre">vfio-calxeda-xgmac</span></code> (removed in 10.2)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#device-vfio-amd-xgbe-removed-in-10-2"><code class="docutils literal notranslate"><span class="pre">-device</span> <span class="pre">vfio-amd-xgbe</span></code> (removed in 10.2)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#device-vfio-platform-removed-in-10-2"><code class="docutils literal notranslate"><span class="pre">-device</span> <span class="pre">vfio-platform</span></code> (removed in 10.2)</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#tools">Tools</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#virtiofsd-removed-in-8-0">virtiofsd (removed in 8.0)</a></li>
 </ul>
@@ -269,6 +297,11 @@
 <li class="toctree-l3"><a class="reference internal" href="#qemu-guest-agent">QEMU guest agent</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#blacklist-command-line-option-removed-in-9-1"><code class="docutils literal notranslate"><span class="pre">--blacklist</span></code> command line option (removed in 9.1)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#blacklist-config-file-option-removed-in-9-1"><code class="docutils literal notranslate"><span class="pre">blacklist</span></code> config file option (removed in 9.1)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#device-options">Device options</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#character-device-options">Character device options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#net-device-options">Net device options</a></li>
 </ul>
 </li>
 </ul>
@@ -785,6 +818,22 @@ the options along with the machine models they were intended for.</p>
 <h3><code class="docutils literal notranslate"><span class="pre">-runas</span></code> (removed in 10.0)<a class="headerlink" href="#runas-removed-in-10-0" title="Link to this heading"></a></h3>
 <p>Use <code class="docutils literal notranslate"><span class="pre">-run-with</span> <span class="pre">user=..</span></code> instead.</p>
 </section>
+<section id="old-param-option-for-booting-arm-kernels-via-param-struct-removed-in-10-2">
+<h3><code class="docutils literal notranslate"><span class="pre">-old-param</span></code> option for booting Arm kernels via param_struct (removed in 10.2)<a class="headerlink" href="#old-param-option-for-booting-arm-kernels-via-param-struct-removed-in-10-2" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">-old-param</span></code> command line option was specific to Arm targets:
+it was used when directly booting a guest kernel to pass it the
+command line and other information via the old <code class="docutils literal notranslate"><span class="pre">param_struct</span></code> ABI,
+rather than the newer ATAGS or DTB mechanisms. This option was only
+ever needed to support ancient kernels on some old board types
+like the <code class="docutils literal notranslate"><span class="pre">akita</span></code> or <code class="docutils literal notranslate"><span class="pre">terrier</span></code>; it has been deprecated in the
+kernel since 2001. None of the board types QEMU supports need
+<code class="docutils literal notranslate"><span class="pre">param_struct</span></code> support, so this option has been removed.</p>
+</section>
+<section id="bit-host-operating-systems-removed-in-11-0">
+<h3>32-bit host operating systems (removed in 11.0)<a class="headerlink" href="#bit-host-operating-systems-removed-in-11-0" title="Link to this heading"></a></h3>
+<p>Keeping 32-bit host support alive was a substantial burden for the
+QEMU project.  Thus QEMU dropped all support for all 32-bit host systems.</p>
+</section>
 </section>
 <section id="user-mode-emulator-command-line-arguments">
 <h2>User-mode emulator command line arguments<a class="headerlink" href="#user-mode-emulator-command-line-arguments" title="Link to this heading"></a></h2>
@@ -793,6 +842,13 @@ the options along with the machine models they were intended for.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">-singlestep</span></code> option has been given a name that better reflects
 what it actually does. For both linux-user and bsd-user, use the
 <code class="docutils literal notranslate"><span class="pre">-one-insn-per-tb</span></code> option instead.</p>
+</section>
+<section id="p-removed-in-10-2">
+<h3><code class="docutils literal notranslate"><span class="pre">-p</span></code> (removed in 10.2)<a class="headerlink" href="#p-removed-in-10-2" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">-p</span></code> option pretends to control the host page size.  However,
+it is not possible to change the host page size; we stopped trying
+to do anything with the option except print a warning from 9.0,
+and now the option is removed entirely.</p>
 </section>
 </section>
 <section id="qemu-machine-protocol-qmp-commands">
@@ -892,11 +948,25 @@ docs/interop/live-block-operations.rst for a detailed explanation.</p>
 storage migration with <code class="docutils literal notranslate"><span class="pre">blockdev-mirror</span></code> + NBD” in
 docs/interop/live-block-operations.rst for a detailed explanation.</p>
 </section>
+<section id="migrate-command-with-file-based-fd-uri-removed-in-11-0">
+<h3><code class="docutils literal notranslate"><span class="pre">migrate</span></code> command with file-based <code class="docutils literal notranslate"><span class="pre">fd:</span></code> URI (removed in 11.0)<a class="headerlink" href="#migrate-command-with-file-based-fd-uri-removed-in-11-0" title="Link to this heading"></a></h3>
+<p>In order to reduce ambiguity, the <code class="docutils literal notranslate"><span class="pre">fd:</span></code> URI usage of providing a
+file descriptor to a plain file has been removed in favor of
+explicitly using the <code class="docutils literal notranslate"><span class="pre">file:</span></code> URI with the file descriptor being
+passed as an <code class="docutils literal notranslate"><span class="pre">fdset</span></code>. Refer to the <code class="docutils literal notranslate"><span class="pre">add-fd</span></code> command documentation
+for details on the <code class="docutils literal notranslate"><span class="pre">fdset</span></code> usage.</p>
+</section>
 <section id="migrate-set-capabilities-block-option-removed-in-9-1">
 <h3><code class="docutils literal notranslate"><span class="pre">migrate-set-capabilities</span></code> <code class="docutils literal notranslate"><span class="pre">block</span></code> option (removed in 9.1)<a class="headerlink" href="#migrate-set-capabilities-block-option-removed-in-9-1" title="Link to this heading"></a></h3>
 <p>Block migration has been removed. For a replacement, see “QMP
 invocation for live storage migration with <code class="docutils literal notranslate"><span class="pre">blockdev-mirror</span></code> + NBD”
 in docs/interop/live-block-operations.rst.</p>
+</section>
+<section id="migrate-set-capabilities-zero-blocks-option-removed-in-11-0">
+<h3><code class="docutils literal notranslate"><span class="pre">migrate-set-capabilities</span></code> <code class="docutils literal notranslate"><span class="pre">zero-blocks</span></code> option (removed in 11.0)<a class="headerlink" href="#migrate-set-capabilities-zero-blocks-option-removed-in-11-0" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">zero-blocks</span></code> capability was accidentally left behind when
+block migration capability got removed in 9.1.  Removed with no
+replacement.</p>
 </section>
 <section id="migrate-set-parameter-compress-level-option-removed-in-9-1">
 <h3><code class="docutils literal notranslate"><span class="pre">migrate-set-parameter</span></code> <code class="docutils literal notranslate"><span class="pre">compress-level</span></code> option (removed in 9.1)<a class="headerlink" href="#migrate-set-parameter-compress-level-option-removed-in-9-1" title="Link to this heading"></a></h3>
@@ -918,13 +988,25 @@ in docs/interop/live-block-operations.rst.</p>
 <h3><code class="docutils literal notranslate"><span class="pre">migrate-set-capability</span></code> <code class="docutils literal notranslate"><span class="pre">compress</span></code> option (removed in 9.1)<a class="headerlink" href="#migrate-set-capability-compress-option-removed-in-9-1" title="Link to this heading"></a></h3>
 <p>Use <code class="docutils literal notranslate"><span class="pre">multifd-compression</span></code> instead.</p>
 </section>
-<section id="incorrectly-typed-device-add-arguments-since-9-2">
-<h3>Incorrectly typed <code class="docutils literal notranslate"><span class="pre">device_add</span></code> arguments (since 9.2)<a class="headerlink" href="#incorrectly-typed-device-add-arguments-since-9-2" title="Link to this heading"></a></h3>
+<section id="incorrectly-typed-device-add-arguments-removed-in-9-2">
+<h3>Incorrectly typed <code class="docutils literal notranslate"><span class="pre">device_add</span></code> arguments (removed in 9.2)<a class="headerlink" href="#incorrectly-typed-device-add-arguments-removed-in-9-2" title="Link to this heading"></a></h3>
 <p>Due to shortcomings in the internal implementation of <code class="docutils literal notranslate"><span class="pre">device_add</span></code>,
 QEMU used to incorrectly accept certain invalid arguments. Any object
 or list arguments were silently ignored. Other argument types were not
 checked, but an implicit conversion happened, so that e.g. string
 values could be assigned to integer device properties or vice versa.</p>
+</section>
+<section id="query-migrationthreads-removed-in-11-0">
+<h3><code class="docutils literal notranslate"><span class="pre">query-migrationthreads</span></code> (removed in 11.0)<a class="headerlink" href="#query-migrationthreads-removed-in-11-0" title="Link to this heading"></a></h3>
+<p>Removed with no replacement, as it reported only a limited set of
+threads (for example, it only reported source side of multifd threads,
+without reporting any destination threads, or non-multifd source
+threads).  For debugging purpose, please use <code class="docutils literal notranslate"><span class="pre">-name</span>
+<span class="pre">$VM,debug-threads=on</span></code> instead.</p>
+</section>
+<section id="migrate-argument-detach-removed-in-11-0">
+<h3><code class="docutils literal notranslate"><span class="pre">migrate</span></code> argument <code class="docutils literal notranslate"><span class="pre">detach</span></code> (removed in 11.0)<a class="headerlink" href="#migrate-argument-detach-removed-in-11-0" title="Link to this heading"></a></h3>
+<p>This argument has always been ignored.</p>
 </section>
 </section>
 <section id="qemu-machine-protocol-qmp-events">
@@ -1048,6 +1130,15 @@ work around the atomicity issues in system mode by running all vCPUs
 in a single thread context; in user mode atomicity was simply broken.
 From 10.0, QEMU has disabled configuration of 64-bit guests on 32-bit hosts.</p>
 </section>
+<section id="bit-mips-removed-in-10-2">
+<h3>32-bit MIPS (removed in 10.2)<a class="headerlink" href="#bit-mips-removed-in-10-2" title="Link to this heading"></a></h3>
+<p>Debian 12 “Bookworm” removed support for 32-bit MIPS, making it hard to
+maintain our cross-compilation CI tests of the architecture.</p>
+</section>
+<section id="bit-ppc-removed-in-10-2">
+<h3>32-bit PPC (removed in 10.2)<a class="headerlink" href="#bit-ppc-removed-in-10-2" title="Link to this heading"></a></h3>
+<p>The QEMU project no longer supports 32-bit host builds.</p>
+</section>
 </section>
 <section id="guest-emulator-isas">
 <h2>Guest Emulator ISAs<a class="headerlink" href="#guest-emulator-isas" title="Link to this heading"></a></h2>
@@ -1150,7 +1241,7 @@ Use “whpx” (on Windows) or “hvf” (on macOS) instead.</p>
 <section id="versioned-machine-types-aarch64-arm-i386-m68k-ppc64-s390x-x86-64">
 <h3>Versioned machine types (aarch64, arm, i386, m68k, ppc64, s390x, x86_64)<a class="headerlink" href="#versioned-machine-types-aarch64-arm-i386-m68k-ppc64-s390x-x86-64" title="Link to this heading"></a></h3>
 <p>In accordance with our versioned machine type deprecation policy, all machine
-types with version <code class="docutils literal notranslate"><span class="pre">4.1.0</span></code>, or older, have been
+types with version <code class="docutils literal notranslate"><span class="pre">5.0.0</span></code>, or older, have been
 removed.</p>
 </section>
 <section id="s390-virtio-removed-in-2-6">
@@ -1240,6 +1331,23 @@ were added for little endian CPUs. Big endian support was never tested
 and likely never worked. Starting with QEMU v10.1, the machines are now
 only available as little-endian machines.</p>
 </section>
+<section id="mips-mipssim-machine-removed-in-10-2">
+<h3>Mips <code class="docutils literal notranslate"><span class="pre">mipssim</span></code> machine (removed in 10.2)<a class="headerlink" href="#mips-mipssim-machine-removed-in-10-2" title="Link to this heading"></a></h3>
+<p>Linux dropped support for this virtual machine type in kernel v3.7, and
+there was also no binary available online to use with that board.</p>
+</section>
+<section id="arm-ast2700a0-evb-machine-removed-in-11-0">
+<h3>Arm <code class="docutils literal notranslate"><span class="pre">ast2700a0-evb</span></code> machine (removed in 11.0)<a class="headerlink" href="#arm-ast2700a0-evb-machine-removed-in-11-0" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">ast2700a0-evb</span></code> machine represents the first revision of the AST2700
+and serves as the initial engineering sample rather than a production version.
+A newer revision, A1, is now supported, and the <code class="docutils literal notranslate"><span class="pre">ast2700a1-evb</span></code> should
+replace the older A0 version.</p>
+</section>
+<section id="arm-highbank-and-midway-machines-removed-in-11-0">
+<h3>Arm <code class="docutils literal notranslate"><span class="pre">highbank</span></code> and <code class="docutils literal notranslate"><span class="pre">midway</span></code> machines (removed in 11.0)<a class="headerlink" href="#arm-highbank-and-midway-machines-removed-in-11-0" title="Link to this heading"></a></h3>
+<p>There were no known users left for these machines. If you just want to
+boot a Cortex-A15 or Cortex-A9 Linux, use the <code class="docutils literal notranslate"><span class="pre">virt</span></code> machine instead.</p>
+</section>
 </section>
 <section id="linux-user-mode-cpus">
 <h2>linux-user mode CPUs<a class="headerlink" href="#linux-user-mode-cpus" title="Link to this heading"></a></h2>
@@ -1262,6 +1370,19 @@ reason the maintainers strongly suspected no one actually used it.</p>
 <p>QEMU Nios II architecture was orphan; Intel has EOL’ed the Nios II
 processor IP (see <a class="reference external" href="https://www.intel.com/content/www/us/en/content-details/781327/intel-is-discontinuing-ip-ordering-codes-listed-in-pdn2312-for-nios-ii-ip.html">Intel discontinuance notification</a>).</p>
 </section>
+<section id="iwmmxt-emulation-and-the-pxa-cpus-removed-in-10-2">
+<h3>iwMMXt emulation and the <code class="docutils literal notranslate"><span class="pre">pxa</span></code> CPUs (removed in 10.2)<a class="headerlink" href="#iwmmxt-emulation-and-the-pxa-cpus-removed-in-10-2" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">pxa</span></code> CPU family (<code class="docutils literal notranslate"><span class="pre">pxa250</span></code>, <code class="docutils literal notranslate"><span class="pre">pxa255</span></code>, <code class="docutils literal notranslate"><span class="pre">pxa260</span></code>,
+<code class="docutils literal notranslate"><span class="pre">pxa261</span></code>, <code class="docutils literal notranslate"><span class="pre">pxa262</span></code>, <code class="docutils literal notranslate"><span class="pre">pxa270-a0</span></code>, <code class="docutils literal notranslate"><span class="pre">pxa270-a1</span></code>, <code class="docutils literal notranslate"><span class="pre">pxa270</span></code>,
+<code class="docutils literal notranslate"><span class="pre">pxa270-b0</span></code>, <code class="docutils literal notranslate"><span class="pre">pxa270-b1</span></code>, <code class="docutils literal notranslate"><span class="pre">pxa270-c0</span></code>, <code class="docutils literal notranslate"><span class="pre">pxa270-c5</span></code>) were
+not available in system emulation, because all the machine types which
+used these CPUs were removed in the QEMU 9.2 release. We don’t
+believe that anybody was using the iwMMXt emulation (which you
+would have to explicitly enable on the command line), and we did
+not have any tests to validate it or any real hardware or similar
+known-good implementation to test against. These CPUs have
+therefore been removed in linux-user mode as well.</p>
+</section>
 </section>
 <section id="tcg-introspection-features">
 <h2>TCG introspection features<a class="headerlink" href="#tcg-introspection-features" title="Link to this heading"></a></h2>
@@ -1272,6 +1393,15 @@ feature can be replicated with TCG plugins it was removed. If
 any user is currently using this feature and needs help with
 converting to using TCG plugins they should contact the qemu-devel
 mailing list.</p>
+</section>
+</section>
+<section id="firmware-acpi-device-tree">
+<h2>Firmware, ACPI, Device Tree<a class="headerlink" href="#firmware-acpi-device-tree" title="Link to this heading"></a></h2>
+<section id="risc-v-virt-board-riscv-delegate-dt-property-removed-in-11-0">
+<h3>RISC-V “virt” board “riscv,delegate” DT property (removed in 11.0)<a class="headerlink" href="#risc-v-virt-board-riscv-delegate-dt-property-removed-in-11-0" title="Link to this heading"></a></h3>
+<p>The “riscv,delegate” DT property was added in QEMU 7.0 as part of
+the AIA APLIC support.  The property changed name during the review
+process in Linux and the correct name ended up being “riscv,delegation”.</p>
 </section>
 </section>
 <section id="system-emulator-devices">
@@ -1306,6 +1436,21 @@ by using <code class="docutils literal notranslate"><span class="pre">-machine</
 <section id="pvrdma-and-the-rdma-subsystem-removed-in-9-1">
 <h3><code class="docutils literal notranslate"><span class="pre">pvrdma</span></code> and the RDMA subsystem (removed in 9.1)<a class="headerlink" href="#pvrdma-and-the-rdma-subsystem-removed-in-9-1" title="Link to this heading"></a></h3>
 <p>The ‘pvrdma’ device and the whole RDMA subsystem have been removed.</p>
+</section>
+<section id="device-sd-card-spec-version-1-removed-in-10-2">
+<h3><code class="docutils literal notranslate"><span class="pre">-device</span> <span class="pre">sd-card,spec_version=1</span></code> (removed in 10.2)<a class="headerlink" href="#device-sd-card-spec-version-1-removed-in-10-2" title="Link to this heading"></a></h3>
+<p>SD physical layer specification v2.00 supersedes the v1.10 one.</p>
+</section>
+</section>
+<section id="system-emulator-binaries">
+<h2>System emulator binaries<a class="headerlink" href="#system-emulator-binaries" title="Link to this heading"></a></h2>
+<section id="qemu-system-microblazeel-removed-in-11-0">
+<h3><code class="docutils literal notranslate"><span class="pre">qemu-system-microblazeel</span></code> (removed in 11.0)<a class="headerlink" href="#qemu-system-microblazeel-removed-in-11-0" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">qemu-system-microblaze</span></code> binary can emulate little-endian machines
+now, too, so the separate binary <code class="docutils literal notranslate"><span class="pre">qemu-system-microblazeel</span></code> (with the
+<code class="docutils literal notranslate"><span class="pre">el</span></code> suffix) for little-endian targets is not required anymore. The
+<code class="docutils literal notranslate"><span class="pre">petalogix-s3adsp1800</span></code> machine can now be switched to little endian by
+setting its <code class="docutils literal notranslate"><span class="pre">endianness</span></code> property to <code class="docutils literal notranslate"><span class="pre">little</span></code>.</p>
 </section>
 </section>
 <section id="related-binaries">
@@ -1384,6 +1529,31 @@ Users are recommended to switch to an alternative distributed block
 device driver such as RBD.</p>
 </section>
 </section>
+<section id="vfio-devices">
+<h2>VFIO devices<a class="headerlink" href="#vfio-devices" title="Link to this heading"></a></h2>
+<section id="device-vfio-calxeda-xgmac-removed-in-10-2">
+<h3><code class="docutils literal notranslate"><span class="pre">-device</span> <span class="pre">vfio-calxeda-xgmac</span></code> (removed in 10.2)<a class="headerlink" href="#device-vfio-calxeda-xgmac-removed-in-10-2" title="Link to this heading"></a></h3>
+<p>The vfio-calxeda-xgmac device allows to assign a host Calxeda Highbank
+10Gb XGMAC Ethernet controller device (“calxeda,hb-xgmac” compatibility
+string) to a guest. Calxeda HW has been ewasted now and there is no point
+keeping that device.</p>
+</section>
+<section id="device-vfio-amd-xgbe-removed-in-10-2">
+<h3><code class="docutils literal notranslate"><span class="pre">-device</span> <span class="pre">vfio-amd-xgbe</span></code> (removed in 10.2)<a class="headerlink" href="#device-vfio-amd-xgbe-removed-in-10-2" title="Link to this heading"></a></h3>
+<p>The vfio-amd-xgbe device allows to assign a host AMD 10GbE controller
+to a guest (“amd,xgbe-seattle-v1a” compatibility string). AMD “Seattle”
+is not supported anymore and there is no point keeping that device.</p>
+</section>
+<section id="device-vfio-platform-removed-in-10-2">
+<h3><code class="docutils literal notranslate"><span class="pre">-device</span> <span class="pre">vfio-platform</span></code> (removed in 10.2)<a class="headerlink" href="#device-vfio-platform-removed-in-10-2" title="Link to this heading"></a></h3>
+<p>The vfio-platform device allows to assign a host platform device
+to a guest in a generic manner. Integrating a new device into
+the vfio-platform infrastructure requires some adaptation at
+both kernel and qemu level. No such attempt has been done for years
+and the conclusion is that vfio-platform has not got any traction.
+PCIe passthrough shall be the mainline solution.</p>
+</section>
+</section>
 <section id="tools">
 <h2>Tools<a class="headerlink" href="#tools" title="Link to this heading"></a></h2>
 <section id="virtiofsd-removed-in-8-0">
@@ -1411,6 +1581,25 @@ both, older and future versions of QEMU.</p>
 option).</p>
 </section>
 </section>
+<section id="device-options">
+<h2>Device options<a class="headerlink" href="#device-options" title="Link to this heading"></a></h2>
+<section id="character-device-options">
+<h3>Character device options<a class="headerlink" href="#character-device-options" title="Link to this heading"></a></h3>
+<section id="reconnect-removed-in-10-2">
+<h4><code class="docutils literal notranslate"><span class="pre">reconnect</span></code> (removed in 10.2)<a class="headerlink" href="#reconnect-removed-in-10-2" title="Link to this heading"></a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">reconnect</span></code> has been replaced by <code class="docutils literal notranslate"><span class="pre">reconnect-ms</span></code>, which provides
+better precision.</p>
+</section>
+</section>
+<section id="net-device-options">
+<h3>Net device options<a class="headerlink" href="#net-device-options" title="Link to this heading"></a></h3>
+<section id="stream-reconnect-removed-in-10-2">
+<h4>Stream <code class="docutils literal notranslate"><span class="pre">reconnect</span></code> (removed in 10.2)<a class="headerlink" href="#stream-reconnect-removed-in-10-2" title="Link to this heading"></a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">reconnect</span></code> has been replaced by <code class="docutils literal notranslate"><span class="pre">reconnect-ms</span></code>, which provides
+better precision.</p>
+</section>
+</section>
+</section>
 </section>
 
 
@@ -1424,7 +1613,7 @@ option).</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -1435,7 +1624,7 @@ option).</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="license.html">QEMU and this manual are released under the

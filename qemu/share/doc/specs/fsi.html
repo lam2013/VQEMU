@@ -9,7 +9,7 @@
   <title>IBM’s Flexible Service Interface (FSI) &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -88,6 +88,7 @@
 <li class="toctree-l2"><a class="reference internal" href="riscv-iommu.html">RISC-V IOMMU support for RISC-V machines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="riscv-aia.html">RISC-V AIA support for RISC-V machines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aspeed-intc.html">ASPEED Interrupt Controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iommu-testdev.html">iommu-testdev — IOMMU test device for bare-metal testing</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../devel/index.html">Developer Information</a></li>
@@ -152,7 +153,7 @@ processors. This now makes an appearance in the ASPEED SoC due to tight
 integration of the FSI master IP with the OPB, mainly the existence of an
 MMIO-mapping of the CFAM address straight onto a sub-region of the OPB
 address space.</p></li>
-<li><p>An APB-to-OPB bridge enabling access to the OPB from the ARM core in the
+<li><p>An APB-to-OPB bridge enabling access to the OPB from the Arm core in the
 AST2600. Hardware limitations prevent the OPB from being directly mapped
 into APB, so all accesses are indirect through the bridge.</p></li>
 </ol>
@@ -171,7 +172,7 @@ space onto the OPB address space - the models follow this directly and map the
 CFAM memory region into the OPB’s memory region.</p>
 <p>The following commands start the <code class="docutils literal notranslate"><span class="pre">rainier-bmc</span></code> machine with built-in FSI
 model. There are no model specific arguments. Please check this document to
-learn more about Aspeed <code class="docutils literal notranslate"><span class="pre">rainier-bmc</span></code> machine: (<a class="reference internal" href="../system/arm/aspeed.html"><span class="doc">Aspeed family boards (ast2500-evb, ast2600-evb, ast2700-evb, bletchley-bmc, fuji-bmc, gb200nvl-bmc, fby35-bmc, fp5280g2-bmc, g220a-bmc, palmetto-bmc, qcom-dc-scm-v1-bmc, qcom-firework-bmc, quanta-q71l-bmc, rainier-bmc, romulus-bmc, sonorapass-bmc, supermicrox11-bmc, supermicrox11spi-bmc, tiogapass-bmc, witherspoon-bmc, yosemitev2-bmc)</span></a>)</p>
+learn more about Aspeed <code class="docutils literal notranslate"><span class="pre">rainier-bmc</span></code> machine: (<a class="reference internal" href="../system/arm/aspeed.html"><span class="doc">Aspeed family boards (ast2500-evb, ast2600-evb, bletchley-bmc, fuji-bmc, gb200nvl-bmc, fby35-bmc, fp5280g2-bmc, g220a-bmc, palmetto-bmc, qcom-dc-scm-v1-bmc, qcom-firework-bmc, quanta-q71l-bmc, rainier-bmc, romulus-bmc, sonorapass-bmc, supermicrox11-bmc, supermicrox11spi-bmc, tiogapass-bmc, witherspoon-bmc, yosemitev2-bmc)</span></a>)</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">qemu-system-arm -M rainier-bmc -nographic \</span>
 <span class="go">-kernel fitImage-linux.bin \</span>
 <span class="go">-dtb aspeed-bmc-ibm-rainier.dtb \</span>
@@ -231,7 +232,7 @@ from the BMC. (see the <a class="reference external" href="https://github.com/op
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -242,7 +243,7 @@ from the BMC. (see the <a class="reference external" href="https://github.com/op
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

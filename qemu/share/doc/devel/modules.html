@@ -9,7 +9,7 @@
   <title>QEMU modules &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -107,7 +107,7 @@
              
   <section id="qemu-modules">
 <h1>QEMU modules<a class="headerlink" href="#qemu-modules" title="Link to this heading"></a></h1>
-<p><strong>module info annotation macros</strong></p>
+<p id="module-info-annotation-macros"><strong>module info annotation macros</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">scripts/modinfo-collect.py</span></code> will collect module info,
 using the preprocessor and -DQEMU_MODINFO.</p>
 <p><code class="docutils literal notranslate"><span class="pre">scripts/modinfo-generate.py</span></code> will create a module meta-data database
@@ -121,6 +121,7 @@ script results.</p>
 <dd></dd></dl>
 
 <p><code class="docutils literal notranslate"><span class="pre">module_obj</span> <span class="pre">(name)</span></code></p>
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">name</span></code></dt><dd><p>QOM type.</p>
@@ -128,12 +129,14 @@ script results.</p>
 </dl>
 <p><strong>Description</strong></p>
 <p>This module implements QOM type <strong>name</strong>.</p>
+</div>
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.module_dep">
 <span class="sig-name descname"><span class="n"><span class="pre">module_dep</span></span></span><a class="headerlink" href="#c.module_dep" title="Link to this definition"></a><br /></dt>
 <dd></dd></dl>
 
 <p><code class="docutils literal notranslate"><span class="pre">module_dep</span> <span class="pre">(name)</span></code></p>
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">name</span></code></dt><dd><p>module name</p>
@@ -141,12 +144,14 @@ script results.</p>
 </dl>
 <p><strong>Description</strong></p>
 <p>This module depends on module <strong>name</strong>.</p>
+</div>
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.module_arch">
 <span class="sig-name descname"><span class="n"><span class="pre">module_arch</span></span></span><a class="headerlink" href="#c.module_arch" title="Link to this definition"></a><br /></dt>
 <dd></dd></dl>
 
 <p><code class="docutils literal notranslate"><span class="pre">module_arch</span> <span class="pre">(name)</span></code></p>
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">name</span></code></dt><dd><p>target architecture</p>
@@ -158,12 +163,14 @@ script results.</p>
 this is only needed in case target-independent modules should be
 restricted.  Use case example: the ccw bus is implemented by s390x
 only.</p>
+</div>
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.module_opts">
 <span class="sig-name descname"><span class="n"><span class="pre">module_opts</span></span></span><a class="headerlink" href="#c.module_opts" title="Link to this definition"></a><br /></dt>
 <dd></dd></dl>
 
 <p><code class="docutils literal notranslate"><span class="pre">module_opts</span> <span class="pre">(name)</span></code></p>
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">name</span></code></dt><dd><p>QemuOpts name</p>
@@ -171,12 +178,14 @@ only.</p>
 </dl>
 <p><strong>Description</strong></p>
 <p>This module registers QemuOpts <strong>name</strong>.</p>
+</div>
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.module_kconfig">
 <span class="sig-name descname"><span class="n"><span class="pre">module_kconfig</span></span></span><a class="headerlink" href="#c.module_kconfig" title="Link to this definition"></a><br /></dt>
 <dd></dd></dl>
 
 <p><code class="docutils literal notranslate"><span class="pre">module_kconfig</span> <span class="pre">(name)</span></code></p>
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">name</span></code></dt><dd><p>Kconfig requirement necessary to load the module</p>
@@ -185,6 +194,7 @@ only.</p>
 <p><strong>Description</strong></p>
 <p>This module requires a core module that should be implemented and
 enabled in Kconfig.</p>
+</div>
 </section>
 
 
@@ -198,7 +208,7 @@ enabled in Kconfig.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -209,7 +219,7 @@ enabled in Kconfig.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

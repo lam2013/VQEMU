@@ -6,10 +6,10 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aspeed family boards (ast2500-evb, ast2600-evb, ast2700-evb, bletchley-bmc, fuji-bmc, gb200nvl-bmc, fby35-bmc, fp5280g2-bmc, g220a-bmc, palmetto-bmc, qcom-dc-scm-v1-bmc, qcom-firework-bmc, quanta-q71l-bmc, rainier-bmc, romulus-bmc, sonorapass-bmc, supermicrox11-bmc, supermicrox11spi-bmc, tiogapass-bmc, witherspoon-bmc, yosemitev2-bmc) &mdash; QEMU  documentation</title>
+  <title>Aspeed family boards (ast2500-evb, ast2600-evb, bletchley-bmc, fuji-bmc, gb200nvl-bmc, fby35-bmc, fp5280g2-bmc, g220a-bmc, palmetto-bmc, qcom-dc-scm-v1-bmc, qcom-firework-bmc, quanta-q71l-bmc, rainier-bmc, romulus-bmc, sonorapass-bmc, supermicrox11-bmc, supermicrox11spi-bmc, tiogapass-bmc, witherspoon-bmc, yosemitev2-bmc) &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../../_static/qemu_32x32.png"/>
@@ -84,8 +84,8 @@
 <li class="toctree-l3"><a class="reference internal" href="../target-loongarch.html">LoongArch System emulator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../target-m68k.html">ColdFire System emulator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../target-mips.html">MIPS System emulator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../target-or1k.html">OpenRISC System emulator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../target-ppc.html">PowerPC System emulator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../target-openrisc.html">OpenRISC System emulator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../target-riscv.html">RISC-V System emulator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../target-rx.html">RX System emulator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../target-s390x.html">s390x System emulator</a></li>
@@ -99,8 +99,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../multi-process.html">Multi-process QEMU</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../confidential-guest-support.html">Confidential Guest Support</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../igvm.html">Independent Guest Virtual Machine (IGVM) support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nitro.html">AWS Nitro Enclaves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../whpx.html">Windows Hypervisor Platform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vm-templating.html">QEMU VM templating</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../sriov.html">Compsable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sriov.html">Composable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../qemu-colo.html">Qemu COLO Fault Tolerance</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Mode Emulation</a></li>
@@ -128,7 +131,7 @@
           <li class="breadcrumb-item"><a href="../index.html">System Emulation</a></li>
           <li class="breadcrumb-item"><a href="../targets.html">QEMU System Emulator Targets</a></li>
           <li class="breadcrumb-item"><a href="../target-arm.html">Arm System emulator</a></li>
-      <li class="breadcrumb-item active">Aspeed family boards (<code class="docutils literal notranslate"><span class="pre">ast2500-evb</span></code>, <code class="docutils literal notranslate"><span class="pre">ast2600-evb</span></code>, <code class="docutils literal notranslate"><span class="pre">ast2700-evb</span></code>, <code class="docutils literal notranslate"><span class="pre">bletchley-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">fuji-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">gb200nvl-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">fby35-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">fp5280g2-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">g220a-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">palmetto-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">qcom-dc-scm-v1-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">qcom-firework-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">quanta-q71l-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">rainier-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">romulus-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">sonorapass-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">supermicrox11-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">supermicrox11spi-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">tiogapass-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">witherspoon-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">yosemitev2-bmc</span></code>)</li>
+      <li class="breadcrumb-item active">Aspeed family boards (<code class="docutils literal notranslate"><span class="pre">ast2500-evb</span></code>, <code class="docutils literal notranslate"><span class="pre">ast2600-evb</span></code>, <code class="docutils literal notranslate"><span class="pre">bletchley-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">fuji-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">gb200nvl-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">fby35-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">fp5280g2-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">g220a-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">palmetto-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">qcom-dc-scm-v1-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">qcom-firework-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">quanta-q71l-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">rainier-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">romulus-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">sonorapass-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">supermicrox11-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">supermicrox11spi-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">tiogapass-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">witherspoon-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">yosemitev2-bmc</span></code>)</li>
       <li class="wy-breadcrumbs-aside">
             <a href="https://gitlab.com/qemu-project/qemu/-/blob/master/docs/system/arm/aspeed.rst">View page source</a>
       </li>
@@ -138,13 +141,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="aspeed-family-boards-ast2500-evb-ast2600-evb-ast2700-evb-bletchley-bmc-fuji-bmc-gb200nvl-bmc-fby35-bmc-fp5280g2-bmc-g220a-bmc-palmetto-bmc-qcom-dc-scm-v1-bmc-qcom-firework-bmc-quanta-q71l-bmc-rainier-bmc-romulus-bmc-sonorapass-bmc-supermicrox11-bmc-supermicrox11spi-bmc-tiogapass-bmc-witherspoon-bmc-yosemitev2-bmc">
-<h1>Aspeed family boards (<code class="docutils literal notranslate"><span class="pre">ast2500-evb</span></code>, <code class="docutils literal notranslate"><span class="pre">ast2600-evb</span></code>, <code class="docutils literal notranslate"><span class="pre">ast2700-evb</span></code>, <code class="docutils literal notranslate"><span class="pre">bletchley-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">fuji-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">gb200nvl-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">fby35-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">fp5280g2-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">g220a-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">palmetto-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">qcom-dc-scm-v1-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">qcom-firework-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">quanta-q71l-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">rainier-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">romulus-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">sonorapass-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">supermicrox11-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">supermicrox11spi-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">tiogapass-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">witherspoon-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">yosemitev2-bmc</span></code>)<a class="headerlink" href="#aspeed-family-boards-ast2500-evb-ast2600-evb-ast2700-evb-bletchley-bmc-fuji-bmc-gb200nvl-bmc-fby35-bmc-fp5280g2-bmc-g220a-bmc-palmetto-bmc-qcom-dc-scm-v1-bmc-qcom-firework-bmc-quanta-q71l-bmc-rainier-bmc-romulus-bmc-sonorapass-bmc-supermicrox11-bmc-supermicrox11spi-bmc-tiogapass-bmc-witherspoon-bmc-yosemitev2-bmc" title="Link to this heading"></a></h1>
+  <section id="aspeed-family-boards-ast2500-evb-ast2600-evb-bletchley-bmc-fuji-bmc-gb200nvl-bmc-fby35-bmc-fp5280g2-bmc-g220a-bmc-palmetto-bmc-qcom-dc-scm-v1-bmc-qcom-firework-bmc-quanta-q71l-bmc-rainier-bmc-romulus-bmc-sonorapass-bmc-supermicrox11-bmc-supermicrox11spi-bmc-tiogapass-bmc-witherspoon-bmc-yosemitev2-bmc">
+<h1>Aspeed family boards (<code class="docutils literal notranslate"><span class="pre">ast2500-evb</span></code>, <code class="docutils literal notranslate"><span class="pre">ast2600-evb</span></code>, <code class="docutils literal notranslate"><span class="pre">bletchley-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">fuji-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">gb200nvl-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">fby35-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">fp5280g2-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">g220a-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">palmetto-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">qcom-dc-scm-v1-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">qcom-firework-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">quanta-q71l-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">rainier-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">romulus-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">sonorapass-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">supermicrox11-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">supermicrox11spi-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">tiogapass-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">witherspoon-bmc</span></code>, <code class="docutils literal notranslate"><span class="pre">yosemitev2-bmc</span></code>)<a class="headerlink" href="#aspeed-family-boards-ast2500-evb-ast2600-evb-bletchley-bmc-fuji-bmc-gb200nvl-bmc-fby35-bmc-fp5280g2-bmc-g220a-bmc-palmetto-bmc-qcom-dc-scm-v1-bmc-qcom-firework-bmc-quanta-q71l-bmc-rainier-bmc-romulus-bmc-sonorapass-bmc-supermicrox11-bmc-supermicrox11spi-bmc-tiogapass-bmc-witherspoon-bmc-yosemitev2-bmc" title="Link to this heading"></a></h1>
 <p>The QEMU Aspeed machines model BMCs of various OpenPOWER systems and
 Aspeed evaluation boards. They are based on different releases of the
 Aspeed SoC : the AST2400 integrating an ARM926EJ-S CPU (400MHz), the
 AST2500 with an ARM1176JZS CPU (800MHz), the AST2600
-with dual cores ARM Cortex-A7 CPUs (1.2GHz).</p>
+with dual cores Arm Cortex-A7 CPUs (1.2GHz).</p>
 <p>The SoC comes with RAM, Gigabit ethernet, USB, SD/MMC, USB, SPI, I2C,
 etc.</p>
 <p>AST2400 SoC based machines :</p>
@@ -365,13 +368,42 @@ under Linux), use :</p>
 </pre></div>
 </div>
 </section>
+<section id="otp-option">
+<h3>OTP Option<a class="headerlink" href="#otp-option" title="Link to this heading"></a></h3>
+<p>Both the AST2600 and AST1030 chips use the same One Time Programmable
+(OTP) memory module, which is utilized for configuration, key storage,
+and storing user-programmable data. This OTP memory module is managed
+by the Secure Boot Controller (SBC). The following options can be
+specified or omitted based on your needs.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>When the options are specified, the pre-generated configuration
+file will be used as the OTP memory storage.</p></li>
+<li><p>When the options are omitted, an internal memory buffer will be
+used to store the OTP memory data.</p></li>
+</ul>
+</div></blockquote>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>-blockdev<span class="w"> </span><span class="nv">driver</span><span class="o">=</span>file,filename<span class="o">=</span>otpmem.img,node-name<span class="o">=</span>otp<span class="w"> </span><span class="se">\</span>
+-global<span class="w"> </span>aspeed-otp.drive<span class="o">=</span>otp<span class="w"> </span><span class="se">\</span>
+</pre></div>
+</div>
+<p>The following bash command can be used to generate a default
+configuration file for OTP memory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>!<span class="w"> </span>-f<span class="w"> </span>otpmem.img<span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>seq<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">2048</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s1">&#39;\x00\x00\x00\x00\xff\xff\xff\xff&#39;</span>
+<span class="w">  </span><span class="k">done</span><span class="w"> </span>&gt;<span class="w"> </span>otpmem.img
+<span class="k">fi</span>
+</pre></div>
+</div>
 </section>
 </section>
-<section id="aspeed-2700-family-boards-ast2700-evb">
-<h1>Aspeed 2700 family boards (<code class="docutils literal notranslate"><span class="pre">ast2700-evb</span></code>)<a class="headerlink" href="#aspeed-2700-family-boards-ast2700-evb" title="Link to this heading"></a></h1>
+</section>
+<section id="aspeed-2700-family-boards-ast2700-evb-ast2700fc">
+<h1>Aspeed 2700 family boards (<code class="docutils literal notranslate"><span class="pre">ast2700-evb</span></code>, <code class="docutils literal notranslate"><span class="pre">ast2700fc</span></code>)<a class="headerlink" href="#aspeed-2700-family-boards-ast2700-evb-ast2700fc" title="Link to this heading"></a></h1>
 <p>The QEMU Aspeed machines model BMCs of Aspeed evaluation boards.
 They are based on different releases of the Aspeed SoC :
-the AST2700 with quad cores ARM Cortex-A35 64 bits CPUs (1.6GHz).</p>
+the AST2700 with quad cores Arm Cortex-A35 64 bits CPUs (1.6GHz).</p>
 <p>The SoC comes with RAM, Gigabit ethernet, USB, SD/MMC, USB, SPI, I2C,
 etc.</p>
 <p>AST2700 SoC based machines :</p>
@@ -440,11 +472,9 @@ etc.</p>
 <p>It causes all 4 CPU cores to start execution from address <code class="docutils literal notranslate"><span class="pre">0x430000000</span></code>, which
 corresponds to the BL31 image load address.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">IMGDIR</span><span class="o">=</span>ast2700-default
-<span class="nv">UBOOT_SIZE</span><span class="o">=</span><span class="k">$(</span>stat<span class="w"> </span>--format<span class="o">=</span>%s<span class="w"> </span>-L<span class="w"> </span><span class="si">${</span><span class="nv">IMGDIR</span><span class="si">}</span>/u-boot-nodtb.bin<span class="k">)</span>
 
 $<span class="w"> </span>qemu-system-aarch64<span class="w"> </span>-M<span class="w"> </span>ast2700-evb<span class="w"> </span><span class="se">\</span>
-<span class="w">     </span>-device<span class="w"> </span>loader,force-raw<span class="o">=</span>on,addr<span class="o">=</span>0x400000000,file<span class="o">=</span><span class="si">${</span><span class="nv">IMGDIR</span><span class="si">}</span>/u-boot-nodtb.bin<span class="w"> </span><span class="se">\</span>
-<span class="w">     </span>-device<span class="w"> </span>loader,force-raw<span class="o">=</span>on,addr<span class="o">=</span><span class="k">$((</span><span class="m">0x400000000</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="si">${</span><span class="nv">UBOOT_SIZE</span><span class="si">}</span><span class="k">))</span>,file<span class="o">=</span><span class="si">${</span><span class="nv">IMGDIR</span><span class="si">}</span>/u-boot.dtb<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-device<span class="w"> </span>loader,force-raw<span class="o">=</span>on,addr<span class="o">=</span>0x400000000,file<span class="o">=</span><span class="si">${</span><span class="nv">IMGDIR</span><span class="si">}</span>/u-boot.bin<span class="w"> </span><span class="se">\</span>
 <span class="w">     </span>-device<span class="w"> </span>loader,force-raw<span class="o">=</span>on,addr<span class="o">=</span>0x430000000,file<span class="o">=</span><span class="si">${</span><span class="nv">IMGDIR</span><span class="si">}</span>/bl31.bin<span class="w"> </span><span class="se">\</span>
 <span class="w">     </span>-device<span class="w"> </span>loader,force-raw<span class="o">=</span>on,addr<span class="o">=</span>0x430080000,file<span class="o">=</span><span class="si">${</span><span class="nv">IMGDIR</span><span class="si">}</span>/optee/tee-raw.bin<span class="w"> </span><span class="se">\</span>
 <span class="w">     </span>-device<span class="w"> </span>loader,cpu-num<span class="o">=</span><span class="m">0</span>,addr<span class="o">=</span>0x430000000<span class="w"> </span><span class="se">\</span>
@@ -496,11 +526,9 @@ specified path in the ${HOME} directory.</p>
 <li><p>Execute the following command to start <code class="docutils literal notranslate"><span class="pre">ast2700fc</span></code> machine:</p></li>
 </ol>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">IMGDIR</span><span class="o">=</span>ast2700-default
-<span class="nv">UBOOT_SIZE</span><span class="o">=</span><span class="k">$(</span>stat<span class="w"> </span>--format<span class="o">=</span>%s<span class="w"> </span>-L<span class="w"> </span><span class="si">${</span><span class="nv">IMGDIR</span><span class="si">}</span>/u-boot-nodtb.bin<span class="k">)</span>
 
 $<span class="w"> </span>qemu-system-aarch64<span class="w"> </span>-M<span class="w"> </span>ast2700fc<span class="w"> </span><span class="se">\</span>
-<span class="w">     </span>-device<span class="w"> </span>loader,force-raw<span class="o">=</span>on,addr<span class="o">=</span>0x400000000,file<span class="o">=</span><span class="si">${</span><span class="nv">IMGDIR</span><span class="si">}</span>/u-boot-nodtb.bin<span class="w"> </span><span class="se">\</span>
-<span class="w">     </span>-device<span class="w"> </span>loader,force-raw<span class="o">=</span>on,addr<span class="o">=</span><span class="k">$((</span><span class="m">0x400000000</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="si">${</span><span class="nv">UBOOT_SIZE</span><span class="si">}</span><span class="k">))</span>,file<span class="o">=</span><span class="si">${</span><span class="nv">IMGDIR</span><span class="si">}</span>/u-boot.dtb<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-device<span class="w"> </span>loader,force-raw<span class="o">=</span>on,addr<span class="o">=</span>0x400000000,file<span class="o">=</span><span class="si">${</span><span class="nv">IMGDIR</span><span class="si">}</span>/u-boot.bin<span class="w"> </span><span class="se">\</span>
 <span class="w">     </span>-device<span class="w"> </span>loader,force-raw<span class="o">=</span>on,addr<span class="o">=</span>0x430000000,file<span class="o">=</span><span class="si">${</span><span class="nv">IMGDIR</span><span class="si">}</span>/bl31.bin<span class="w"> </span><span class="se">\</span>
 <span class="w">     </span>-device<span class="w"> </span>loader,force-raw<span class="o">=</span>on,addr<span class="o">=</span>0x430080000,file<span class="o">=</span><span class="si">${</span><span class="nv">IMGDIR</span><span class="si">}</span>/optee/tee-raw.bin<span class="w"> </span><span class="se">\</span>
 <span class="w">     </span>-device<span class="w"> </span>loader,cpu-num<span class="o">=</span><span class="m">0</span>,addr<span class="o">=</span>0x430000000<span class="w"> </span><span class="se">\</span>
@@ -535,21 +563,22 @@ $<span class="w"> </span>tio<span class="w"> </span>/dev/pts/57
 </section>
 </section>
 </section>
-<section id="aspeed-minibmc-family-boards-ast1030-evb">
-<h1>Aspeed minibmc family boards (<code class="docutils literal notranslate"><span class="pre">ast1030-evb</span></code>)<a class="headerlink" href="#aspeed-minibmc-family-boards-ast1030-evb" title="Link to this heading"></a></h1>
-<p>The QEMU Aspeed machines model mini BMCs of various Aspeed evaluation
-boards. They are based on different releases of the
-Aspeed SoC : the AST1030 integrating an ARM Cortex M4F CPU (200MHz).</p>
+<section id="aspeed-minibmc-and-platform-root-of-trust-processor-family-boards-ast1030-evb-ast1060-evb">
+<h1>Aspeed MiniBMC and Platform Root of Trust processor family boards (<code class="docutils literal notranslate"><span class="pre">ast1030-evb</span></code>, <code class="docutils literal notranslate"><span class="pre">ast1060-evb</span></code>)<a class="headerlink" href="#aspeed-minibmc-and-platform-root-of-trust-processor-family-boards-ast1030-evb-ast1060-evb" title="Link to this heading"></a></h1>
+<p>The QEMU Aspeed machines model mini BMCs and Platform Root of Trust processors of various Aspeed
+evaluation boards. They are based on different releases of the Aspeed SoC : the AST1030 (MiniBMC)
+and AST1060 (Platform Root of Trust Processor), both integrating an Arm Cortex M4F CPU (200MHz).</p>
 <p>The SoC comes with SRAM, SPI, I2C, etc.</p>
-<p>AST1030 SoC based machines :</p>
+<p>AST10x0 SoC based machines :</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">ast1030-evb</span></code>          Aspeed AST1030 Evaluation board (Cortex-M4F)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ast1060-evb</span></code>          Aspeed AST1060 Evaluation board (Cortex-M4F)</p></li>
 </ul>
 <section id="id4">
 <h2>Supported devices<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
 <blockquote>
 <div><ul class="simple">
-<li><p>SMP (for the AST1030 Cortex-M4F)</p></li>
+<li><p>SMP (for the Cortex-M4F)</p></li>
 <li><p>Interrupt Controller (VIC)</p></li>
 <li><p>Timer Controller</p></li>
 <li><p>I2C Controller</p></li>
@@ -579,6 +608,8 @@ Aspeed SoC : the AST1030 integrating an ARM Cortex M4F CPU (200MHz).</p>
 <li><p>Virtual UART</p></li>
 <li><p>eSPI Controller</p></li>
 <li><p>I3C Controller</p></li>
+<li><p>SMBus Filter Controller</p></li>
+<li><p>QSPI Monitor Controller</p></li>
 </ul>
 </div></blockquote>
 </section>
@@ -592,7 +623,7 @@ ASPEED GitHub release repository :</p>
 </div></blockquote>
 <p>To boot a kernel directly from a Zephyr build tree:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>qemu-system-arm<span class="w"> </span>-M<span class="w"> </span>ast1030-evb<span class="w"> </span>-nographic<span class="w"> </span><span class="se">\</span>
-<span class="w">      </span>-kernel<span class="w"> </span>zephyr.elf
+<span class="w">      </span>-kernel<span class="w"> </span>zephyr.bin
 </pre></div>
 </div>
 </section>
@@ -609,7 +640,7 @@ ASPEED GitHub release repository :</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -620,7 +651,7 @@ ASPEED GitHub release repository :</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../../about/license.html">QEMU and this manual are released under the

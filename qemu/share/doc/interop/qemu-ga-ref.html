@@ -9,7 +9,7 @@
   <title>QEMU Guest Agent Protocol Reference &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -203,8 +203,8 @@
              
   <section id="qemu-guest-agent-protocol-reference">
 <h1>QEMU Guest Agent Protocol Reference<a class="headerlink" href="#qemu-guest-agent-protocol-reference" title="Link to this heading"></a></h1>
-<p id="module-QGA-qapi-schema">This manual describes the commands supported by the QEMU Guest
-Agent Protocol.</p>
+<p id="module-QGA-qapi-schema">This manual describes the commands supported by the QEMU Guest Agent
+Protocol.</p>
 <p>For locating  a particular item, please see the <a class="reference internal" href="../qapi-qga-index.html"><span class="std std-ref">QGA Index</span></a>.</p>
 <p>The following notation is used in examples:</p>
 <div class="admonition admonition-example">
@@ -265,8 +265,8 @@ such a way that this response can be obtained.</p>
 <p>In cases where a partial stale response was previously received by
 the client, this cannot always be done reliably.  One particular
 scenario being if qemu-ga responses are fed character-by-character
-into a JSON parser.  In these situations, using <a class="reference internal" href="#command-QGA-qapi-schema.guest-sync-delimited" title="QGA:qapi-schema.guest-sync-delimited"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">guest-sync-delimited</span></code></a>
-may be optimal.</p>
+into a JSON parser.  In these situations, using
+<a class="reference internal" href="#command-QGA-qapi-schema.guest-sync-delimited" title="QGA:qapi-schema.guest-sync-delimited"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">guest-sync-delimited</span></code></a> may be optimal.</p>
 <p>For clients that fetch responses line by line and convert them to
 JSON objects, <a class="reference internal" href="#command-QGA-qapi-schema.guest-sync" title="QGA:qapi-schema.guest-sync"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">guest-sync</span></code></a> should be sufficient, but note that in
 cases where the channel is dirty some attempts at parsing the
@@ -315,9 +315,9 @@ resynchronize the guest.</p>
 <p>This command tries to set guest’s System Time to the given value,
 then sets the Hardware Clock (RTC) to the current System Time.  This
 will make it easier for a guest to resynchronize without waiting for
-NTP. If no <code class="docutils literal notranslate"><span class="pre">time</span></code> is specified, then the time to set is read from
-RTC. However, this may not be supported on all platforms (i.e.
-Windows). If that’s the case users are advised to always pass a
+NTP.  If no <code class="docutils literal notranslate"><span class="pre">time</span></code> is specified, then the time to set is read from
+RTC.  However, this may not be supported on all platforms (i.e.
+Windows).  If that’s the case users are advised to always pass a
 value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Arguments<span class="colon">:</span></dt>
@@ -626,8 +626,8 @@ remain “thawed” and calling <a class="reference internal" href="#command-QGA
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>On Windows, the command is implemented with the help of a
-Volume Shadow-copy Service DLL helper.  The frozen state is limited
-for up to 10 seconds by VSS.</p>
+Volume Shadow-copy Service DLL helper.  The frozen state is
+limited for up to 10 seconds by VSS.</p>
 </div>
 </dd></dl>
 
@@ -671,9 +671,9 @@ points are ignored.</p></li>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If the return value does not match the previous call to
-<a class="reference internal" href="#command-QGA-qapi-schema.guest-fsfreeze-freeze" title="QGA:qapi-schema.guest-fsfreeze-freeze"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">guest-fsfreeze-freeze</span></code></a>, this likely means some freezable filesystems
-were unfrozen before this call, and that the filesystem state may
-have changed before issuing this command.</p>
+<a class="reference internal" href="#command-QGA-qapi-schema.guest-fsfreeze-freeze" title="QGA:qapi-schema.guest-fsfreeze-freeze"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">guest-fsfreeze-freeze</span></code></a>, this likely means some freezable
+filesystems were unfrozen before this call, and that the
+filesystem state may have changed before issuing this command.</p>
 </div>
 </dd></dl>
 
@@ -706,7 +706,8 @@ have changed before issuing this command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Members<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>paths</strong> (<span><code class="docutils literal notranslate"><span class="pre">[</span></code><a class="reference internal" href="#object-QGA-qapi-schema.GuestFilesystemTrimResult" title="QGA:qapi-schema.GuestFilesystemTrimResult"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">GuestFilesystemTrimResult</span></code></a><code class="docutils literal notranslate"><span class="pre">]</span></code></span>) – list of <a class="reference internal" href="#object-QGA-qapi-schema.GuestFilesystemTrimResult" title="QGA:qapi-schema.GuestFilesystemTrimResult"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">GuestFilesystemTrimResult</span></code></a> per path that was trimmed</p></li>
+<li><p><strong>paths</strong> (<span><code class="docutils literal notranslate"><span class="pre">[</span></code><a class="reference internal" href="#object-QGA-qapi-schema.GuestFilesystemTrimResult" title="QGA:qapi-schema.GuestFilesystemTrimResult"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">GuestFilesystemTrimResult</span></code></a><code class="docutils literal notranslate"><span class="pre">]</span></code></span>) – list of <a class="reference internal" href="#object-QGA-qapi-schema.GuestFilesystemTrimResult" title="QGA:qapi-schema.GuestFilesystemTrimResult"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">GuestFilesystemTrimResult</span></code></a> per path that was
+trimmed</p></li>
 </ul>
 </dd>
 </dl>
@@ -755,9 +756,9 @@ in this order:</p>
 </ul>
 <p>This command does NOT return a response on success.  There is a high
 chance the command succeeded if the VM exits with a zero exit status
-or, when running with –no-shutdown, by issuing the <a class="reference internal" href="qemu-qmp-ref.html#command-QMP-run-state.query-status" title="QMP:run-state.query-status"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">query-status</span></code></a> QMP
-command to to confirm the VM status is “shutdown”. However, the VM
-could also exit (or set its status to “shutdown”) due to other
+or, when running with –no-shutdown, by issuing the <a class="reference internal" href="qemu-qmp-ref.html#command-QMP-run-state.query-status" title="QMP:run-state.query-status"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">query-status</span></code></a>
+QMP command to to confirm the VM status is “shutdown”.  However, the
+VM could also exit (or set its status to “shutdown”) due to other
 reasons.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Errors<span class="colon">:</span></dt>
@@ -769,8 +770,8 @@ reasons.</p>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>It’s strongly recommended to issue the <a class="reference internal" href="#command-QGA-qapi-schema.guest-sync" title="QGA:qapi-schema.guest-sync"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">guest-sync</span></code></a> command
-before sending commands when the guest resumes.</p>
+<p>It’s strongly recommended to issue the <a class="reference internal" href="#command-QGA-qapi-schema.guest-sync" title="QGA:qapi-schema.guest-sync"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">guest-sync</span></code></a>
+command before sending commands when the guest resumes.</p>
 </div>
 </dd></dl>
 
@@ -790,7 +791,7 @@ in this order:</p>
 <li><p>manual write into sysfs</p></li>
 </ul>
 <p>IMPORTANT: <a class="reference internal" href="#command-QGA-qapi-schema.guest-suspend-ram" title="QGA:qapi-schema.guest-suspend-ram"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">guest-suspend-ram</span></code></a> requires working wakeup support in
-QEMU. You should check QMP command <a class="reference internal" href="qemu-qmp-ref.html#command-QMP-machine.query-current-machine" title="QMP:machine.query-current-machine"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">query-current-machine</span></code></a> returns
+QEMU.  You should check QMP command <a class="reference internal" href="qemu-qmp-ref.html#command-QMP-machine.query-current-machine" title="QMP:machine.query-current-machine"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">query-current-machine</span></code></a> returns
 wakeup-suspend-support: true before issuing this command.  Failure
 in doing so can result in a suspended guest that QEMU will not be
 able to awaken, forcing the user to power cycle the guest to bring
@@ -812,8 +813,8 @@ options to check for success:</p>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>It’s strongly recommended to issue the <a class="reference internal" href="#command-QGA-qapi-schema.guest-sync" title="QGA:qapi-schema.guest-sync"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">guest-sync</span></code></a> command
-before sending commands when the guest resumes.</p>
+<p>It’s strongly recommended to issue the <a class="reference internal" href="#command-QGA-qapi-schema.guest-sync" title="QGA:qapi-schema.guest-sync"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">guest-sync</span></code></a>
+command before sending commands when the guest resumes.</p>
 </div>
 </dd></dl>
 
@@ -832,7 +833,7 @@ order:</p>
 <li><p>pm-utils (via pm-suspend-hybrid)</p></li>
 </ul>
 <p>IMPORTANT: <a class="reference internal" href="#command-QGA-qapi-schema.guest-suspend-hybrid" title="QGA:qapi-schema.guest-suspend-hybrid"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">guest-suspend-hybrid</span></code></a> requires working wakeup support in
-QEMU. You should check QMP command <a class="reference internal" href="qemu-qmp-ref.html#command-QMP-machine.query-current-machine" title="QMP:machine.query-current-machine"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">query-current-machine</span></code></a> returns
+QEMU.  You should check QMP command <a class="reference internal" href="qemu-qmp-ref.html#command-QMP-machine.query-current-machine" title="QMP:machine.query-current-machine"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">query-current-machine</span></code></a> returns
 wakeup-suspend-support: true before issuing this command.  Failure
 in doing so can result in a suspended guest that QEMU will not be
 able to awaken, forcing the user to power cycle the guest to bring
@@ -854,8 +855,8 @@ options to check for success:</p>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>It’s strongly recommended to issue the <a class="reference internal" href="#command-QGA-qapi-schema.guest-sync" title="QGA:qapi-schema.guest-sync"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">guest-sync</span></code></a> command
-before sending commands when the guest resumes.</p>
+<p>It’s strongly recommended to issue the <a class="reference internal" href="#command-QGA-qapi-schema.guest-sync" title="QGA:qapi-schema.guest-sync"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">guest-sync</span></code></a>
+command before sending commands when the guest resumes.</p>
 </div>
 </dd></dl>
 
@@ -1256,9 +1257,10 @@ NBD, etc.</p>
 <li><p><strong>mountpoint</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code></span>) – mount point path</p></li>
 <li><p><strong>type</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code></span>) – file system type string</p></li>
 <li><p><strong>used-bytes</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – file system used bytes (since 3.0)</p></li>
-<li><p><strong>total-bytes</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – filesystem capacity in bytes for unprivileged users (since 3.0)</p></li>
-<li><p><strong>total-bytes-privileged</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – filesystem capacity in bytes for privileged users
-(since 9.1)</p></li>
+<li><p><strong>total-bytes</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – filesystem capacity in bytes for unprivileged users
+(since 3.0)</p></li>
+<li><p><strong>total-bytes-privileged</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – filesystem capacity in bytes for privileged
+users (since 9.1)</p></li>
 <li><p><strong>disk</strong> (<span><code class="docutils literal notranslate"><span class="pre">[</span></code><a class="reference internal" href="#object-QGA-qapi-schema.GuestDiskAddress" title="QGA:qapi-schema.GuestDiskAddress"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">GuestDiskAddress</span></code></a><code class="docutils literal notranslate"><span class="pre">]</span></code></span>) – an array of disk hardware information that the volume lies
 on, which may be empty if the disk type is not supported</p></li>
 </ul>
@@ -1385,7 +1387,8 @@ fails, because of some errors happen.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Members<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>phys-index</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code></span>) – same with the ‘phys-index’ member of <a class="reference internal" href="#object-QGA-qapi-schema.GuestMemoryBlock" title="QGA:qapi-schema.GuestMemoryBlock"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">GuestMemoryBlock</span></code></a>.</p></li>
+<li><p><strong>phys-index</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code></span>) – same with the ‘phys-index’ member of
+<a class="reference internal" href="#object-QGA-qapi-schema.GuestMemoryBlock" title="QGA:qapi-schema.GuestMemoryBlock"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">GuestMemoryBlock</span></code></a>.</p></li>
 <li><p><strong>response</strong> (<span><a class="reference internal" href="#enum-QGA-qapi-schema.GuestMemoryBlockResponseType" title="QGA:qapi-schema.GuestMemoryBlockResponseType"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">GuestMemoryBlockResponseType</span></code></a></span>) – the result of memory block operation.</p></li>
 <li><p><strong>error-code</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – the error number.  When memory block operation fails,
 we assign the value of ‘errno’ to this member, it indicates what
@@ -1726,10 +1729,11 @@ west of GMT, positive numbers for east</p></li>
 <p class="admonition-title">Note</p>
 <p>On POSIX systems the fields <code class="docutils literal notranslate"><span class="pre">id</span></code>, <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">pretty-name</span></code>,
 <code class="docutils literal notranslate"><span class="pre">version</span></code>, <code class="docutils literal notranslate"><span class="pre">version-id</span></code>, <code class="docutils literal notranslate"><span class="pre">variant</span></code> and <code class="docutils literal notranslate"><span class="pre">variant-id</span></code> follow the
-definition specified in os-release(5). Refer to the manual page for
-exact description of the fields.  Their values are taken from the
-os-release file.  If the file is not present in the system, or the
-values are not present in the file, the fields are not included.</p>
+definition specified in os-release(5).  Refer to the manual page
+for exact description of the fields.  Their values are taken from
+the os-release file.  If the file is not present in the system,
+or the values are not present in the file, the fields are not
+included.</p>
 <p>On Windows the values are filled from information gathered from
 the system.</p>
 </div>
@@ -1881,7 +1885,7 @@ format)</p></li>
 <dt class="sig sig-object qapi" id="command-QGA-qapi-schema.guest-ssh-remove-authorized-keys">
 <em class="property"><span class="k"><span class="pre">Command</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guest-ssh-remove-authorized-keys</span></span><span class="w"> </span><span><span class="pre">(Since:</span> <span class="pre">5.2)</span></span><a class="headerlink" href="#command-QGA-qapi-schema.guest-ssh-remove-authorized-keys" title="Link to this definition"></a></dt>
 <dd><p>Remove public keys from the user .ssh/authorized_keys on Unix
-systems (not implemented for other systems). It’s not an error if
+systems (not implemented for other systems).  It’s not an error if
 the key is already missing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Arguments<span class="colon">:</span></dt>
@@ -2068,10 +2072,10 @@ under the  control of the Linux kernel (since Linux 2.6.24)</p></li>
 <p>Retrieve CPU process load information</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Windows does not have load average API, so QGA emulates it by
-calculating the average CPU usage in the last 1, 5, 15 minutes
-similar as Linux does this.
-Calculation starts from the first time this command is called.</p>
+<p>Windows does not have load average API, so QGA emulates it
+by calculating the average CPU usage in the last 1, 5, 15 minutes
+similar as Linux does this.  Calculation starts from the first
+time this command is called.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Return<span class="colon">:</span></dt>
@@ -2082,17 +2086,20 @@ Calculation starts from the first time this command is called.</p>
 
 <dl class="qapi object">
 <dt class="sig sig-object qapi" id="object-QGA-qapi-schema.GuestNetworkRoute">
-<em class="property"><span class="k"><span class="pre">Object</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GuestNetworkRoute</span></span><span class="w"> </span><span><span class="pre">(Since:</span> <span class="pre">9.1)</span></span><a class="headerlink" href="#object-QGA-qapi-schema.GuestNetworkRoute" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">Object</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GuestNetworkRoute</span></span><span class="w"> </span><span><span class="pre">(Since:</span> <span class="pre">9.1</span> <span class="pre">(Linux</span> <span class="pre">only);</span> <span class="pre">11.0</span> <span class="pre">(Windows))</span></span><a class="headerlink" href="#object-QGA-qapi-schema.GuestNetworkRoute" title="Link to this definition"></a></dt>
 <dd><div class="qapi-infopips docutils container">
 <div class="qapi-infopip qapi-ifcond docutils container">
-<em>Availability</em>: <code class="docutils literal notranslate"><span class="pre">CONFIG_LINUX</span></code></div>
+<em>Availability</em>: <code class="docutils literal notranslate"><span class="pre">CONFIG_LINUX</span> <span class="pre">or</span> <span class="pre">CONFIG_WIN32</span></code></div>
 </div>
-<p>Route information, currently, only linux supported.</p>
+<p>Route information.  Supported on Linux (since 9.1) and Windows
+(since 11.0).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Members<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>iface</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code></span>) – The destination network or host’s egress network interface in the routing table</p></li>
-<li><p><strong>destination</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code></span>) – The IP address of the target network or host, The final destination of the packet</p></li>
+<li><p><strong>iface</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code></span>) – The destination network or host’s egress network interface
+in the routing table</p></li>
+<li><p><strong>destination</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code></span>) – The IP address of the target network or host, The
+final destination of the packet</p></li>
 <li><p><strong>metric</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code></span>) – Route metric</p></li>
 <li><p><strong>gateway</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – The IP address of the next hop router</p></li>
 <li><p><strong>mask</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – Subnet Mask (IPv4 only)</p></li>
@@ -2100,7 +2107,8 @@ Calculation starts from the first time this command is called.</p>
 <li><p><strong>flags</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – Route flags (not for windows)</p></li>
 <li><p><strong>refcnt</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – The route’s reference count (not for windows)</p></li>
 <li><p><strong>use</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – Route usage count (not for windows)</p></li>
-<li><p><strong>window</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – TCP window size, used for flow control (not for windows, IPv4 only)</p></li>
+<li><p><strong>window</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – TCP window size, used for flow control (not for windows,
+IPv4 only)</p></li>
 <li><p><strong>mtu</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – Data link layer maximum packet size (not for windows)</p></li>
 <li><p><strong>desprefixlen</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – Destination prefix length (for IPv6)</p></li>
 <li><p><strong>source</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – Source IP address (for IPv6)</p></li>
@@ -2114,10 +2122,10 @@ Calculation starts from the first time this command is called.</p>
 
 <dl class="qapi command">
 <dt class="sig sig-object qapi" id="command-QGA-qapi-schema.guest-network-get-route">
-<em class="property"><span class="k"><span class="pre">Command</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guest-network-get-route</span></span><span class="w"> </span><span><span class="pre">(Since:</span> <span class="pre">9.1)</span></span><a class="headerlink" href="#command-QGA-qapi-schema.guest-network-get-route" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">Command</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guest-network-get-route</span></span><span class="w"> </span><span><span class="pre">(Since:</span> <span class="pre">9.1</span> <span class="pre">(Linux</span> <span class="pre">only);</span> <span class="pre">11.0</span> <span class="pre">(Windows))</span></span><a class="headerlink" href="#command-QGA-qapi-schema.guest-network-get-route" title="Link to this definition"></a></dt>
 <dd><div class="qapi-infopips docutils container">
 <div class="qapi-infopip qapi-ifcond docutils container">
-<em>Availability</em>: <code class="docutils literal notranslate"><span class="pre">CONFIG_LINUX</span></code></div>
+<em>Availability</em>: <code class="docutils literal notranslate"><span class="pre">CONFIG_LINUX</span> <span class="pre">or</span> <span class="pre">CONFIG_WIN32</span></code></div>
 </div>
 <p>Retrieve information about route of network.</p>
 <dl class="field-list simple">
@@ -2140,7 +2148,7 @@ Calculation starts from the first time this command is called.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -2151,7 +2159,7 @@ Calculation starts from the first time this command is called.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

@@ -9,7 +9,7 @@
   <title>TCG Intermediate Representation &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -922,30 +922,6 @@ which have ordering side effects.</div>
 </tbody>
 </table>
 </section>
-<section id="bit-guest-on-32-bit-host-support">
-<h3>64-bit guest on 32-bit host support<a class="headerlink" href="#bit-guest-on-32-bit-host-support" title="Link to this heading"></a></h3>
-<p>The following opcodes are internal to TCG.  Thus they are to be implemented by
-32-bit host code generators, but are not to be emitted by guest translators.
-They are emitted as needed by inline functions within <code class="docutils literal notranslate"><span class="pre">tcg-op.h</span></code>.</p>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p>brcond2_i32 <em>t0_low</em>, <em>t0_high</em>, <em>t1_low</em>, <em>t1_high</em>, <em>cond</em>, <em>label</em></p></td>
-<td><div class="line-block">
-<div class="line">Similar to brcond, except that the 64-bit values <em>t0</em> and <em>t1</em>
-are formed from two 32-bit arguments.</div>
-</div>
-</td>
-</tr>
-<tr class="row-even"><td><p>setcond2_i32 <em>dest</em>, <em>t1_low</em>, <em>t1_high</em>, <em>t2_low</em>, <em>t2_high</em>, <em>cond</em></p></td>
-<td><div class="line-block">
-<div class="line">Similar to setcond, except that the 64-bit values <em>t1</em> and <em>t2</em> are
-formed from two 32-bit arguments. The result is a 32-bit value.</div>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
-</section>
 <section id="qemu-specific-operations">
 <h3>QEMU specific operations<a class="headerlink" href="#qemu-specific-operations" title="Link to this heading"></a></h3>
 <table class="docutils align-default">
@@ -1195,13 +1171,10 @@ contains the target specific code; it is #included by <code class="docutils lite
 than being a standalone C file.</p>
 <section id="assumptions">
 <h3>Assumptions<a class="headerlink" href="#assumptions" title="Link to this heading"></a></h3>
-<p>The target word size (<code class="docutils literal notranslate"><span class="pre">TCG_TARGET_REG_BITS</span></code>) is expected to be 32 bit or
-64 bit. It is expected that the pointer has the same size as the word.</p>
-<p>On a 32 bit target, all 64 bit operations are converted to 32 bits.
-A few specific operations must be implemented to allow it
-(see brcond2_i32, setcond2_i32).</p>
-<p>On a 64 bit target, the values are transferred between 32 and 64-bit
-registers using the following ops:</p>
+<p>The target word size (<code class="docutils literal notranslate"><span class="pre">TCG_TARGET_REG_BITS</span></code>) is expected to be 64 bit.
+It is expected that the pointer has the same size as the word.</p>
+<p>Values are transferred between 32 and 64-bit registers using the
+following ops:</p>
 <ul class="simple">
 <li><p>extrl_i64_i32</p></li>
 <li><p>extrh_i64_i32</p></li>
@@ -1296,7 +1269,7 @@ x86 guest uses it to improve the condition codes optimisation.</p></li>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -1307,7 +1280,7 @@ x86 guest uses it to improve the condition codes optimisation.</p></li>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

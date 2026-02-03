@@ -9,7 +9,7 @@
   <title>Functional testing with Python &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../../_static/qemu_32x32.png"/>
@@ -157,14 +157,27 @@ the following line will only run the tests for the x86_64 target:</p>
 </pre></div>
 </div>
 <p>To run a single test file without the meson test runner, you can also
-execute the file directly by specifying two environment variables first,
-the PYTHONPATH that has to include the python folder and the tests/functional
-folder of the source tree, and QEMU_TEST_QEMU_BINARY that has to point
-to the QEMU binary that should be used for the test. The current working
-directory should be your build folder. For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ export PYTHONPATH=../python:../tests/functional
-$ export QEMU_TEST_QEMU_BINARY=$PWD/qemu-system-x86_64
-$ pyvenv/bin/python3 ../tests/functional/test_file.py
+execute the file directly by specifying the name of the emulator target
+binary as an env variable.</p>
+<p>Assuming the current working directory is the top level source checkout
+and the build directory is ‘./build’:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ export QEMU_TEST_QEMU_BINARY=qemu-system-x86_64
+</pre></div>
+</div>
+<p>Run all tests from a test file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./build/run tests/functional/x86_64/test_virtio_version.py
+</pre></div>
+</div>
+<p>Run all tests from a test class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./build/run tests/functional/x86_64/test_virtio_version.py VirtioVersionCheck
+</pre></div>
+</div>
+<p>Or a single test:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./build/run tests/functional/x86_64/test_virtio_version.py VirtioVersionCheck.test_modern_only_devs
+</pre></div>
+</div>
+<p>Filtering test names also works:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./build/run tests/functional/x86_64/test_virtio_version.py -k modern
 </pre></div>
 </div>
 <p>The test framework will automatically purge any scratch files created during
@@ -394,6 +407,8 @@ the assets without running the tests, you can do so by running:</p>
 <p>The cache is populated in the <code class="docutils literal notranslate"><span class="pre">~/.cache/qemu/download</span></code> directory by
 default, but the location can be changed by setting the
 <code class="docutils literal notranslate"><span class="pre">QEMU_TEST_CACHE_DIR</span></code> environment variable.</p>
+<p>To force the test suite to re-download the cache, even if still valid,
+set the <code class="docutils literal notranslate"><span class="pre">QEMU_TEST_REFRESH_CACHE</span></code> environment variable.</p>
 </section>
 <section id="skipping-tests">
 <h2>Skipping tests<a class="headerlink" href="#skipping-tests" title="Link to this heading"></a></h2>
@@ -466,7 +481,7 @@ the QEMU_TEST_ALLOW_SLOW environment variable has been set.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -477,7 +492,7 @@ the QEMU_TEST_ALLOW_SLOW environment variable has been set.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../../about/license.html">QEMU and this manual are released under the

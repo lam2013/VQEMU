@@ -9,7 +9,7 @@
   <title>Fuzzing &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../../_static/qemu_32x32.png"/>
@@ -372,6 +372,14 @@ can be a line in the stack-trace, for example:</p>
 </li>
 <li><p>Report the bug and send a patch with the C reproducer upstream</p></li>
 </ul>
+<p>QEMU can also read the reproducer directly from a file rather than
+from standard input:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$QEMU_PATH $QEMU_ARGS -qtest chardev:repro \
+  -chardev file,id=repro,path=/dev/null,input-path=/tmp/reproducer
+</pre></div>
+</div>
+<p>This is useful if you want to run QEMU under a debugger to investigate
+the failure.</p>
 </section>
 <section id="implementation-details-fuzzer-lifecycle">
 <h2>Implementation Details / Fuzzer Lifecycle<a class="headerlink" href="#implementation-details-fuzzer-lifecycle" title="Link to this heading"></a></h2>
@@ -420,7 +428,7 @@ reboot.</p></li>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -431,7 +439,7 @@ reboot.</p></li>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../../about/license.html">QEMU and this manual are released under the

@@ -9,7 +9,7 @@
   <title>Generic Loader &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -63,7 +63,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#loading-data-into-memory-values">Loading Data into Memory Values</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#setting-a-cpu-s-program-counter">Setting a CPU’s Program Counter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#loading-files">Loading Files</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#restrictions-and-todos">Restrictions and ToDos</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="guest-loader.html">Guest Loader</a></li>
@@ -83,8 +82,11 @@
 <li class="toctree-l2"><a class="reference internal" href="multi-process.html">Multi-process QEMU</a></li>
 <li class="toctree-l2"><a class="reference internal" href="confidential-guest-support.html">Confidential Guest Support</a></li>
 <li class="toctree-l2"><a class="reference internal" href="igvm.html">Independent Guest Virtual Machine (IGVM) support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nitro.html">AWS Nitro Enclaves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="whpx.html">Windows Hypervisor Platform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vm-templating.html">QEMU VM templating</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sriov.html">Compsable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sriov.html">Composable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qemu-colo.html">Qemu COLO Fault Tolerance</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Mode Emulation</a></li>
@@ -132,8 +134,11 @@ can be done by following the syntax below:</p>
                 <span class="p">[,</span><span class="n">data</span><span class="o">-</span><span class="n">be</span><span class="o">=&lt;</span><span class="n">data</span><span class="o">-</span><span class="n">be</span><span class="o">&gt;</span><span class="p">][,</span><span class="n">cpu</span><span class="o">-</span><span class="n">num</span><span class="o">=&lt;</span><span class="n">cpu</span><span class="o">-</span><span class="n">num</span><span class="o">&gt;</span><span class="p">]</span>
 </pre></div>
 </div>
-<dl class="simple">
+<dl>
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;addr&gt;</span></code></dt><dd><p>The address to store the data in.</p>
+<p>Note that as usual with QEMU numeric option values, the default is to
+treat the argument as decimal.  To specify a value in hex, prefix it
+with ‘0x’.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;data&gt;</span></code></dt><dd><p>The value to be written to the address. The maximum size of the data
 is 8 bytes.</p>
@@ -148,10 +153,6 @@ as big endian data. The default is to write little endian data.</p>
 loaded. If not specified the address space of the first CPU is used.</p>
 </dd>
 </dl>
-<p>All values are parsed using the standard QemuOps parsing. This allows the user
-to specify any values in any format supported. By default the values
-will be parsed as decimal. To use hex values the user should prefix the number
-with a ‘0x’.</p>
 <p>An example of loading value 0x8000000e to address 0xfd1a0104 is:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">device</span> <span class="n">loader</span><span class="p">,</span><span class="n">addr</span><span class="o">=</span><span class="mh">0xfd1a0104</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="mh">0x8000000e</span><span class="p">,</span><span class="n">data</span><span class="o">-</span><span class="nb">len</span><span class="o">=</span><span class="mi">4</span>
 </pre></div>
@@ -164,16 +165,15 @@ can be done by following the syntax below:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">device</span> <span class="n">loader</span><span class="p">,</span><span class="n">addr</span><span class="o">=&lt;</span><span class="n">addr</span><span class="o">&gt;</span><span class="p">,</span><span class="n">cpu</span><span class="o">-</span><span class="n">num</span><span class="o">=&lt;</span><span class="n">cpu</span><span class="o">-</span><span class="n">num</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<dl class="simple">
+<dl>
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;addr&gt;</span></code></dt><dd><p>The value to use as the CPU’s PC.</p>
+<p>Note that as usual with QEMU numeric option values, the default is to
+treat the argument as decimal.  To specify a value in hex, prefix it
+with ‘0x’.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;cpu-num&gt;</span></code></dt><dd><p>The number of the CPU whose PC should be set to the specified value.</p>
 </dd>
 </dl>
-<p>All values are parsed using the standard QemuOpts parsing. This allows the user
-to specify any values in any format supported. By default the values
-will be parsed as decimal. To use hex values the user should prefix the number
-with a ‘0x’.</p>
 <p>An example of setting CPU 0’s PC to 0x8000 is:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">device</span> <span class="n">loader</span><span class="p">,</span><span class="n">addr</span><span class="o">=</span><span class="mh">0x8000</span><span class="p">,</span><span class="n">cpu</span><span class="o">-</span><span class="n">num</span><span class="o">=</span><span class="mi">0</span>
 </pre></div>
@@ -187,41 +187,38 @@ shown below:</p>
 <blockquote>
 <div><p>-device loader,file=&lt;file&gt;[,addr=&lt;addr&gt;][,cpu-num=&lt;cpu-num&gt;][,force-raw=&lt;raw&gt;]</p>
 </div></blockquote>
-<dl class="simple">
+<dl>
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;file&gt;</span></code></dt><dd><p>A file to be loaded into memory</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;addr&gt;</span></code></dt><dd><p>The memory address where the file should be loaded. This is required
 for raw images and ignored for non-raw files.</p>
+<p>Note that as usual with QEMU numeric option values, the default is to
+treat the argument as decimal.  To specify a value in hex, prefix it
+with ‘0x’.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;cpu-num&gt;</span></code></dt><dd><p>This specifies the CPU that should be used. This is an
-optional argument and will cause the CPU’s PC to be set to the
-memory address where the raw file is loaded or the entry point
-specified in the executable format header. This option should only
-be used for the boot image. This will also cause the image to be
-written to the specified CPU’s address space. If not specified, the
-default is CPU 0.</p>
+optional argument with two effects:</p>
+<ul class="simple">
+<li><p>this CPU’s address space is used to load the data</p></li>
+<li><p>this CPU’s PC will be set to the address where the raw file is loaded
+or the entry point specified in the executable format header</p></li>
+</ul>
+<p>If this option is not specified, then the data will be loaded via
+the address space of the first CPU, and no CPU will have its PC set.</p>
+<p>Note that there is currently no way to specify the address space to
+load the data without also causing that CPU’s PC to be set.</p>
+<p>Since it sets the starting PC, this option should only be used for the boot
+image.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">&lt;force-raw&gt;</span></code></dt><dd><p>Setting ‘force-raw=on’ forces the file to be treated as a raw image.
 This can be used to load supported executable formats as if they
 were raw.</p>
 </dd>
 </dl>
-<p>All values are parsed using the standard QemuOpts parsing. This allows the user
-to specify any values in any format supported. By default the values
-will be parsed as decimal. To use hex values the user should prefix the number
-with a ‘0x’.</p>
 <p>An example of loading an ELF file which CPU0 will boot is shown below:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">device</span> <span class="n">loader</span><span class="p">,</span><span class="n">file</span><span class="o">=./</span><span class="n">images</span><span class="o">/</span><span class="n">boot</span><span class="o">.</span><span class="n">elf</span><span class="p">,</span><span class="n">cpu</span><span class="o">-</span><span class="n">num</span><span class="o">=</span><span class="mi">0</span>
 </pre></div>
 </div>
-</section>
-<section id="restrictions-and-todos">
-<h2>Restrictions and ToDos<a class="headerlink" href="#restrictions-and-todos" title="Link to this heading"></a></h2>
-<p>At the moment it is just assumed that if you specify a cpu-num then
-you want to set the PC as well. This might not always be the case. In
-future the internal state ‘set_pc’ (which exists in the generic loader
-now) should be exposed to the user so that they can choose if the PC
-is set or not.</p>
 </section>
 </section>
 
@@ -236,7 +233,7 @@ is set or not.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -247,7 +244,7 @@ is set or not.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

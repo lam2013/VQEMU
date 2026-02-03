@@ -9,7 +9,7 @@
   <title>QEMU Security Protocols and Data Models (SPDM) Support &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -96,6 +96,7 @@
 <li class="toctree-l2"><a class="reference internal" href="riscv-iommu.html">RISC-V IOMMU support for RISC-V machines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="riscv-aia.html">RISC-V AIA support for RISC-V machines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aspeed-intc.html">ASPEED Interrupt Controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iommu-testdev.html">iommu-testdev — IOMMU test device for bare-metal testing</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../devel/index.html">Developer Information</a></li>
@@ -206,11 +207,11 @@ $<span class="w"> </span>dd<span class="w"> </span><span class="k">if</span><spa
 </div>
 <p>Then you can add this to your QEMU command line:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>-drive<span class="w"> </span><span class="nv">file</span><span class="o">=</span>blknvme,if<span class="o">=</span>none,id<span class="o">=</span>mynvme,format<span class="o">=</span>raw<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>-device<span class="w"> </span>nvme,drive<span class="o">=</span>mynvme,serial<span class="o">=</span>deadbeef,spdm_port<span class="o">=</span><span class="m">2323</span>
+<span class="w">    </span>-device<span class="w"> </span>nvme,drive<span class="o">=</span>mynvme,serial<span class="o">=</span>deadbeef,spdm_port<span class="o">=</span><span class="m">2323</span>,spdm_trans<span class="o">=</span>doe
 </pre></div>
 </div>
 <p>At which point QEMU will try to connect to the SPDM server.</p>
-<p>Note that if using x64-64 you will want to use the q35 machine instead
+<p>Note that if using x86_64 you will want to use the q35 machine instead
 of the default. So the entire QEMU command might look like this</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>qemu-system-x86_64<span class="w"> </span>-M<span class="w"> </span>q35<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--kernel<span class="w"> </span>bzImage<span class="w"> </span><span class="se">\</span>
@@ -218,9 +219,14 @@ of the default. So the entire QEMU command might look like this</p>
 <span class="w">    </span>-append<span class="w"> </span><span class="s2">&quot;root=/dev/vda console=ttyS0&quot;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>-net<span class="w"> </span>none<span class="w"> </span>-nographic<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>-drive<span class="w"> </span><span class="nv">file</span><span class="o">=</span>blknvme,if<span class="o">=</span>none,id<span class="o">=</span>mynvme,format<span class="o">=</span>raw<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>-device<span class="w"> </span>nvme,drive<span class="o">=</span>mynvme,serial<span class="o">=</span>deadbeef,spdm_port<span class="o">=</span><span class="m">2323</span>
+<span class="w">    </span>-device<span class="w"> </span>nvme,drive<span class="o">=</span>mynvme,serial<span class="o">=</span>deadbeef,spdm_port<span class="o">=</span><span class="m">2323</span>,spdm_trans<span class="o">=</span>doe
 </pre></div>
 </div>
+<p>The <code class="docutils literal notranslate"><span class="pre">spdm_trans</span></code> argument defines the underlying transport type that is
+emulated by QEMU. For an PCIe NVMe controller, both “doe” and “nvme” are
+supported. Where, “doe” does SPDM transport over the PCIe extended capability
+Data Object Exchange (DOE), and “nvme” uses the NVMe Admin Security
+Send/Receive commands to implement the SPDM transport.</p>
 </section>
 </section>
 
@@ -235,7 +241,7 @@ of the default. So the entire QEMU command might look like this</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -246,7 +252,7 @@ of the default. So the entire QEMU command might look like this</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

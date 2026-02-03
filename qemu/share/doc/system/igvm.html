@@ -9,7 +9,7 @@
   <title>Independent Guest Virtual Machine (IGVM) support &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -22,7 +22,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="QEMU VM templating" href="vm-templating.html" />
+    <link rel="next" title="AWS Nitro Enclaves" href="nitro.html" />
     <link rel="prev" title="Confidential Guest Support" href="confidential-guest-support.html" /> 
 </head>
 
@@ -86,8 +86,11 @@
 <li class="toctree-l3"><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="nitro.html">AWS Nitro Enclaves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="whpx.html">Windows Hypervisor Platform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vm-templating.html">QEMU VM templating</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sriov.html">Compsable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sriov.html">Composable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qemu-colo.html">Qemu COLO Fault Tolerance</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Mode Emulation</a></li>
@@ -296,10 +299,10 @@ SEV-SNP confidential platforms.</p>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
 <dl class="simple">
-<dt>[1] AMD64 Architecture Programmer’s Manual, Volume 2: System Programming</dt><dd><p>Rev 3.41
-<a class="reference external" href="https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/programmer-references/24593.pdf">https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/programmer-references/24593.pdf</a></p>
+<dt>[1] AMD64 Architecture Programmer’s Manual, Volume 2: System Programming</dt><dd><p>Rev 3.43
+<a class="reference external" href="https://docs.amd.com/v/u/en-US/24593_3.43">https://docs.amd.com/v/u/en-US/24593_3.43</a></p>
 </dd>
-<dt>[2] <code class="docutils literal notranslate"><span class="pre">buildigvm</span></code> - A tool to build example IGVM files containing OVMF firmware</dt><dd><p><a class="reference external" href="https://github.com/roy-hopkins/buildigvm">https://github.com/roy-hopkins/buildigvm</a></p>
+<dt>[2] <code class="docutils literal notranslate"><span class="pre">buildigvm</span></code> - A tool to build example IGVM files containing OVMF firmware</dt><dd><p><a class="reference external" href="https://gitlab.com/qemu-project/buildigvm">https://gitlab.com/qemu-project/buildigvm</a></p>
 </dd>
 </dl>
 </section>
@@ -310,13 +313,13 @@ SEV-SNP confidential platforms.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="confidential-guest-support.html" class="btn btn-neutral float-left" title="Confidential Guest Support" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="vm-templating.html" class="btn btn-neutral float-right" title="QEMU VM templating" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="nitro.html" class="btn btn-neutral float-right" title="AWS Nitro Enclaves" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -327,7 +330,7 @@ SEV-SNP confidential platforms.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

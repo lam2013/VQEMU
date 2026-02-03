@@ -9,7 +9,7 @@
   <title>UEFI variables &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -146,7 +146,7 @@ communication with the host uses a virtual device, which essentially
 configures the shared buffer location and size, and traps to the host
 to process the requests.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">uefi-vars</span></code> device implements the UEFI virtual device.  It comes
-in <code class="docutils literal notranslate"><span class="pre">uefi-vars-x86</span></code> and <code class="docutils literal notranslate"><span class="pre">uefi-vars-sysbus</span></code> flavours.  The device
+in <code class="docutils literal notranslate"><span class="pre">uefi-vars-x64</span></code> and <code class="docutils literal notranslate"><span class="pre">uefi-vars-sysbus</span></code> flavours.  The device
 reimplements the handlers needed, specifically
 <code class="docutils literal notranslate"><span class="pre">EfiSmmVariableProtocol</span></code> and <code class="docutils literal notranslate"><span class="pre">VarCheckPolicyLibMmiHandler</span></code>.  It
 also consumes events (<code class="docutils literal notranslate"><span class="pre">EfiEndOfDxeEventGroup</span></code>,
@@ -163,7 +163,7 @@ because we have to reimplement some edk2 functionality in qemu.</p>
 <section id="usage-on-x86-64">
 <h3>usage on x86_64<a class="headerlink" href="#usage-on-x86-64" title="Link to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">qemu</span><span class="o">-</span><span class="n">system</span><span class="o">-</span><span class="n">x86_64</span> \
-   <span class="o">-</span><span class="n">device</span> <span class="n">uefi</span><span class="o">-</span><span class="nb">vars</span><span class="o">-</span><span class="n">x86</span><span class="p">,</span><span class="n">jsonfile</span><span class="o">=/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="nb">vars</span><span class="o">.</span><span class="n">json</span>
+   <span class="o">-</span><span class="n">device</span> <span class="n">uefi</span><span class="o">-</span><span class="nb">vars</span><span class="o">-</span><span class="n">x64</span><span class="p">,</span><span class="n">jsonfile</span><span class="o">=/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="nb">vars</span><span class="o">.</span><span class="n">json</span>
 </pre></div>
 </div>
 </section>
@@ -188,7 +188,7 @@ because we have to reimplement some edk2 functionality in qemu.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -199,7 +199,7 @@ because we have to reimplement some edk2 functionality in qemu.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

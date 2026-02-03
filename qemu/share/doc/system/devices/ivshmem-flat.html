@@ -9,7 +9,7 @@
   <title>Inter-VM Shared Memory Flat Device &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../../_static/qemu_32x32.png"/>
@@ -22,8 +22,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Sparc32 keyboard" href="keyboard.html" />
-    <link rel="prev" title="Inter-VM Shared Memory device" href="ivshmem.html" /> 
+    <link rel="next" title="Inter-VM Shared Memory device" href="ivshmem.html" />
+    <link rel="prev" title="igb" href="igb.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -55,25 +55,22 @@
 <li class="toctree-l2 current"><a class="reference internal" href="../device-emulation.html">Device Emulation</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="../device-emulation.html#common-terms">Common Terms</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="../device-emulation.html#emulated-devices">Emulated Devices</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="virtio/index.html">VirtIO Devices</a></li>
 <li class="toctree-l4"><a class="reference internal" href="can.html">CAN Bus Emulation Support</a></li>
+<li class="toctree-l4"><a class="reference internal" href="canokey.html">CanoKey QEMU</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ccid.html">Chip Card Interface Device (CCID)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="cxl.html">Compute Express Link (CXL)</a></li>
-<li class="toctree-l4"><a class="reference internal" href="vfio-user.html">vfio-user</a></li>
-<li class="toctree-l4"><a class="reference internal" href="ivshmem.html">Inter-VM Shared Memory device</a></li>
+<li class="toctree-l4"><a class="reference internal" href="emmc.html">eMMC Emulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="igb.html">igb</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">Inter-VM Shared Memory Flat Device</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ivshmem.html">Inter-VM Shared Memory device</a></li>
 <li class="toctree-l4"><a class="reference internal" href="keyboard.html">Sparc32 keyboard</a></li>
 <li class="toctree-l4"><a class="reference internal" href="net.html">Network emulation</a></li>
 <li class="toctree-l4"><a class="reference internal" href="nvme.html">NVMe Emulation</a></li>
-<li class="toctree-l4"><a class="reference internal" href="usb.html">USB emulation</a></li>
-<li class="toctree-l4"><a class="reference internal" href="vhost-user.html">vhost-user back ends</a></li>
-<li class="toctree-l4"><a class="reference internal" href="virtio-gpu.html">virtio-gpu</a></li>
-<li class="toctree-l4"><a class="reference internal" href="virtio-pmem.html">virtio pmem</a></li>
-<li class="toctree-l4"><a class="reference internal" href="virtio-snd.html">virtio sound</a></li>
-<li class="toctree-l4"><a class="reference internal" href="vhost-user-input.html">QEMU vhost-user-input - Input emulation</a></li>
-<li class="toctree-l4"><a class="reference internal" href="vhost-user-rng.html">QEMU vhost-user-rng - RNG emulation</a></li>
-<li class="toctree-l4"><a class="reference internal" href="canokey.html">CanoKey QEMU</a></li>
+<li class="toctree-l4"><a class="reference internal" href="scsi/index.html">SCSI Devices</a></li>
 <li class="toctree-l4"><a class="reference internal" href="usb-u2f.html">Universal Second Factor (U2F) USB Key Device</a></li>
-<li class="toctree-l4"><a class="reference internal" href="igb.html">igb</a></li>
+<li class="toctree-l4"><a class="reference internal" href="usb.html">USB emulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="vfio-user.html">vfio-user</a></li>
 </ul>
 </li>
 </ul>
@@ -102,8 +99,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../multi-process.html">Multi-process QEMU</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../confidential-guest-support.html">Confidential Guest Support</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../igvm.html">Independent Guest Virtual Machine (IGVM) support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nitro.html">AWS Nitro Enclaves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../whpx.html">Windows Hypervisor Platform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../vm-templating.html">QEMU VM templating</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../sriov.html">Compsable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sriov.html">Composable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../qemu-colo.html">Qemu COLO Fault Tolerance</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../user/index.html">User Mode Emulation</a></li>
@@ -174,14 +174,14 @@ exactly as in the ivshmem PCI device (see ./specs/ivshmem-spec.txt).</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="ivshmem.html" class="btn btn-neutral float-left" title="Inter-VM Shared Memory device" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="keyboard.html" class="btn btn-neutral float-right" title="Sparc32 keyboard" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="igb.html" class="btn btn-neutral float-left" title="igb" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ivshmem.html" class="btn btn-neutral float-right" title="Inter-VM Shared Memory device" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -192,7 +192,7 @@ exactly as in the ivshmem PCI device (see ./specs/ivshmem-spec.txt).</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../../about/license.html">QEMU and this manual are released under the

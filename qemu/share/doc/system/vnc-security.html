@@ -9,7 +9,7 @@
   <title>VNC security &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -87,8 +87,11 @@
 <li class="toctree-l2"><a class="reference internal" href="multi-process.html">Multi-process QEMU</a></li>
 <li class="toctree-l2"><a class="reference internal" href="confidential-guest-support.html">Confidential Guest Support</a></li>
 <li class="toctree-l2"><a class="reference internal" href="igvm.html">Independent Guest Virtual Machine (IGVM) support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nitro.html">AWS Nitro Enclaves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="whpx.html">Windows Hypervisor Platform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vm-templating.html">QEMU VM templating</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sriov.html">Compsable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sriov.html">Composable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qemu-colo.html">Qemu COLO Fault Tolerance</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Mode Emulation</a></li>
@@ -244,9 +247,9 @@ support session encryption, so can only be used in combination with TLS.</p>
 <p>This says to use the ‘GSSAPI’ mechanism with the Kerberos v5 protocol,
 with the server principal stored in /etc/qemu/krb5.tab. For this to work
 the administrator of your KDC must generate a Kerberos principal for the
-server, with a name of <a class="reference external" href="mailto:'qemu/somehost&#46;example&#46;com&#37;&#52;&#48;EXAMPLE&#46;COM">‘qemu/somehost<span>&#46;</span>example<span>&#46;</span>com<span>&#64;</span>EXAMPLE<span>&#46;</span>COM</a>’ replacing
-‘somehost.example.com’ with the fully qualified host name of the machine
-running QEMU, and ‘EXAMPLE.COM’ with the Kerberos Realm.</p>
+server, with a name of <code class="docutils literal notranslate"><span class="pre">qemu/somehost.example.com&#64;EXAMPLE.COM</span></code> replacing
+<code class="docutils literal notranslate"><span class="pre">somehost.example.com</span></code> with the fully qualified host name of the machine
+running QEMU, and <code class="docutils literal notranslate"><span class="pre">EXAMPLE.COM</span></code> with the Kerberos Realm.</p>
 <p>When using TLS, if username+password authentication is desired, then a
 reasonable configuration is</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mech_list</span><span class="p">:</span> <span class="n">scram</span><span class="o">-</span><span class="n">sha</span><span class="o">-</span><span class="mi">256</span>
@@ -273,7 +276,7 @@ TLS to ensure a secure data channel.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -284,7 +287,7 @@ TLS to ensure a secure data channel.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

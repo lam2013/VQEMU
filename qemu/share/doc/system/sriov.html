@@ -6,10 +6,10 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Compsable SR-IOV device &mdash; QEMU  documentation</title>
+  <title>Composable SR-IOV device &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -22,7 +22,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="User Mode Emulation" href="../user/index.html" />
+    <link rel="next" title="Qemu COLO Fault Tolerance" href="qemu-colo.html" />
     <link rel="prev" title="QEMU VM templating" href="vm-templating.html" /> 
 </head>
 
@@ -77,8 +77,11 @@
 <li class="toctree-l2"><a class="reference internal" href="multi-process.html">Multi-process QEMU</a></li>
 <li class="toctree-l2"><a class="reference internal" href="confidential-guest-support.html">Confidential Guest Support</a></li>
 <li class="toctree-l2"><a class="reference internal" href="igvm.html">Independent Guest Virtual Machine (IGVM) support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nitro.html">AWS Nitro Enclaves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="whpx.html">Windows Hypervisor Platform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vm-templating.html">QEMU VM templating</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Compsable SR-IOV device</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Composable SR-IOV device</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qemu-colo.html">Qemu COLO Fault Tolerance</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../user/index.html">User Mode Emulation</a></li>
@@ -104,7 +107,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="index.html">System Emulation</a></li>
-      <li class="breadcrumb-item active">Compsable SR-IOV device</li>
+      <li class="breadcrumb-item active">Composable SR-IOV device</li>
       <li class="wy-breadcrumbs-aside">
             <a href="https://gitlab.com/qemu-project/qemu/-/blob/master/docs/system/sriov.rst">View page source</a>
       </li>
@@ -114,8 +117,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="compsable-sr-iov-device">
-<h1>Compsable SR-IOV device<a class="headerlink" href="#compsable-sr-iov-device" title="Link to this heading"></a></h1>
+  <section id="composable-sr-iov-device">
+<h1>Composable SR-IOV device<a class="headerlink" href="#composable-sr-iov-device" title="Link to this heading"></a></h1>
 <p>SR-IOV (Single Root I/O Virtualization) is an optional extended capability of a
 PCI Express device. It allows a single physical function (PF) to appear as
 multiple virtual functions (VFs) for the main purpose of eliminating software
@@ -154,13 +157,13 @@ your guest. For Linux, refer to <a class="footnote-reference brackets" href="#id
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="vm-templating.html" class="btn btn-neutral float-left" title="QEMU VM templating" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../user/index.html" class="btn btn-neutral float-right" title="User Mode Emulation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="qemu-colo.html" class="btn btn-neutral float-right" title="Qemu COLO Fault Tolerance" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -171,7 +174,7 @@ your guest. For Linux, refer to <a class="footnote-reference brackets" href="#id
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

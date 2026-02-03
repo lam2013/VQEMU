@@ -9,7 +9,7 @@
   <title>Load and Store APIs &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -165,10 +165,10 @@ potentially unaligned pointer values.</p>
 <p>The target endian accessors are only available to source
 files which are built per-target.</p>
 <p>There are also functions which take the size as an argument:</p>
-<p>load: <code class="docutils literal notranslate"><span class="pre">ldn{endian}_p(ptr,</span> <span class="pre">sz)</span></code></p>
+<p>load: <code class="docutils literal notranslate"><span class="pre">ldn_{endian}_p(ptr,</span> <span class="pre">sz)</span></code></p>
 <p>which performs an unsigned load of <code class="docutils literal notranslate"><span class="pre">sz</span></code> bytes from <code class="docutils literal notranslate"><span class="pre">ptr</span></code>
 as an <code class="docutils literal notranslate"><span class="pre">{endian}</span></code> order value and returns it in a uint64_t.</p>
-<p>store: <code class="docutils literal notranslate"><span class="pre">stn{endian}_p(ptr,</span> <span class="pre">sz,</span> <span class="pre">val)</span></code></p>
+<p>store: <code class="docutils literal notranslate"><span class="pre">stn_{endian}_p(ptr,</span> <span class="pre">sz,</span> <span class="pre">val)</span></code></p>
 <p>which stores <code class="docutils literal notranslate"><span class="pre">val</span></code> to <code class="docutils literal notranslate"><span class="pre">ptr</span></code> as an <code class="docutils literal notranslate"><span class="pre">{endian}</span></code> order value
 of size <code class="docutils literal notranslate"><span class="pre">sz</span></code> bytes.</p>
 <dl class="simple">
@@ -176,8 +176,8 @@ of size <code class="docutils literal notranslate"><span class="pre">sz</span></
 <li><p><code class="docutils literal notranslate"><span class="pre">\&lt;ld[us]\?[bwlq]\(_[hbl]e\)\?_p\&gt;</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">\&lt;st[bwlq]\(_[hbl]e\)\?_p\&gt;</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">\&lt;st24\(_[hbl]e\)\?_p\&gt;</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">\&lt;ldn_\([hbl]e\)\?_p\&gt;</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">\&lt;stn_\([hbl]e\)\?_p\&gt;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">\&lt;ldn\(_[hbl]e\)\?_p\&gt;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">\&lt;stn\(_[hbl]e\)\?_p\&gt;</span></code></p></li>
 </ul>
 </dd>
 </dl>
@@ -580,10 +580,9 @@ rather than using the system address space</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">cpu_physical_memory_read</span></code></p>
 <p><code class="docutils literal notranslate"><span class="pre">cpu_physical_memory_write</span></code></p>
-<p><code class="docutils literal notranslate"><span class="pre">cpu_physical_memory_rw</span></code></p>
 <dl class="simple">
 <dt>Regexes for git grep:</dt><dd><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">\&lt;cpu_physical_memory_\(read\|write\|rw\)\&gt;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">\&lt;cpu_physical_memory_\(read\|write\)\&gt;</span></code></p></li>
 </ul>
 </dd>
 </dl>
@@ -595,7 +594,7 @@ rather than using the system address space</p></li>
 It takes a virtual address, converts it to a physical address via
 an MMU lookup using the current settings of the specified CPU,
 and then performs the access (using <code class="docutils literal notranslate"><span class="pre">address_space_rw</span></code> for
-reads or <code class="docutils literal notranslate"><span class="pre">cpu_physical_memory_write_rom</span></code> for writes).
+reads or <code class="docutils literal notranslate"><span class="pre">address_space_write_rom</span></code> for writes).
 This means that if the access is a write to a ROM then this
 function will modify the contents (whereas a normal guest CPU access
 would ignore the write attempt).</p>
@@ -676,7 +675,7 @@ correct address space for that device.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -687,7 +686,7 @@ correct address space for that device.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

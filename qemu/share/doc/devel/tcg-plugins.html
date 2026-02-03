@@ -9,7 +9,7 @@
   <title>QEMU TCG Plugins &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -250,7 +250,7 @@ has executed while all vCPUs are quiescent.</p>
 <section id="plugin-api">
 <h1>Plugin API<a class="headerlink" href="#plugin-api" title="Link to this heading"></a></h1>
 <p>The following API is generated from the inline documentation in
-<code class="docutils literal notranslate"><span class="pre">include/qemu/qemu-plugin.h</span></code>. Please ensure any updates to the API
+<code class="docutils literal notranslate"><span class="pre">include/plugins/qemu-plugin.h</span></code>. Please ensure any updates to the API
 include the full kernel-doc annotations.</p>
 <dl class="c type">
 <dt class="sig sig-object c" id="c.qemu_plugin_id_t">
@@ -264,20 +264,21 @@ include the full kernel-doc annotations.</p>
 <dd><p>system information for plugins</p>
 </dd></dl>
 
-<p><strong>Definition</strong></p>
+<div class="kernelindent docutils container">
+<p><strong>Definition</strong>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">struct</span> <span class="n">qemu_info_t</span> <span class="p">{</span>
-  <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">target_name</span><span class="p">;</span>
-  <span class="n">struct</span> <span class="p">{</span>
-    <span class="nb">int</span> <span class="nb">min</span><span class="p">;</span>
-    <span class="nb">int</span> <span class="n">cur</span><span class="p">;</span>
-  <span class="p">}</span> <span class="n">version</span><span class="p">;</span>
-  <span class="nb">bool</span> <span class="n">system_emulation</span><span class="p">;</span>
-  <span class="n">union</span> <span class="p">{</span>
+    <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">target_name</span><span class="p">;</span>
     <span class="n">struct</span> <span class="p">{</span>
-      <span class="nb">int</span> <span class="n">smp_vcpus</span><span class="p">;</span>
-      <span class="nb">int</span> <span class="n">max_vcpus</span><span class="p">;</span>
-    <span class="p">}</span> <span class="n">system</span><span class="p">;</span>
-  <span class="p">};</span>
+        <span class="nb">int</span> <span class="nb">min</span><span class="p">;</span>
+        <span class="nb">int</span> <span class="n">cur</span><span class="p">;</span>
+    <span class="p">}</span> <span class="n">version</span><span class="p">;</span>
+    <span class="nb">bool</span> <span class="n">system_emulation</span><span class="p">;</span>
+    <span class="n">union</span> <span class="p">{</span>
+        <span class="n">struct</span> <span class="p">{</span>
+            <span class="nb">int</span> <span class="n">smp_vcpus</span><span class="p">;</span>
+            <span class="nb">int</span> <span class="n">max_vcpus</span><span class="p">;</span>
+        <span class="p">}</span> <span class="n">system</span><span class="p">;</span>
+    <span class="p">};</span>
 <span class="p">};</span>
 </pre></div>
 </div>
@@ -294,6 +295,7 @@ include the full kernel-doc annotations.</p>
 <dt><code class="docutils literal notranslate"><span class="pre">system</span></code></dt><dd><p>information relevant to system emulation</p>
 </dd>
 </dl>
+</div>
 <p><strong>Description</strong></p>
 <p>This structure provides for some limited information about the
 system to allow the plugin to make decisions on how to proceed. For
@@ -305,6 +307,7 @@ architectures or when under full system emulation.</p>
 <dd><p>Install a plugin</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>this plugin’s opaque ID</p>
@@ -326,6 +329,7 @@ want to keep. <strong>argv</strong> remains valid throughout the lifetime of the
 loaded plugin.</p>
 <p><strong>Return</strong></p>
 <p>0 on successful loading, !0 for an error.</p>
+</div>
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.qemu_plugin_simple_cb_t">
 <span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_simple_cb_t</span></span></span><a class="headerlink" href="#c.qemu_plugin_simple_cb_t" title="Link to this definition"></a><br /></dt>
@@ -336,6 +340,7 @@ loaded plugin.</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">qemu_plugin_simple_cb_t</span> <span class="pre">(qemu_plugin_id_t</span> <span class="pre">id)</span></code></p>
 </div></blockquote>
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>the unique qemu_plugin_id_t</p>
@@ -343,6 +348,7 @@ loaded plugin.</p>
 </dl>
 <p><strong>Description</strong></p>
 <p>This callback passes no information aside from the unique <strong>id</strong>.</p>
+</div>
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.qemu_plugin_udata_cb_t">
 <span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_udata_cb_t</span></span></span><a class="headerlink" href="#c.qemu_plugin_udata_cb_t" title="Link to this definition"></a><br /></dt>
@@ -353,6 +359,7 @@ loaded plugin.</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">qemu_plugin_udata_cb_t</span> <span class="pre">(qemu_plugin_id_t</span> <span class="pre">id,</span> <span class="pre">void</span> <span class="pre">*userdata)</span></code></p>
 </div></blockquote>
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>the unique qemu_plugin_id_t</p>
@@ -361,6 +368,7 @@ loaded plugin.</p>
 was registered.</p>
 </dd>
 </dl>
+</div>
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.qemu_plugin_vcpu_simple_cb_t">
 <span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_vcpu_simple_cb_t</span></span></span><a class="headerlink" href="#c.qemu_plugin_vcpu_simple_cb_t" title="Link to this definition"></a><br /></dt>
@@ -371,6 +379,7 @@ was registered.</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">qemu_plugin_vcpu_simple_cb_t</span> <span class="pre">(qemu_plugin_id_t</span> <span class="pre">id,</span> <span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">vcpu_index)</span></code></p>
 </div></blockquote>
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>the unique qemu_plugin_id_t</p>
@@ -378,6 +387,7 @@ was registered.</p>
 <dt><code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">vcpu_index</span></code></dt><dd><p>the current vcpu context</p>
 </dd>
 </dl>
+</div>
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.qemu_plugin_vcpu_udata_cb_t">
 <span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_vcpu_udata_cb_t</span></span></span><a class="headerlink" href="#c.qemu_plugin_vcpu_udata_cb_t" title="Link to this definition"></a><br /></dt>
@@ -388,6 +398,7 @@ was registered.</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">qemu_plugin_vcpu_udata_cb_t</span> <span class="pre">(unsigned</span> <span class="pre">int</span> <span class="pre">vcpu_index,</span> <span class="pre">void</span> <span class="pre">*userdata)</span></code></p>
 </div></blockquote>
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">vcpu_index</span></code></dt><dd><p>the current vcpu context</p>
@@ -396,12 +407,73 @@ was registered.</p>
 was registered.</p>
 </dd>
 </dl>
+</div>
+<dl class="c enum">
+<dt class="sig sig-object c" id="c.qemu_plugin_discon_type">
+<span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_discon_type</span></span></span><a class="headerlink" href="#c.qemu_plugin_discon_type" title="Link to this definition"></a><br /></dt>
+<dd><p>type of a (potential) PC discontinuity</p>
+</dd></dl>
+
+<div class="kernelindent docutils container">
+<p><strong>Constants</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_DISCON_INTERRUPT</span></code></dt><dd><p>an interrupt, defined across all architectures
+as an asynchronous event, usually originating
+from outside the CPU</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_DISCON_EXCEPTION</span></code></dt><dd><p>an exception, defined across all architectures
+as a synchronous event in response to a
+specific instruction being executed</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_DISCON_HOSTCALL</span></code></dt><dd><p>a host call, functionally a special kind of
+exception that is not handled by code run by
+the vCPU but machinery outside the vCPU</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_DISCON_ALL</span></code></dt><dd><p>all types of disconinuity events currently covered</p>
+</dd>
+</dl>
+</div>
+<dl class="c macro">
+<dt class="sig sig-object c" id="c.qemu_plugin_vcpu_discon_cb_t">
+<span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_vcpu_discon_cb_t</span></span></span><a class="headerlink" href="#c.qemu_plugin_vcpu_discon_cb_t" title="Link to this definition"></a><br /></dt>
+<dd><p><strong>Typedef</strong>: vcpu discontinuity callback</p>
+</dd></dl>
+
+<p><strong>Syntax</strong></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">qemu_plugin_vcpu_discon_cb_t</span> <span class="pre">(qemu_plugin_id_t</span> <span class="pre">id,</span> <span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">vcpu_index,</span> <span class="pre">enum</span> <span class="pre">qemu_plugin_discon_type</span> <span class="pre">type,</span> <span class="pre">uint64_t</span> <span class="pre">from_pc,</span> <span class="pre">uint64_t</span> <span class="pre">to_pc)</span></code></p>
+</div></blockquote>
+<div class="kernelindent docutils container">
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin ID</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">vcpu_index</span></code></dt><dd><p>the current vcpu context</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">enum</span> <span class="pre">qemu_plugin_discon_type</span> <span class="pre">type</span></code></dt><dd><p>the type of discontinuity</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">from_pc</span></code></dt><dd><p>the source of the discontinuity, e.g. the PC before the
+transition</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">to_pc</span></code></dt><dd><p>the PC pointing to the next instruction to be executed</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>The exact semantics of <strong>from_pc</strong> depends on the <strong>type</strong> of discontinuity. For
+interrupts, <strong>from_pc</strong> will point to the next instruction which would have
+been executed. For exceptions and host calls, <strong>from_pc</strong> will point to the
+instruction that caused the exception or issued the host call. Note that
+in the case of exceptions, the instruction may not be retired and thus not
+observable via general instruction exec callbacks. The same may be the case
+for some host calls such as hypervisor call “exceptions”.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_uninstall">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_uninstall</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t"><span class="n"><span class="pre">qemu_plugin_id_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">id</span></span>, <a class="reference internal" href="#c.qemu_plugin_simple_cb_t" title="qemu_plugin_simple_cb_t"><span class="n"><span class="pre">qemu_plugin_simple_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_uninstall" title="Link to this definition"></a><br /></dt>
 <dd><p>Uninstall a plugin</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>this plugin’s opaque ID</p>
@@ -415,12 +487,14 @@ returns. Plugins are uninstalled asynchronously, and therefore the given
 plugin receives callbacks until <strong>cb</strong> is called.</p>
 <p><strong>Note</strong></p>
 <p>Calling this function from qemu_plugin_install() is a bug.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_reset">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_reset</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t"><span class="n"><span class="pre">qemu_plugin_id_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">id</span></span>, <a class="reference internal" href="#c.qemu_plugin_simple_cb_t" title="qemu_plugin_simple_cb_t"><span class="n"><span class="pre">qemu_plugin_simple_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_reset" title="Link to this definition"></a><br /></dt>
 <dd><p>Reset a plugin</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>this plugin’s opaque ID</p>
@@ -433,12 +507,14 @@ plugin receives callbacks until <strong>cb</strong> is called.</p>
 <p>Do NOT assume that the plugin has been reset once this function returns.
 Plugins are reset asynchronously, and therefore the given plugin receives
 callbacks until <strong>cb</strong> is called.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_register_vcpu_init_cb">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_vcpu_init_cb</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t"><span class="n"><span class="pre">qemu_plugin_id_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">id</span></span>, <a class="reference internal" href="#c.qemu_plugin_vcpu_simple_cb_t" title="qemu_plugin_vcpu_simple_cb_t"><span class="n"><span class="pre">qemu_plugin_vcpu_simple_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_init_cb" title="Link to this definition"></a><br /></dt>
 <dd><p>register a vCPU initialization callback</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin ID</p>
@@ -449,12 +525,14 @@ callbacks until <strong>cb</strong> is called.</p>
 <p><strong>Description</strong></p>
 <p>The <strong>cb</strong> function is called every time a vCPU is initialized.</p>
 <p>See also: qemu_plugin_register_vcpu_exit_cb()</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_register_vcpu_exit_cb">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_vcpu_exit_cb</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t"><span class="n"><span class="pre">qemu_plugin_id_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">id</span></span>, <a class="reference internal" href="#c.qemu_plugin_vcpu_simple_cb_t" title="qemu_plugin_vcpu_simple_cb_t"><span class="n"><span class="pre">qemu_plugin_vcpu_simple_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_exit_cb" title="Link to this definition"></a><br /></dt>
 <dd><p>register a vCPU exit callback</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin ID</p>
@@ -465,12 +543,14 @@ callbacks until <strong>cb</strong> is called.</p>
 <p><strong>Description</strong></p>
 <p>The <strong>cb</strong> function is called every time a vCPU exits.</p>
 <p>See also: qemu_plugin_register_vcpu_init_cb()</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_register_vcpu_idle_cb">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_vcpu_idle_cb</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t"><span class="n"><span class="pre">qemu_plugin_id_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">id</span></span>, <a class="reference internal" href="#c.qemu_plugin_vcpu_simple_cb_t" title="qemu_plugin_vcpu_simple_cb_t"><span class="n"><span class="pre">qemu_plugin_vcpu_simple_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_idle_cb" title="Link to this definition"></a><br /></dt>
 <dd><p>register a vCPU idle callback</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin ID</p>
@@ -480,12 +560,14 @@ callbacks until <strong>cb</strong> is called.</p>
 </dl>
 <p><strong>Description</strong></p>
 <p>The <strong>cb</strong> function is called every time a vCPU idles.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_register_vcpu_resume_cb">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_vcpu_resume_cb</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t"><span class="n"><span class="pre">qemu_plugin_id_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">id</span></span>, <a class="reference internal" href="#c.qemu_plugin_vcpu_simple_cb_t" title="qemu_plugin_vcpu_simple_cb_t"><span class="n"><span class="pre">qemu_plugin_vcpu_simple_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_resume_cb" title="Link to this definition"></a><br /></dt>
 <dd><p>register a vCPU resume callback</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin ID</p>
@@ -495,6 +577,29 @@ callbacks until <strong>cb</strong> is called.</p>
 </dl>
 <p><strong>Description</strong></p>
 <p>The <strong>cb</strong> function is called every time a vCPU resumes execution.</p>
+</div>
+<dl class="c function">
+<dt class="sig sig-object c" id="c.qemu_plugin_register_vcpu_discon_cb">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_vcpu_discon_cb</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t"><span class="n"><span class="pre">qemu_plugin_id_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">id</span></span>, <span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.qemu_plugin_discon_type" title="qemu_plugin_discon_type"><span class="n"><span class="pre">qemu_plugin_discon_type</span></span></a><span class="w"> </span><span class="n"><span class="pre">type</span></span>, <a class="reference internal" href="#c.qemu_plugin_vcpu_discon_cb_t" title="qemu_plugin_vcpu_discon_cb_t"><span class="n"><span class="pre">qemu_plugin_vcpu_discon_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_discon_cb" title="Link to this definition"></a><br /></dt>
+<dd><p>register a discontinuity callback</p>
+</dd></dl>
+
+<div class="kernelindent docutils container">
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin ID</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">enum</span> <span class="pre">qemu_plugin_discon_type</span> <span class="pre">type</span></code></dt><dd><p>types of discontinuities for which to call the callback</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_vcpu_discon_cb_t</span> <span class="pre">cb</span></code></dt><dd><p>callback function</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>The <strong>cb</strong> function is called every time a vCPU receives a discontinuity event
+of the specified type(s), after the vCPU was prepared to handle the event.
+Preparation entails updating the PC, usually to some interrupt handler or
+trap vector entry.</p>
+</div>
 <dl class="c type">
 <dt class="sig sig-object c" id="c.qemu_plugin_u64">
 <span class="k"><span class="pre">type</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_u64</span></span></span><a class="headerlink" href="#c.qemu_plugin_u64" title="Link to this definition"></a><br /></dt>
@@ -510,6 +615,7 @@ located at a specified offset. Inline operations expect this as entry.</p>
 <dd><p>type of callback</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Constants</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_CB_NO_REGS</span></code></dt><dd><p>callback does not access the CPU’s regs</p>
@@ -518,13 +624,62 @@ located at a specified offset. Inline operations expect this as entry.</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_CB_RW_REGS</span></code></dt><dd><p>callback reads and writes the CPU’s regs</p>
 </dd>
+<dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_CB_RW_REGS_PC</span></code></dt><dd><p>callback reads and writes the CPU’s
+regs and updates the PC</p>
+</dd>
 </dl>
+</div>
+<dl class="c enum">
+<dt class="sig sig-object c" id="c.qemu_plugin_mem_rw">
+<span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_mem_rw</span></span></span><a class="headerlink" href="#c.qemu_plugin_mem_rw" title="Link to this definition"></a><br /></dt>
+<dd><p>type of memory access</p>
+</dd></dl>
+
+<div class="kernelindent docutils container">
+<p><strong>Constants</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_MEM_R</span></code></dt><dd><p>memory read access only</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_MEM_W</span></code></dt><dd><p>memory write access only</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_MEM_RW</span></code></dt><dd><p>memory read and write access</p>
+</dd>
+</dl>
+</div>
+<dl class="c enum">
+<dt class="sig sig-object c" id="c.qemu_plugin_mem_value_type">
+<span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_mem_value_type</span></span></span><a class="headerlink" href="#c.qemu_plugin_mem_value_type" title="Link to this definition"></a><br /></dt>
+<dd><p>size of memory value</p>
+</dd></dl>
+
+<div class="kernelindent docutils container">
+<p><strong>Constants</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_MEM_VALUE_U8</span></code></dt><dd><p>unsigned 8-bit value</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_MEM_VALUE_U16</span></code></dt><dd><p>unsigned 16-bit value</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_MEM_VALUE_U32</span></code></dt><dd><p>unsigned 32-bit value</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_MEM_VALUE_U64</span></code></dt><dd><p>unsigned 64-bit value</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_MEM_VALUE_U128</span></code></dt><dd><p>unsigned 128-bit value</p>
+</dd>
+</dl>
+</div>
+<dl class="c type">
+<dt class="sig sig-object c" id="c.qemu_plugin_mem_value">
+<span class="k"><span class="pre">type</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_mem_value</span></span></span><a class="headerlink" href="#c.qemu_plugin_mem_value" title="Link to this definition"></a><br /></dt>
+<dd><p>value accessed during a load/store</p>
+</dd></dl>
+
 <dl class="c enum">
 <dt class="sig sig-object c" id="c.qemu_plugin_cond">
 <span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_cond</span></span></span><a class="headerlink" href="#c.qemu_plugin_cond" title="Link to this definition"></a><br /></dt>
 <dd><p>condition to enable callback</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Constants</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_COND_NEVER</span></code></dt><dd><p>false</p>
@@ -544,6 +699,7 @@ located at a specified offset. Inline operations expect this as entry.</p>
 <dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_COND_GE</span></code></dt><dd><p>is greater than or equal?</p>
 </dd>
 </dl>
+</div>
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.qemu_plugin_vcpu_tb_trans_cb_t">
 <span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_vcpu_tb_trans_cb_t</span></span></span><a class="headerlink" href="#c.qemu_plugin_vcpu_tb_trans_cb_t" title="Link to this definition"></a><br /></dt>
@@ -554,6 +710,7 @@ located at a specified offset. Inline operations expect this as entry.</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">qemu_plugin_vcpu_tb_trans_cb_t</span> <span class="pre">(qemu_plugin_id_t</span> <span class="pre">id,</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_tb</span> <span class="pre">*tb)</span></code></p>
 </div></blockquote>
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>unique plugin id</p>
@@ -561,12 +718,14 @@ located at a specified offset. Inline operations expect this as entry.</p>
 <dt><code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">qemu_plugin_tb</span> <span class="pre">*tb</span></code></dt><dd><p>opaque handle used for querying and instrumenting a block.</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_register_vcpu_tb_trans_cb">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_vcpu_tb_trans_cb</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t"><span class="n"><span class="pre">qemu_plugin_id_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">id</span></span>, <a class="reference internal" href="#c.qemu_plugin_vcpu_tb_trans_cb_t" title="qemu_plugin_vcpu_tb_trans_cb_t"><span class="n"><span class="pre">qemu_plugin_vcpu_tb_trans_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_tb_trans_cb" title="Link to this definition"></a><br /></dt>
 <dd><p>register a translate cb</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin ID</p>
@@ -581,12 +740,14 @@ for additional information including the list of translated
 instructions. At this point the plugin can register further
 callbacks to be triggered when the block or individual instruction
 executes.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_register_vcpu_tb_exec_cb">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_vcpu_tb_exec_cb</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_tb</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">tb</span></span>, <a class="reference internal" href="#c.qemu_plugin_vcpu_udata_cb_t" title="qemu_plugin_vcpu_udata_cb_t"><span class="n"><span class="pre">qemu_plugin_vcpu_udata_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span>, <span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.qemu_plugin_cb_flags" title="qemu_plugin_cb_flags"><span class="n"><span class="pre">qemu_plugin_cb_flags</span></span></a><span class="w"> </span><span class="n"><span class="pre">flags</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">userdata</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_tb_exec_cb" title="Link to this definition"></a><br /></dt>
 <dd><p>register execution callback</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">qemu_plugin_tb</span> <span class="pre">*tb</span></code></dt><dd><p>the opaque qemu_plugin_tb handle for the translation</p>
@@ -600,12 +761,14 @@ executes.</p>
 </dl>
 <p><strong>Description</strong></p>
 <p>The <strong>cb</strong> function is called every time a translated unit executes.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_register_vcpu_tb_exec_cond_cb">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_vcpu_tb_exec_cond_cb</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_tb</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">tb</span></span>, <a class="reference internal" href="#c.qemu_plugin_vcpu_udata_cb_t" title="qemu_plugin_vcpu_udata_cb_t"><span class="n"><span class="pre">qemu_plugin_vcpu_udata_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span>, <span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.qemu_plugin_cb_flags" title="qemu_plugin_cb_flags"><span class="n"><span class="pre">qemu_plugin_cb_flags</span></span></a><span class="w"> </span><span class="n"><span class="pre">flags</span></span>, <span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.qemu_plugin_cond" title="qemu_plugin_cond"><span class="n"><span class="pre">qemu_plugin_cond</span></span></a><span class="w"> </span><span class="n"><span class="pre">cond</span></span>, <a class="reference internal" href="#c.qemu_plugin_u64" title="qemu_plugin_u64"><span class="n"><span class="pre">qemu_plugin_u64</span></span></a><span class="w"> </span><span class="n"><span class="pre">entry</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n"><span class="pre">imm</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">userdata</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_tb_exec_cond_cb" title="Link to this definition"></a><br /></dt>
 <dd><p>register conditional callback</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">qemu_plugin_tb</span> <span class="pre">*tb</span></code></dt><dd><p>the opaque qemu_plugin_tb handle for the translation</p>
@@ -630,12 +793,14 @@ If condition is QEMU_PLUGIN_COND_ALWAYS, condition is never interpreted and
 this function is equivalent to qemu_plugin_register_vcpu_tb_exec_cb.
 If condition QEMU_PLUGIN_COND_NEVER, condition is never interpreted and
 callback is never installed.</p>
+</div>
 <dl class="c enum">
 <dt class="sig sig-object c" id="c.qemu_plugin_op">
 <span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_op</span></span></span><a class="headerlink" href="#c.qemu_plugin_op" title="Link to this definition"></a><br /></dt>
 <dd><p>describes an inline op</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Constants</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_INLINE_ADD_U64</span></code></dt><dd><p>add an immediate value uint64_t</p>
@@ -643,12 +808,14 @@ callback is never installed.</p>
 <dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_INLINE_STORE_U64</span></code></dt><dd><p>store an immediate value uint64_t</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_register_vcpu_tb_exec_inline_per_vcpu">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_vcpu_tb_exec_inline_per_vcpu</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_tb</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">tb</span></span>, <span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.qemu_plugin_op" title="qemu_plugin_op"><span class="n"><span class="pre">qemu_plugin_op</span></span></a><span class="w"> </span><span class="n"><span class="pre">op</span></span>, <a class="reference internal" href="#c.qemu_plugin_u64" title="qemu_plugin_u64"><span class="n"><span class="pre">qemu_plugin_u64</span></span></a><span class="w"> </span><span class="n"><span class="pre">entry</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n"><span class="pre">imm</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_tb_exec_inline_per_vcpu" title="Link to this definition"></a><br /></dt>
 <dd><p>execution inline op</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">qemu_plugin_tb</span> <span class="pre">*tb</span></code></dt><dd><p>the opaque qemu_plugin_tb handle for the translation</p>
@@ -662,12 +829,14 @@ callback is never installed.</p>
 </dl>
 <p><strong>Description</strong></p>
 <p>Insert an inline op on a given scoreboard entry.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_register_vcpu_insn_exec_cb">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_vcpu_insn_exec_cb</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_insn</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">insn</span></span>, <a class="reference internal" href="#c.qemu_plugin_vcpu_udata_cb_t" title="qemu_plugin_vcpu_udata_cb_t"><span class="n"><span class="pre">qemu_plugin_vcpu_udata_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span>, <span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.qemu_plugin_cb_flags" title="qemu_plugin_cb_flags"><span class="n"><span class="pre">qemu_plugin_cb_flags</span></span></a><span class="w"> </span><span class="n"><span class="pre">flags</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">userdata</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_insn_exec_cb" title="Link to this definition"></a><br /></dt>
 <dd><p>register insn execution cb</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">qemu_plugin_insn</span> <span class="pre">*insn</span></code></dt><dd><p>the opaque qemu_plugin_insn handle for an instruction</p>
@@ -681,12 +850,14 @@ callback is never installed.</p>
 </dl>
 <p><strong>Description</strong></p>
 <p>The <strong>cb</strong> function is called every time an instruction is executed</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_register_vcpu_insn_exec_cond_cb">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_vcpu_insn_exec_cond_cb</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_insn</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">insn</span></span>, <a class="reference internal" href="#c.qemu_plugin_vcpu_udata_cb_t" title="qemu_plugin_vcpu_udata_cb_t"><span class="n"><span class="pre">qemu_plugin_vcpu_udata_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span>, <span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.qemu_plugin_cb_flags" title="qemu_plugin_cb_flags"><span class="n"><span class="pre">qemu_plugin_cb_flags</span></span></a><span class="w"> </span><span class="n"><span class="pre">flags</span></span>, <span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.qemu_plugin_cond" title="qemu_plugin_cond"><span class="n"><span class="pre">qemu_plugin_cond</span></span></a><span class="w"> </span><span class="n"><span class="pre">cond</span></span>, <a class="reference internal" href="#c.qemu_plugin_u64" title="qemu_plugin_u64"><span class="n"><span class="pre">qemu_plugin_u64</span></span></a><span class="w"> </span><span class="n"><span class="pre">entry</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n"><span class="pre">imm</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">userdata</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_insn_exec_cond_cb" title="Link to this definition"></a><br /></dt>
 <dd><p>conditional insn execution cb</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">qemu_plugin_insn</span> <span class="pre">*insn</span></code></dt><dd><p>the opaque qemu_plugin_insn handle for an instruction</p>
@@ -711,12 +882,14 @@ If condition is QEMU_PLUGIN_COND_ALWAYS, condition is never interpreted and
 this function is equivalent to qemu_plugin_register_vcpu_insn_exec_cb.
 If condition QEMU_PLUGIN_COND_NEVER, condition is never interpreted and
 callback is never installed.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_register_vcpu_insn_exec_inline_per_vcpu">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_vcpu_insn_exec_inline_per_vcpu</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_insn</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">insn</span></span>, <span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.qemu_plugin_op" title="qemu_plugin_op"><span class="n"><span class="pre">qemu_plugin_op</span></span></a><span class="w"> </span><span class="n"><span class="pre">op</span></span>, <a class="reference internal" href="#c.qemu_plugin_u64" title="qemu_plugin_u64"><span class="n"><span class="pre">qemu_plugin_u64</span></span></a><span class="w"> </span><span class="n"><span class="pre">entry</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n"><span class="pre">imm</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_insn_exec_inline_per_vcpu" title="Link to this definition"></a><br /></dt>
 <dd><p>insn exec inline op</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">qemu_plugin_insn</span> <span class="pre">*insn</span></code></dt><dd><p>the opaque qemu_plugin_insn handle for an instruction</p>
@@ -730,12 +903,14 @@ callback is never installed.</p>
 </dl>
 <p><strong>Description</strong></p>
 <p>Insert an inline op to every time an instruction executes.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_tb_n_insns">
 <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_tb_n_insns</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_tb</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">tb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_tb_n_insns" title="Link to this definition"></a><br /></dt>
 <dd><p>query helper for number of insns in TB</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_tb</span> <span class="pre">*tb</span></code></dt><dd><p>opaque handle to TB passed to callback</p>
@@ -743,12 +918,14 @@ callback is never installed.</p>
 </dl>
 <p><strong>Return</strong></p>
 <p>number of instructions in this block</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_tb_vaddr">
 <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_tb_vaddr</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_tb</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">tb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_tb_vaddr" title="Link to this definition"></a><br /></dt>
 <dd><p>query helper for vaddr of TB start</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_tb</span> <span class="pre">*tb</span></code></dt><dd><p>opaque handle to TB passed to callback</p>
@@ -756,12 +933,14 @@ callback is never installed.</p>
 </dl>
 <p><strong>Return</strong></p>
 <p>virtual address of block start</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_tb_get_insn">
 <span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_insn</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_tb_get_insn</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_tb</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">tb</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">idx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_tb_get_insn" title="Link to this definition"></a><br /></dt>
 <dd><p>retrieve handle for instruction</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_tb</span> <span class="pre">*tb</span></code></dt><dd><p>opaque handle to TB passed to callback</p>
@@ -775,12 +954,14 @@ as when instrumenting an instruction. It is only valid for the
 lifetime of the callback.</p>
 <p><strong>Return</strong></p>
 <p>opaque handle to instruction</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_insn_data">
 <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_insn_data</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_insn</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">insn</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dest</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">len</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_insn_data" title="Link to this definition"></a><br /></dt>
 <dd><p>copy instruction data</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_insn</span> <span class="pre">*insn</span></code></dt><dd><p>opaque instruction handle from qemu_plugin_tb_get_insn()</p>
@@ -792,12 +973,14 @@ lifetime of the callback.</p>
 </dl>
 <p><strong>Description</strong></p>
 <p>Returns the number of bytes copied, minimum of <strong>len</strong> and insn size.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_insn_size">
 <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_insn_size</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_insn</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">insn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_insn_size" title="Link to this definition"></a><br /></dt>
 <dd><p>return size of instruction</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_insn</span> <span class="pre">*insn</span></code></dt><dd><p>opaque instruction handle from qemu_plugin_tb_get_insn()</p>
@@ -805,12 +988,14 @@ lifetime of the callback.</p>
 </dl>
 <p><strong>Return</strong></p>
 <p>size of instruction in bytes</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_insn_vaddr">
 <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_insn_vaddr</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_insn</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">insn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_insn_vaddr" title="Link to this definition"></a><br /></dt>
 <dd><p>return vaddr of instruction</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_insn</span> <span class="pre">*insn</span></code></dt><dd><p>opaque instruction handle from qemu_plugin_tb_get_insn()</p>
@@ -818,12 +1003,14 @@ lifetime of the callback.</p>
 </dl>
 <p><strong>Return</strong></p>
 <p>virtual address of instruction</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_insn_haddr">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_insn_haddr</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_insn</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">insn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_insn_haddr" title="Link to this definition"></a><br /></dt>
 <dd><p>return hardware addr of instruction</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_insn</span> <span class="pre">*insn</span></code></dt><dd><p>opaque instruction handle from qemu_plugin_tb_get_insn()</p>
@@ -831,6 +1018,7 @@ lifetime of the callback.</p>
 </dl>
 <p><strong>Return</strong></p>
 <p>hardware (physical) target address of instruction</p>
+</div>
 <dl class="c type">
 <dt class="sig sig-object c" id="c.qemu_plugin_meminfo_t">
 <span class="k"><span class="pre">type</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_meminfo_t</span></span></span><a class="headerlink" href="#c.qemu_plugin_meminfo_t" title="Link to this definition"></a><br /></dt>
@@ -846,6 +1034,7 @@ functions.</p>
 <dd><p>get size of access</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_meminfo_t</span> <span class="pre">info</span></code></dt><dd><p>opaque memory transaction handle</p>
@@ -853,12 +1042,14 @@ functions.</p>
 </dl>
 <p><strong>Return</strong></p>
 <p>size of access in ^2 (0=byte, 1=16bit, 2=32bit etc…)</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_mem_is_sign_extended">
 <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_mem_is_sign_extended</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_meminfo_t" title="qemu_plugin_meminfo_t"><span class="n"><span class="pre">qemu_plugin_meminfo_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">info</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_mem_is_sign_extended" title="Link to this definition"></a><br /></dt>
 <dd><p>was the access sign extended</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_meminfo_t</span> <span class="pre">info</span></code></dt><dd><p>opaque memory transaction handle</p>
@@ -866,12 +1057,14 @@ functions.</p>
 </dl>
 <p><strong>Return</strong></p>
 <p>true if it was, otherwise false</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_mem_is_big_endian">
 <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_mem_is_big_endian</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_meminfo_t" title="qemu_plugin_meminfo_t"><span class="n"><span class="pre">qemu_plugin_meminfo_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">info</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_mem_is_big_endian" title="Link to this definition"></a><br /></dt>
 <dd><p>was the access big endian</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_meminfo_t</span> <span class="pre">info</span></code></dt><dd><p>opaque memory transaction handle</p>
@@ -879,12 +1072,14 @@ functions.</p>
 </dl>
 <p><strong>Return</strong></p>
 <p>true if it was, otherwise false</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_mem_is_store">
 <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_mem_is_store</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_meminfo_t" title="qemu_plugin_meminfo_t"><span class="n"><span class="pre">qemu_plugin_meminfo_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">info</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_mem_is_store" title="Link to this definition"></a><br /></dt>
 <dd><p>was the access a store</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_meminfo_t</span> <span class="pre">info</span></code></dt><dd><p>opaque memory transaction handle</p>
@@ -892,25 +1087,29 @@ functions.</p>
 </dl>
 <p><strong>Return</strong></p>
 <p>true if it was, otherwise false</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_mem_get_value">
-<span class="n"><span class="pre">qemu_plugin_mem_value</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_mem_get_value</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_meminfo_t" title="qemu_plugin_meminfo_t"><span class="n"><span class="pre">qemu_plugin_meminfo_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">info</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_mem_get_value" title="Link to this definition"></a><br /></dt>
+<a class="reference internal" href="#c.qemu_plugin_mem_value" title="qemu_plugin_mem_value"><span class="n"><span class="pre">qemu_plugin_mem_value</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_mem_get_value</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_meminfo_t" title="qemu_plugin_meminfo_t"><span class="n"><span class="pre">qemu_plugin_meminfo_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">info</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_mem_get_value" title="Link to this definition"></a><br /></dt>
 <dd><p>return last value loaded/stored</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_meminfo_t</span> <span class="pre">info</span></code></dt><dd><p>opaque memory transaction handle</p>
 </dd>
 </dl>
 <p><strong>Return</strong></p>
-<p>memory value</p>
+<p>memory value in host-endian order (no further swap is necessary).</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_get_hwaddr">
 <span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_hwaddr</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_get_hwaddr</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_meminfo_t" title="qemu_plugin_meminfo_t"><span class="n"><span class="pre">qemu_plugin_meminfo_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">info</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n"><span class="pre">vaddr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_get_hwaddr" title="Link to this definition"></a><br /></dt>
 <dd><p>return handle for memory operation</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_meminfo_t</span> <span class="pre">info</span></code></dt><dd><p>opaque memory info structure</p>
@@ -925,12 +1124,14 @@ address. For linux-user guests it just returns NULL.</p>
 <p>This handle is <em>only</em> valid for the duration of the callback. Any
 information about the handle should be recovered before the
 callback returns.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_hwaddr_is_io">
 <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_hwaddr_is_io</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_hwaddr</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">haddr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_hwaddr_is_io" title="Link to this definition"></a><br /></dt>
 <dd><p>query whether memory operation is IO</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_hwaddr</span> <span class="pre">*haddr</span></code></dt><dd><p>address handle from qemu_plugin_get_hwaddr()</p>
@@ -939,12 +1140,14 @@ callback returns.</p>
 <p><strong>Description</strong></p>
 <p>Returns true if the handle’s memory operation is to memory-mapped IO, or
 false if it is to RAM</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_hwaddr_phys_addr">
 <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_hwaddr_phys_addr</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_hwaddr</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">haddr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_hwaddr_phys_addr" title="Link to this definition"></a><br /></dt>
 <dd><p>query physical address for memory operation</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_hwaddr</span> <span class="pre">*haddr</span></code></dt><dd><p>address handle from qemu_plugin_get_hwaddr()</p>
@@ -954,6 +1157,7 @@ false if it is to RAM</p>
 <p>Returns the physical address associated with the memory operation</p>
 <p>Note that the returned physical address may not be unique if you are dealing
 with multiple address spaces.</p>
+</div>
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.qemu_plugin_vcpu_mem_cb_t">
 <span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_vcpu_mem_cb_t</span></span></span><a class="headerlink" href="#c.qemu_plugin_vcpu_mem_cb_t" title="Link to this definition"></a><br /></dt>
@@ -964,6 +1168,7 @@ with multiple address spaces.</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">qemu_plugin_vcpu_mem_cb_t</span> <span class="pre">(unsigned</span> <span class="pre">int</span> <span class="pre">vcpu_index,</span> <span class="pre">qemu_plugin_meminfo_t</span> <span class="pre">info,</span> <span class="pre">uint64_t</span> <span class="pre">vaddr,</span> <span class="pre">void</span> <span class="pre">*userdata)</span></code></p>
 </div></blockquote>
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">vcpu_index</span></code></dt><dd><p>the executing vCPU</p>
@@ -975,12 +1180,14 @@ with multiple address spaces.</p>
 <dt><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">*userdata</span></code></dt><dd><p>any user data attached to the callback</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_register_vcpu_mem_cb">
-<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_vcpu_mem_cb</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_insn</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">insn</span></span>, <a class="reference internal" href="#c.qemu_plugin_vcpu_mem_cb_t" title="qemu_plugin_vcpu_mem_cb_t"><span class="n"><span class="pre">qemu_plugin_vcpu_mem_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span>, <span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.qemu_plugin_cb_flags" title="qemu_plugin_cb_flags"><span class="n"><span class="pre">qemu_plugin_cb_flags</span></span></a><span class="w"> </span><span class="n"><span class="pre">flags</span></span>, <span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_mem_rw</span></span><span class="w"> </span><span class="n"><span class="pre">rw</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">userdata</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_mem_cb" title="Link to this definition"></a><br /></dt>
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_vcpu_mem_cb</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_insn</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">insn</span></span>, <a class="reference internal" href="#c.qemu_plugin_vcpu_mem_cb_t" title="qemu_plugin_vcpu_mem_cb_t"><span class="n"><span class="pre">qemu_plugin_vcpu_mem_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span>, <span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.qemu_plugin_cb_flags" title="qemu_plugin_cb_flags"><span class="n"><span class="pre">qemu_plugin_cb_flags</span></span></a><span class="w"> </span><span class="n"><span class="pre">flags</span></span>, <span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.qemu_plugin_mem_rw" title="qemu_plugin_mem_rw"><span class="n"><span class="pre">qemu_plugin_mem_rw</span></span></a><span class="w"> </span><span class="n"><span class="pre">rw</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">userdata</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_mem_cb" title="Link to this definition"></a><br /></dt>
 <dd><p>register memory access callback</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">qemu_plugin_insn</span> <span class="pre">*insn</span></code></dt><dd><p>handle for instruction to instrument</p>
@@ -1004,12 +1211,14 @@ can attach some userdata to the callback for additional purposes.</p>
 <p>Other execution threads will continue to execute during the
 callback so the plugin is responsible for ensuring it doesn’t get
 confused by making appropriate use of locking if required.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_register_vcpu_mem_inline_per_vcpu">
-<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_vcpu_mem_inline_per_vcpu</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_insn</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">insn</span></span>, <span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_mem_rw</span></span><span class="w"> </span><span class="n"><span class="pre">rw</span></span>, <span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.qemu_plugin_op" title="qemu_plugin_op"><span class="n"><span class="pre">qemu_plugin_op</span></span></a><span class="w"> </span><span class="n"><span class="pre">op</span></span>, <a class="reference internal" href="#c.qemu_plugin_u64" title="qemu_plugin_u64"><span class="n"><span class="pre">qemu_plugin_u64</span></span></a><span class="w"> </span><span class="n"><span class="pre">entry</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n"><span class="pre">imm</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_mem_inline_per_vcpu" title="Link to this definition"></a><br /></dt>
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_vcpu_mem_inline_per_vcpu</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_insn</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">insn</span></span>, <span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.qemu_plugin_mem_rw" title="qemu_plugin_mem_rw"><span class="n"><span class="pre">qemu_plugin_mem_rw</span></span></a><span class="w"> </span><span class="n"><span class="pre">rw</span></span>, <span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.qemu_plugin_op" title="qemu_plugin_op"><span class="n"><span class="pre">qemu_plugin_op</span></span></a><span class="w"> </span><span class="n"><span class="pre">op</span></span>, <a class="reference internal" href="#c.qemu_plugin_u64" title="qemu_plugin_u64"><span class="n"><span class="pre">qemu_plugin_u64</span></span></a><span class="w"> </span><span class="n"><span class="pre">entry</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n"><span class="pre">imm</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_mem_inline_per_vcpu" title="Link to this definition"></a><br /></dt>
 <dd><p>inline op for mem access</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">qemu_plugin_insn</span> <span class="pre">*insn</span></code></dt><dd><p>handle for instruction to instrument</p>
@@ -1026,12 +1235,14 @@ confused by making appropriate use of locking if required.</p>
 <p><strong>Description</strong></p>
 <p>This registers a inline op every memory access generated by the
 instruction.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_request_time_control">
 <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_request_time_control</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_request_time_control" title="Link to this definition"></a><br /></dt>
 <dd><p>request the ability to control time</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">void</span></code></dt><dd><p>no arguments</p>
@@ -1042,12 +1253,14 @@ instruction.</p>
 plugin can control time so if multiple plugins request the ability
 all but the first will fail.</p>
 <p>Returns an opaque handle or NULL if fails</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_update_ns">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_update_ns</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">handle</span></span>, <span class="n"><span class="pre">int64_t</span></span><span class="w"> </span><span class="n"><span class="pre">time</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_update_ns" title="Link to this definition"></a><br /></dt>
 <dd><p>update system emulation time</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">void</span> <span class="pre">*handle</span></code></dt><dd><p>opaque handle returned by qemu_plugin_request_time_control()</p>
@@ -1061,12 +1274,174 @@ time control handle) to move system time forward to <strong>time</strong>. For
 user-mode emulation the time is not changed by this as all reported
 time comes from the host kernel.</p>
 <p>Start time is 0.</p>
+</div>
+<dl class="c macro">
+<dt class="sig sig-object c" id="c.qemu_plugin_vcpu_syscall_cb_t">
+<span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_vcpu_syscall_cb_t</span></span></span><a class="headerlink" href="#c.qemu_plugin_vcpu_syscall_cb_t" title="Link to this definition"></a><br /></dt>
+<dd><p><strong>Typedef</strong>: vCPU syscall callback function type</p>
+</dd></dl>
+
+<p><strong>Syntax</strong></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">qemu_plugin_vcpu_syscall_cb_t</span> <span class="pre">(qemu_plugin_id_t</span> <span class="pre">id,</span> <span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">vcpu_index,</span> <span class="pre">int64_t</span> <span class="pre">num,</span> <span class="pre">uint64_t</span> <span class="pre">a1,</span> <span class="pre">uint64_t</span> <span class="pre">a2,</span> <span class="pre">uint64_t</span> <span class="pre">a3,</span> <span class="pre">uint64_t</span> <span class="pre">a4,</span> <span class="pre">uint64_t</span> <span class="pre">a5,</span> <span class="pre">uint64_t</span> <span class="pre">a6,</span> <span class="pre">uint64_t</span> <span class="pre">a7,</span> <span class="pre">uint64_t</span> <span class="pre">a8)</span></code></p>
+</div></blockquote>
+<div class="kernelindent docutils container">
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin id</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">vcpu_index</span></code></dt><dd><p>the executing vCPU</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">int64_t</span> <span class="pre">num</span></code></dt><dd><p>the syscall number</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">a1</span></code></dt><dd><p>the 1st syscall argument</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">a2</span></code></dt><dd><p>the 2nd syscall argument</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">a3</span></code></dt><dd><p>the 3rd syscall argument</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">a4</span></code></dt><dd><p>the 4th syscall argument</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">a5</span></code></dt><dd><p>the 5th syscall argument</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">a6</span></code></dt><dd><p>the 6th syscall argument</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">a7</span></code></dt><dd><p>the 7th syscall argument</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">a8</span></code></dt><dd><p>the 8th syscall argument</p>
+</dd>
+</dl>
+</div>
+<dl class="c macro">
+<dt class="sig sig-object c" id="c.qemu_plugin_vcpu_syscall_filter_cb_t">
+<span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_vcpu_syscall_filter_cb_t</span></span></span><a class="headerlink" href="#c.qemu_plugin_vcpu_syscall_filter_cb_t" title="Link to this definition"></a><br /></dt>
+<dd><p><strong>Typedef</strong>: vCPU syscall filter callback function type</p>
+</dd></dl>
+
+<p><strong>Syntax</strong></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">bool</span> <span class="pre">qemu_plugin_vcpu_syscall_filter_cb_t</span> <span class="pre">(qemu_plugin_id_t</span> <span class="pre">id,</span> <span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">vcpu_index,</span> <span class="pre">int64_t</span> <span class="pre">num,</span> <span class="pre">uint64_t</span> <span class="pre">a1,</span> <span class="pre">uint64_t</span> <span class="pre">a2,</span> <span class="pre">uint64_t</span> <span class="pre">a3,</span> <span class="pre">uint64_t</span> <span class="pre">a4,</span> <span class="pre">uint64_t</span> <span class="pre">a5,</span> <span class="pre">uint64_t</span> <span class="pre">a6,</span> <span class="pre">uint64_t</span> <span class="pre">a7,</span> <span class="pre">uint64_t</span> <span class="pre">a8,</span> <span class="pre">uint64_t</span> <span class="pre">*sysret)</span></code></p>
+</div></blockquote>
+<div class="kernelindent docutils container">
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin id</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">vcpu_index</span></code></dt><dd><p>the executing vCPU</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">int64_t</span> <span class="pre">num</span></code></dt><dd><p>the syscall number</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">a1</span></code></dt><dd><p>the 1st syscall argument</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">a2</span></code></dt><dd><p>the 2nd syscall argument</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">a3</span></code></dt><dd><p>the 3rd syscall argument</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">a4</span></code></dt><dd><p>the 4th syscall argument</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">a5</span></code></dt><dd><p>the 5th syscall argument</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">a6</span></code></dt><dd><p>the 6th syscall argument</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">a7</span></code></dt><dd><p>the 7th syscall argument</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">a8</span></code></dt><dd><p>the 8th syscall argument</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">*sysret</span></code></dt><dd><p>reference of the syscall return value, must set this if filtered</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>Returns true if you want to filter this syscall (i.e. stop it being
+handled further), otherwise returns false.</p>
+</div>
+<dl class="c macro">
+<dt class="sig sig-object c" id="c.qemu_plugin_vcpu_syscall_ret_cb_t">
+<span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_vcpu_syscall_ret_cb_t</span></span></span><a class="headerlink" href="#c.qemu_plugin_vcpu_syscall_ret_cb_t" title="Link to this definition"></a><br /></dt>
+<dd><p><strong>Typedef</strong>: vCPU syscall return callback function type</p>
+</dd></dl>
+
+<p><strong>Syntax</strong></p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">qemu_plugin_vcpu_syscall_ret_cb_t</span> <span class="pre">(qemu_plugin_id_t</span> <span class="pre">id,</span> <span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">vcpu_index,</span> <span class="pre">int64_t</span> <span class="pre">num,</span> <span class="pre">int64_t</span> <span class="pre">ret)</span></code></p>
+</div></blockquote>
+<div class="kernelindent docutils container">
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin id</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">vcpu_index</span></code></dt><dd><p>the executing vCPU</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">int64_t</span> <span class="pre">num</span></code></dt><dd><p>the syscall number</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">int64_t</span> <span class="pre">ret</span></code></dt><dd><p>the syscall return value</p>
+</dd>
+</dl>
+</div>
+<dl class="c function">
+<dt class="sig sig-object c" id="c.qemu_plugin_register_vcpu_syscall_cb">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_vcpu_syscall_cb</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t"><span class="n"><span class="pre">qemu_plugin_id_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">id</span></span>, <a class="reference internal" href="#c.qemu_plugin_vcpu_syscall_cb_t" title="qemu_plugin_vcpu_syscall_cb_t"><span class="n"><span class="pre">qemu_plugin_vcpu_syscall_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_syscall_cb" title="Link to this definition"></a><br /></dt>
+<dd><p>register a syscall entry callback</p>
+</dd></dl>
+
+<div class="kernelindent docutils container">
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin id</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_vcpu_syscall_cb_t</span> <span class="pre">cb</span></code></dt><dd><p>callback of type qemu_plugin_vcpu_syscall_cb_t</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>This registers a callback for every syscall executed by the guest. The <strong>cb</strong>
+function is executed before a syscall is handled by the host.</p>
+</div>
+<dl class="c function">
+<dt class="sig sig-object c" id="c.qemu_plugin_register_vcpu_syscall_filter_cb">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_vcpu_syscall_filter_cb</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t"><span class="n"><span class="pre">qemu_plugin_id_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">id</span></span>, <a class="reference internal" href="#c.qemu_plugin_vcpu_syscall_filter_cb_t" title="qemu_plugin_vcpu_syscall_filter_cb_t"><span class="n"><span class="pre">qemu_plugin_vcpu_syscall_filter_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_syscall_filter_cb" title="Link to this definition"></a><br /></dt>
+<dd><p>register a syscall filter callback</p>
+</dd></dl>
+
+<div class="kernelindent docutils container">
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin id</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_vcpu_syscall_filter_cb_t</span> <span class="pre">cb</span></code></dt><dd><p>callback of type qemu_plugin_vcpu_syscall_filter_cb_t</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>This registers a callback for every syscall executed by the guest. The <strong>cb</strong>
+function is executed before a syscall is handled by the host. If the
+callback returns true, the syscall is filtered and will not be executed by
+the host. The callback must then set the syscall return value via the
+corresponding pointer passed to it.</p>
+</div>
+<dl class="c function">
+<dt class="sig sig-object c" id="c.qemu_plugin_register_vcpu_syscall_ret_cb">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_vcpu_syscall_ret_cb</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t"><span class="n"><span class="pre">qemu_plugin_id_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">id</span></span>, <a class="reference internal" href="#c.qemu_plugin_vcpu_syscall_ret_cb_t" title="qemu_plugin_vcpu_syscall_ret_cb_t"><span class="n"><span class="pre">qemu_plugin_vcpu_syscall_ret_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_vcpu_syscall_ret_cb" title="Link to this definition"></a><br /></dt>
+<dd><p>register a syscall entry callback</p>
+</dd></dl>
+
+<div class="kernelindent docutils container">
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin id</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_vcpu_syscall_ret_cb_t</span> <span class="pre">cb</span></code></dt><dd><p>callback of type qemu_plugin_vcpu_syscall_ret_cb_t</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>This registers a callback for every syscall executed by the guest. The <strong>cb</strong>
+function is executed upon return from the host syscall before execution is
+handed back to the guest.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_insn_disas">
 <span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_insn_disas</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_insn</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">insn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_insn_disas" title="Link to this definition"></a><br /></dt>
 <dd><p>return disassembly string for instruction</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_insn</span> <span class="pre">*insn</span></code></dt><dd><p>instruction reference</p>
@@ -1074,12 +1449,14 @@ time comes from the host kernel.</p>
 </dl>
 <p><strong>Description</strong></p>
 <p>Returns an allocated string containing the disassembly</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_insn_symbol">
 <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_insn_symbol</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_insn</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">insn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_insn_symbol" title="Link to this definition"></a><br /></dt>
 <dd><p>best effort symbol lookup</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">struct</span> <span class="pre">qemu_plugin_insn</span> <span class="pre">*insn</span></code></dt><dd><p>instruction reference</p>
@@ -1088,12 +1465,14 @@ time comes from the host kernel.</p>
 <p><strong>Description</strong></p>
 <p>Return a static string referring to the symbol. This is dependent
 on the binary QEMU is running having provided a symbol table.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_vcpu_for_each">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_vcpu_for_each</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t"><span class="n"><span class="pre">qemu_plugin_id_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">id</span></span>, <a class="reference internal" href="#c.qemu_plugin_vcpu_simple_cb_t" title="qemu_plugin_vcpu_simple_cb_t"><span class="n"><span class="pre">qemu_plugin_vcpu_simple_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_vcpu_for_each" title="Link to this definition"></a><br /></dt>
 <dd><p>iterate over the existing vCPU</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin ID</p>
@@ -1104,12 +1483,34 @@ on the binary QEMU is running having provided a symbol table.</p>
 <p><strong>Description</strong></p>
 <p>The <strong>cb</strong> function is called once for each existing vCPU.</p>
 <p>See also: qemu_plugin_register_vcpu_init_cb()</p>
+</div>
+<dl class="c function">
+<dt class="sig sig-object c" id="c.qemu_plugin_register_flush_cb">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_flush_cb</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t"><span class="n"><span class="pre">qemu_plugin_id_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">id</span></span>, <a class="reference internal" href="#c.qemu_plugin_simple_cb_t" title="qemu_plugin_simple_cb_t"><span class="n"><span class="pre">qemu_plugin_simple_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_flush_cb" title="Link to this definition"></a><br /></dt>
+<dd><p>register code cache flush callback</p>
+</dd></dl>
+
+<div class="kernelindent docutils container">
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin ID</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_simple_cb_t</span> <span class="pre">cb</span></code></dt><dd><p>callback</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>The <strong>cb</strong> function is called every time the code cache is flushed.
+The callback can be used to free resources associated with existing
+translated blocks in a plugin. <strong>cb</strong> is guaranteed to run with all cpus being
+stopped, thus no lock is required within it.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_register_atexit_cb">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_register_atexit_cb</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_id_t" title="qemu_plugin_id_t"><span class="n"><span class="pre">qemu_plugin_id_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">id</span></span>, <a class="reference internal" href="#c.qemu_plugin_udata_cb_t" title="qemu_plugin_udata_cb_t"><span class="n"><span class="pre">qemu_plugin_udata_cb_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">cb</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">userdata</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_register_atexit_cb" title="Link to this definition"></a><br /></dt>
 <dd><p>register exit callback</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_id_t</span> <span class="pre">id</span></code></dt><dd><p>plugin ID</p>
@@ -1125,23 +1526,27 @@ should be able to free all their resources at this point much like
 after a reset/uninstall callback is called.</p>
 <p>In user-mode it is possible a few un-instrumented instructions from
 child threads may run before the host kernel reaps the threads.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_outs">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_outs</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">string</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_outs" title="Link to this definition"></a><br /></dt>
 <dd><p>output string via QEMU’s logging system</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*string</span></code></dt><dd><p>a string</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_bool_parse">
 <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_bool_parse</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">val</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">ret</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_bool_parse" title="Link to this definition"></a><br /></dt>
 <dd><p>parses a boolean argument in the form of “&lt;argname&gt;=[on|yes|true|off|no|false]”</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*name</span></code></dt><dd><p>argument name, the part before the equals sign</p>
@@ -1154,12 +1559,14 @@ child threads may run before the host kernel reaps the threads.</p>
 <p><strong>Description</strong></p>
 <p>returns true if the combination <strong>name**=**val</strong> parses correctly to a boolean
 argument, and false otherwise</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_path_to_binary">
 <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_path_to_binary</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_path_to_binary" title="Link to this definition"></a><br /></dt>
 <dd><p>path to binary file being executed</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">void</span></code></dt><dd><p>no arguments</p>
@@ -1170,12 +1577,14 @@ argument, and false otherwise</p>
 this is the main executable. For system emulation we currently
 return NULL. The user should g_free() the string once no longer
 needed.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_start_code">
 <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_start_code</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_start_code" title="Link to this definition"></a><br /></dt>
 <dd><p>returns start of text segment</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">void</span></code></dt><dd><p>no arguments</p>
@@ -1184,12 +1593,14 @@ needed.</p>
 <p><strong>Description</strong></p>
 <p>Returns the nominal start address of the main text segment in
 user-mode. Currently returns 0 for system emulation.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_end_code">
 <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_end_code</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_end_code" title="Link to this definition"></a><br /></dt>
 <dd><p>returns end of text segment</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">void</span></code></dt><dd><p>no arguments</p>
@@ -1198,12 +1609,14 @@ user-mode. Currently returns 0 for system emulation.</p>
 <p><strong>Description</strong></p>
 <p>Returns the nominal end address of the main text segment in
 user-mode. Currently returns 0 for system emulation.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_entry_code">
 <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_entry_code</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_entry_code" title="Link to this definition"></a><br /></dt>
 <dd><p>returns start address for module</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">void</span></code></dt><dd><p>no arguments</p>
@@ -1212,6 +1625,7 @@ user-mode. Currently returns 0 for system emulation.</p>
 <p><strong>Description</strong></p>
 <p>Returns the nominal entry address of the main text segment in
 user-mode. Currently returns 0 for system emulation.</p>
+</div>
 <dl class="c type">
 <dt class="sig sig-object c" id="c.qemu_plugin_reg_descriptor">
 <span class="k"><span class="pre">type</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_reg_descriptor</span></span></span><a class="headerlink" href="#c.qemu_plugin_reg_descriptor" title="Link to this definition"></a><br /></dt>
@@ -1224,6 +1638,7 @@ user-mode. Currently returns 0 for system emulation.</p>
 <dd><p>return register list for current vCPU</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">void</span></code></dt><dd><p>no arguments</p>
@@ -1234,12 +1649,14 @@ user-mode. Currently returns 0 for system emulation.</p>
 Caller frees the array (but not the const strings).</p>
 <p>Should be used from a qemu_plugin_register_vcpu_init_cb() callback
 after the vCPU is initialised, i.e. in the vCPU context.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_read_register">
-<span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_read_register</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_register</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">handle</span></span>, <span class="n"><span class="pre">GByteArray</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">buf</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_read_register" title="Link to this definition"></a><br /></dt>
+<span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_read_register</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_register</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">handle</span></span>, <span class="n"><span class="pre">GByteArray</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">buf</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_read_register" title="Link to this definition"></a><br /></dt>
 <dd><p>read register for current vCPU</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">qemu_plugin_register</span> <span class="pre">*handle</span></code></dt><dd><p>a <strong>qemu_plugin_reg_handle</strong> handle</p>
@@ -1255,14 +1672,16 @@ function can also be used in any callback context that does not use a flags
 argument, such as in a callback registered with
 qemu_plugin_register_vcpu_init_cb(), except for callbacks registered with
 qemu_plugin_register_atexit_cb() and qemu_plugin_register_flush_cb().</p>
-<p>Returns the size of the read register. The content of <strong>buf</strong> is in target byte
-order. On failure returns -1.</p>
+<p>Returns true on success, false on failure. The content of <strong>buf</strong> is in target
+byte order.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_write_register">
-<span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_write_register</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_register</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">handle</span></span>, <span class="n"><span class="pre">GByteArray</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">buf</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_write_register" title="Link to this definition"></a><br /></dt>
+<span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_write_register</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_register</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">handle</span></span>, <span class="n"><span class="pre">GByteArray</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">buf</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_write_register" title="Link to this definition"></a><br /></dt>
 <dd><p>write register for current vCPU</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">qemu_plugin_register</span> <span class="pre">*handle</span></code></dt><dd><p>a <strong>qemu_plugin_reg_handle</strong> handle</p>
@@ -1281,13 +1700,31 @@ qemu_plugin_register_atexit_cb() and qemu_plugin_register_flush_cb().</p>
 <p>The size of <strong>buf</strong> must be at least the size of the requested register.
 Attempting to write a register with <strong>buf</strong> smaller than the register size
 will result in a crash or other undesired behavior.</p>
-<p>Returns the number of bytes written. On failure returns 0.</p>
+<p>Returns true on success, false on failure.</p>
+</div>
+<dl class="c function">
+<dt class="sig sig-object c" id="c.qemu_plugin_set_pc">
+<span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_set_pc</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n"><span class="pre">vaddr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_set_pc" title="Link to this definition"></a><br /></dt>
+<dd><p>set the program counter for the current vCPU</p>
+</dd></dl>
+
+<div class="kernelindent docutils container">
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">vaddr</span></code></dt><dd><p>the new virtual (guest) address for the program counter</p>
+</dd>
+</dl>
+<p><strong>Description</strong></p>
+<p>This function sets the program counter for the current vCPU to <strong>vaddr</strong> and
+resumes execution at that address. This function does not return.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_read_memory_vaddr">
 <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_read_memory_vaddr</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n"><span class="pre">addr</span></span>, <span class="n"><span class="pre">GByteArray</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">len</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_read_memory_vaddr" title="Link to this definition"></a><br /></dt>
 <dd><p>read from memory using a virtual address</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">addr</span></code></dt><dd><p>A virtual address to read from</p>
@@ -1306,12 +1743,14 @@ callers should take care when calling this function in plugin callbacks to
 avoid attempting to read data which may not yet be written and should use
 the memory callback API instead.</p>
 <p>Returns true on success and false on failure.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_write_memory_vaddr">
 <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_write_memory_vaddr</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n"><span class="pre">addr</span></span>, <span class="n"><span class="pre">GByteArray</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_write_memory_vaddr" title="Link to this definition"></a><br /></dt>
 <dd><p>write to memory using a virtual address</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">addr</span></code></dt><dd><p>A virtual address to write to</p>
@@ -1328,12 +1767,14 @@ so callers should take care to only call this function in vCPU context (i.e.
 in callbacks) and avoid depending on the existence of data written using this
 function which may be overwritten afterward.</p>
 <p>Returns true on success and false on failure.</p>
+</div>
 <dl class="c enum">
 <dt class="sig sig-object c" id="c.qemu_plugin_hwaddr_operation_result">
 <span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_hwaddr_operation_result</span></span></span><a class="headerlink" href="#c.qemu_plugin_hwaddr_operation_result" title="Link to this definition"></a><br /></dt>
 <dd><p>result of a memory operation</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Constants</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_HWADDR_OPERATION_OK</span></code></dt><dd><p>hwaddr operation succeeded</p>
@@ -1349,12 +1790,14 @@ function which may be overwritten afterward.</p>
 <dt><code class="docutils literal notranslate"><span class="pre">QEMU_PLUGIN_HWADDR_OPERATION_INVALID_ADDRESS_SPACE</span></code></dt><dd><p>invalid address space</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_read_memory_hwaddr">
 <span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.qemu_plugin_hwaddr_operation_result" title="qemu_plugin_hwaddr_operation_result"><span class="n"><span class="pre">qemu_plugin_hwaddr_operation_result</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_read_memory_hwaddr</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n"><span class="pre">addr</span></span>, <span class="n"><span class="pre">GByteArray</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">len</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_read_memory_hwaddr" title="Link to this definition"></a><br /></dt>
 <dd><p>read from memory using a hardware address</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">addr</span></code></dt><dd><p>The physical address to read from</p>
@@ -1376,12 +1819,14 @@ the memory callback API instead.</p>
 <p>This function is only valid for softmmu targets.</p>
 <p>Returns a qemu_plugin_hwaddr_operation_result indicating the result of the
 operation.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_write_memory_hwaddr">
 <span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.qemu_plugin_hwaddr_operation_result" title="qemu_plugin_hwaddr_operation_result"><span class="n"><span class="pre">qemu_plugin_hwaddr_operation_result</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_write_memory_hwaddr</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n"><span class="pre">addr</span></span>, <span class="n"><span class="pre">GByteArray</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">data</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_write_memory_hwaddr" title="Link to this definition"></a><br /></dt>
 <dd><p>write to memory using a hardware address</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">addr</span></code></dt><dd><p>A physical address to write to</p>
@@ -1409,12 +1854,14 @@ block.</p>
 <p>This function is only valid for softmmu targets.</p>
 <p>Returns a qemu_plugin_hwaddr_operation_result indicating the result of the
 operation.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_translate_vaddr">
 <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_translate_vaddr</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n"><span class="pre">vaddr</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">hwaddr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_translate_vaddr" title="Link to this definition"></a><br /></dt>
 <dd><p>translate virtual address for current vCPU</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">vaddr</span></code></dt><dd><p>virtual address to translate</p>
@@ -1426,12 +1873,14 @@ operation.</p>
 <p>This function is only valid in vCPU context (i.e. in callbacks) and is only
 valid for softmmu targets.</p>
 <p>Returns true on success and false on failure.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_scoreboard_new">
 <span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_scoreboard</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_scoreboard_new</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">element_size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_scoreboard_new" title="Link to this definition"></a><br /></dt>
 <dd><p>alloc a new scoreboard</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">size_t</span> <span class="pre">element_size</span></code></dt><dd><p>size (in bytes) for one entry</p>
@@ -1440,23 +1889,27 @@ valid for softmmu targets.</p>
 <p><strong>Description</strong></p>
 <p>Returns a pointer to a new scoreboard. It must be freed using
 qemu_plugin_scoreboard_free.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_scoreboard_free">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_scoreboard_free</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_scoreboard</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">score</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_scoreboard_free" title="Link to this definition"></a><br /></dt>
 <dd><p>free a scoreboard</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">qemu_plugin_scoreboard</span> <span class="pre">*score</span></code></dt><dd><p>scoreboard to free</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_scoreboard_find">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_scoreboard_find</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">qemu_plugin_scoreboard</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">score</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">vcpu_index</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_scoreboard_find" title="Link to this definition"></a><br /></dt>
 <dd><p>get pointer to an entry of a scoreboard</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">qemu_plugin_scoreboard</span> <span class="pre">*score</span></code></dt><dd><p>scoreboard to query</p>
@@ -1467,12 +1920,14 @@ qemu_plugin_scoreboard_free.</p>
 <p><strong>Description</strong></p>
 <p>Returns address of entry of a scoreboard matching a given vcpu_index. This
 address can be modified later if scoreboard is resized.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_u64_add">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_u64_add</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_u64" title="qemu_plugin_u64"><span class="n"><span class="pre">qemu_plugin_u64</span></span></a><span class="w"> </span><span class="n"><span class="pre">entry</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">vcpu_index</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n"><span class="pre">added</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_u64_add" title="Link to this definition"></a><br /></dt>
 <dd><p>add a value to a qemu_plugin_u64 for a given vcpu</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_u64</span> <span class="pre">entry</span></code></dt><dd><p>entry to query</p>
@@ -1482,12 +1937,14 @@ address can be modified later if scoreboard is resized.</p>
 <dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">added</span></code></dt><dd><p>value to add</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_u64_get">
 <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_u64_get</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_u64" title="qemu_plugin_u64"><span class="n"><span class="pre">qemu_plugin_u64</span></span></a><span class="w"> </span><span class="n"><span class="pre">entry</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">vcpu_index</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_u64_get" title="Link to this definition"></a><br /></dt>
 <dd><p>get value of a qemu_plugin_u64 for a given vcpu</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_u64</span> <span class="pre">entry</span></code></dt><dd><p>entry to query</p>
@@ -1495,12 +1952,14 @@ address can be modified later if scoreboard is resized.</p>
 <dt><code class="docutils literal notranslate"><span class="pre">unsigned</span> <span class="pre">int</span> <span class="pre">vcpu_index</span></code></dt><dd><p>entry index</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_u64_set">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_u64_set</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_u64" title="qemu_plugin_u64"><span class="n"><span class="pre">qemu_plugin_u64</span></span></a><span class="w"> </span><span class="n"><span class="pre">entry</span></span>, <span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">vcpu_index</span></span>, <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="n"><span class="pre">val</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_u64_set" title="Link to this definition"></a><br /></dt>
 <dd><p>set value of a qemu_plugin_u64 for a given vcpu</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_u64</span> <span class="pre">entry</span></code></dt><dd><p>entry to query</p>
@@ -1510,17 +1969,20 @@ address can be modified later if scoreboard is resized.</p>
 <dt><code class="docutils literal notranslate"><span class="pre">uint64_t</span> <span class="pre">val</span></code></dt><dd><p>new value</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qemu_plugin_u64_sum">
 <span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qemu_plugin_u64_sum</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.qemu_plugin_u64" title="qemu_plugin_u64"><span class="n"><span class="pre">qemu_plugin_u64</span></span></a><span class="w"> </span><span class="n"><span class="pre">entry</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qemu_plugin_u64_sum" title="Link to this definition"></a><br /></dt>
 <dd><p>return sum of all vcpu entries in a scoreboard</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">qemu_plugin_u64</span> <span class="pre">entry</span></code></dt><dd><p>entry to sum</p>
 </dd>
 </dl>
+</div>
 </section>
 
 
@@ -1534,7 +1996,7 @@ address can be modified later if scoreboard is resized.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -1545,7 +2007,7 @@ address can be modified later if scoreboard is resized.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

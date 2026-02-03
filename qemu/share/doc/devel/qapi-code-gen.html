@@ -9,7 +9,7 @@
   <title>How to use the QAPI code generator &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -1730,27 +1730,13 @@ qmp_exit_my_command(const char *result, bool succeeded) &quot;%s %d&quot;
 $ cat qapi-generated/example-qapi-commands.c
 [Uninteresting stuff omitted...]
 
-static void qmp_marshal_output_UserDefOne(UserDefOne *ret_in,
-                                QObject **ret_out, Error **errp)
-{
-    Visitor *v;
-
-    v = qobject_output_visitor_new_qmp(ret_out);
-    if (visit_type_UserDefOne(v, &quot;unused&quot;, &amp;ret_in, errp)) {
-        visit_complete(v, ret_out);
-    }
-    visit_free(v);
-    v = qapi_dealloc_visitor_new();
-    visit_type_UserDefOne(v, &quot;unused&quot;, &amp;ret_in, NULL);
-    visit_free(v);
-}
-
 void qmp_marshal_my_command(QDict *args, QObject **ret, Error **errp)
 {
     Error *err = NULL;
     bool ok = false;
     Visitor *v;
     UserDefOne *retval;
+    Visitor *ov;
     q_obj_my_command_arg arg = {0};
 
     v = qobject_input_visitor_new_qmp(QOBJECT(args));
@@ -1778,7 +1764,14 @@ void qmp_marshal_my_command(QDict *args, QObject **ret, Error **errp)
         goto out;
     }
 
-    qmp_marshal_output_UserDefOne(retval, ret, errp);
+    ov = qobject_output_visitor_new_qmp(ret);
+    if (visit_type_UserDefOne(ov, &quot;unused&quot;, &amp;retval, errp)) {
+        visit_complete(ov, ret);
+    }
+    visit_free(ov);
+    ov = qapi_dealloc_visitor_new();
+    visit_type_UserDefOne(ov, &quot;unused&quot;, &amp;retval, NULL);
+    visit_free(ov);
 
     if (trace_event_get_state_backends(TRACE_QMP_EXIT_MY_COMMAND)) {
         g_autoptr(GString) ret_json = qobject_to_json(*ret);
@@ -2045,7 +2038,7 @@ const QLitObject example_qmp_schema_qlit = QLIT_QLIST(((QLitObject[]) {
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -2056,7 +2049,7 @@ const QLitObject example_qmp_schema_qlit = QLIT_QLIST(((QLitObject[]) {
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

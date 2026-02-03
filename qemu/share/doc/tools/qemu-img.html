@@ -9,7 +9,7 @@
   <title>QEMU disk image utility &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -204,7 +204,7 @@ the <code class="docutils literal notranslate"><span class="pre">simple</span></
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-qemu-img-arg-info">
-<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-prename descclassname"> <span class="pre">[--object</span> <span class="pre">OBJECTDEF]</span> <span class="pre">[--image-opts]</span> <span class="pre">[-f</span> <span class="pre">FMT]</span> <span class="pre">[--output=OFMT]</span> <span class="pre">[--backing-chain]</span> <span class="pre">[-U]</span> <span class="pre">FILENAME</span></span><a class="headerlink" href="#cmdoption-qemu-img-arg-info" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-prename descclassname"> <span class="pre">[--object</span> <span class="pre">OBJECTDEF]</span> <span class="pre">[--image-opts]</span> <span class="pre">[-f</span> <span class="pre">FMT]</span> <span class="pre">[--output=OFMT]</span> <span class="pre">[--backing-chain]</span> <span class="pre">[--limits]</span> <span class="pre">[-t</span> <span class="pre">CACHE]</span> <span class="pre">[-U]</span> <span class="pre">FILENAME</span></span><a class="headerlink" href="#cmdoption-qemu-img-arg-info" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="std option">
@@ -710,7 +710,7 @@ dd will stop reading input after reading <em>BLOCKS</em> input blocks.</p>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-qemu-img-commands-arg-info">
-<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-prename descclassname"> <span class="pre">[--object</span> <span class="pre">OBJECTDEF]</span> <span class="pre">[--image-opts]</span> <span class="pre">[-f</span> <span class="pre">FMT]</span> <span class="pre">[--output=OFMT]</span> <span class="pre">[--backing-chain]</span> <span class="pre">[-U]</span> <span class="pre">FILENAME</span></span><a class="headerlink" href="#cmdoption-qemu-img-commands-arg-info" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-prename descclassname"> <span class="pre">[--object</span> <span class="pre">OBJECTDEF]</span> <span class="pre">[--image-opts]</span> <span class="pre">[-f</span> <span class="pre">FMT]</span> <span class="pre">[--output=OFMT]</span> <span class="pre">[--backing-chain]</span> <span class="pre">[--limits]</span> <span class="pre">[-t</span> <span class="pre">CACHE]</span> <span class="pre">[-U]</span> <span class="pre">FILENAME</span></span><a class="headerlink" href="#cmdoption-qemu-img-commands-arg-info" title="Link to this definition"></a></dt>
 <dd><p>Give information about the disk image <em>FILENAME</em>. Use it in
 particular to know the size reserved on disk which can be different
 from the displayed size. If VM snapshots are stored in the disk image,
@@ -758,6 +758,9 @@ auto-repaired the next time it is opened in qemu.</p>
 section is a textual representation of the respective
 <code class="docutils literal notranslate"><span class="pre">ImageInfoSpecific*</span></code> QAPI object (e.g. <code class="docutils literal notranslate"><span class="pre">ImageInfoSpecificQCow2</span></code>
 for qcow2 images).</p>
+</dd>
+<dt><em>Block limits</em></dt><dd><p>The block limits for I/O that QEMU detected for the image.
+This information is only shown if the <code class="docutils literal notranslate"><span class="pre">--limits</span></code> option was specified.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1100,7 +1103,7 @@ images to either raw or qcow2 in order to achieve good performance.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -1111,7 +1114,7 @@ images to either raw or qcow2 in order to achieve good performance.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

@@ -9,7 +9,7 @@
   <title>Code provenance &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -69,7 +69,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#tools-for-adding-signed-off-by">Tools for adding <code class="docutils literal notranslate"><span class="pre">Signed-off-by</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#re-starting-abandoned-work">Re-starting abandoned work</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inclusion-of-generated-files">Inclusion of generated files</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#use-of-ai-content-generators">Use of AI content generators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#use-of-ai-generated-content">Use of AI-generated content</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="trivial-patches.html">Trivial Patches</a></li>
@@ -307,7 +307,7 @@ original <code class="docutils literal notranslate"><span class="pre">Signed-off
 <li><p>Indicate where the original patch was obtained from (mailing list, bug
 tracker, author’s git repo, etc) when sending it for review</p></li>
 <li><p>Acknowledge the extra work of the new contributor by including their
-<code class="docutils literal notranslate"><span class="pre">Signed-off-by</span></code> in the patch in addition to the orignal author’s</p></li>
+<code class="docutils literal notranslate"><span class="pre">Signed-off-by</span></code> in the patch in addition to the original author’s</p></li>
 <li><p>Indicate who is responsible for what parts of the patch. This is typically
 done via a note in the commit message, just prior to the new contributor’s
 <code class="docutils literal notranslate"><span class="pre">Signed-off-by</span></code>:</p>
@@ -351,7 +351,7 @@ with the libvirt-ci git submodule link. The generated dockerfiles are
 included in tree because it is desirable to be able to directly build
 container images from a clean git checkout.</p></li>
 <li><p>eBPF: QEMU includes some generated eBPF machine code, since the required
-eBPF compilation tools are not broadly available on all targetted OS
+eBPF compilation tools are not broadly available on all targeted OS
 distributions. The corresponding eBPF C code for the binary is also
 provided. This is a time-limited exception until the eBPF toolchain is
 sufficiently broadly available in distros.</p></li>
@@ -375,13 +375,16 @@ Such tools are acceptable to use, provided there is clearly defined copyright
 and licensing for their output. Note in particular the caveats applying to AI
 content generators below.</p>
 </section>
-<section id="use-of-ai-content-generators">
-<h2>Use of AI content generators<a class="headerlink" href="#use-of-ai-content-generators" title="Link to this heading"></a></h2>
+<section id="use-of-ai-generated-content">
+<h2>Use of AI-generated content<a class="headerlink" href="#use-of-ai-generated-content" title="Link to this heading"></a></h2>
 <p>TL;DR:</p>
 <blockquote>
 <div><p><strong>Current QEMU project policy is to DECLINE any contributions which are
 believed to include or derive from AI generated content. This includes
 ChatGPT, Claude, Copilot, Llama and similar tools.</strong></p>
+<p><strong>This policy does not apply to other uses of AI, such as researching APIs
+or algorithms, static analysis, or debugging, provided their output is not
+included in contributions.</strong></p>
 </div></blockquote>
 <p>The increasing prevalence of AI-assisted software development results in a
 number of difficult legal questions and risks for software projects, including
@@ -404,18 +407,24 @@ not willing or able to accept the legal risks of non-compliance.</p>
 <p>The QEMU project thus requires that contributors refrain from using AI content
 generators on patches intended to be submitted to the project, and will
 decline any contribution if use of AI is either known or suspected.</p>
-<p>This policy does not apply to other uses of AI, such as researching APIs or
-algorithms, static analysis, or debugging, provided their output is not to be
-included in contributions.</p>
 <p>Examples of tools impacted by this policy includes GitHub’s CoPilot, OpenAI’s
 ChatGPT, Anthropic’s Claude, and Meta’s Code Llama, and code/content
 generation agents which are built on top of such tools.</p>
 <p>This policy may evolve as AI tools mature and the legal situation is
-clarifed. In the meanwhile, requests for exceptions to this policy will be
-evaluated by the QEMU project on a case by case basis. To be granted an
-exception, a contributor will need to demonstrate clarity of the license and
-copyright status for the tool’s output in relation to its training model and
-code, to the satisfaction of the project maintainers.</p>
+clarified.</p>
+<section id="exceptions">
+<h3>Exceptions<a class="headerlink" href="#exceptions" title="Link to this heading"></a></h3>
+<p>The QEMU project welcomes discussion on any exceptions to this policy,
+or more general revisions. This can be done by contacting the qemu-devel
+mailing list with details of a proposed tool, model, usage scenario, etc.
+that is beneficial to QEMU, while still mitigating issues around compliance
+with the DCO.  After discussion, any exception will be listed below.</p>
+<p>Exceptions do not remove the need for authors to comply with all other
+requirements for contribution.  In particular, the “Signed-off-by”
+label in a patch submission is a statement that the author takes
+responsibility for the entire contents of the patch, including any parts
+that were generated or assisted by AI tools or other tools.</p>
+</section>
 </section>
 </section>
 
@@ -430,7 +439,7 @@ code, to the satisfaction of the project maintainers.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -441,7 +450,7 @@ code, to the satisfaction of the project maintainers.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

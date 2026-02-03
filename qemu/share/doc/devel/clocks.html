@@ -9,7 +9,7 @@
   <title>Modelling a clock tree in QEMU &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -170,8 +170,8 @@ model the main clock source of a machine.</p>
                                             <span class="o">+--------------+</span>
 </pre></div>
 </div>
-<p>Clocks are defined in the <code class="docutils literal notranslate"><span class="pre">include/hw/clock.h</span></code> header and device
-related functions are defined in the <code class="docutils literal notranslate"><span class="pre">include/hw/qdev-clock.h</span></code>
+<p>Clocks are defined in the <code class="docutils literal notranslate"><span class="pre">include/hw/core/clock.h</span></code> header and device
+related functions are defined in the <code class="docutils literal notranslate"><span class="pre">include/hw/core/qdev-clock.h</span></code>
 header.</p>
 </section>
 <section id="the-clock-state">
@@ -214,7 +214,7 @@ device’s state structure for further use.</p>
 outputs. The function <code class="docutils literal notranslate"><span class="pre">qdev_init_clocks()</span></code> must be called with the array as
 parameter to initialize the clocks: it has the same behaviour as calling the
 <code class="docutils literal notranslate"><span class="pre">qdev_init_clock_in/out()</span></code> for each clock in the array. To ease the array
-construction, some macros are defined in <code class="docutils literal notranslate"><span class="pre">include/hw/qdev-clock.h</span></code>.
+construction, some macros are defined in <code class="docutils literal notranslate"><span class="pre">include/hw/core/qdev-clock.h</span></code>.
 As an example, the following creates 2 clocks to a device: one input and one
 output.</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cm">/* device structure containing pointers to the clock objects */</span>
@@ -614,7 +614,7 @@ will trigger side effects to other devices in an unknown state.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -625,7 +625,7 @@ will trigger side effects to other devices in an unknown state.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

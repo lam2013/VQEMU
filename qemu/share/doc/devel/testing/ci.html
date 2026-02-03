@@ -9,7 +9,7 @@
   <title>Continuous Integration (CI) &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../../_static/qemu_32x32.png"/>
@@ -275,18 +275,17 @@ private runners</p>
 runner, you can set this variable to enable the tests that require this
 kind of host. The runner should be tagged with “aarch64”.</p>
 </section>
-<section id="aarch32-runner-available">
-<h3>AARCH32_RUNNER_AVAILABLE<a class="headerlink" href="#aarch32-runner-available" title="Link to this heading"></a></h3>
-<p>If you’ve got access to an armhf host or an arch64 host that can run
-aarch32 EL0 code to be used as a gitlab-CI runner, you can set this
-variable to enable the tests that require this kind of host. The
-runner should be tagged with “aarch32”.</p>
-</section>
 <section id="s390x-runner-available">
 <h3>S390X_RUNNER_AVAILABLE<a class="headerlink" href="#s390x-runner-available" title="Link to this heading"></a></h3>
 <p>If you’ve got access to an IBM Z host that can be used as a gitlab-CI
 runner, you can set this variable to enable the tests that require this
 kind of host. The runner should be tagged with “s390x”.</p>
+</section>
+<section id="ppc64le-runner-available">
+<h3>PPC64LE_RUNNER_AVAILABLE<a class="headerlink" href="#ppc64le-runner-available" title="Link to this heading"></a></h3>
+<p>If you’ve got access to an PPC64LE host that can be used as a gitlab-CI
+runner, you can set this variable to enable the tests that require this
+kind of host. The runner should be tagged with “ppc64le”.</p>
 </section>
 <section id="ccache-disable">
 <h3>CCACHE_DISABLE<a class="headerlink" href="#ccache-disable" title="Link to this heading"></a></h3>
@@ -441,7 +440,7 @@ Reliable Software Releases Through Build, Test, and Deployment, p. 122.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -452,7 +451,7 @@ Reliable Software Releases Through Build, Test, and Deployment, p. 122.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../../about/license.html">QEMU and this manual are released under the

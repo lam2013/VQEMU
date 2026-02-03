@@ -9,7 +9,7 @@
   <title>QEMU Storage Daemon QMP Reference Manual &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -651,21 +651,23 @@ between <code class="docutils literal notranslate"><span class="pre">port</span>
 IPv6</p></li>
 <li><p><strong>ipv6</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – whether to accept IPv6 addresses, default try both IPv4 and
 IPv6</p></li>
-<li><p><strong>keep-alive</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – enable keep-alive when connecting to/listening on this socket.
+<li><p><strong>keep-alive</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – enable keep-alive when connecting to/listening on this
+socket.
 (Since 4.2, not supported for listening sockets until 10.1)</p></li>
-<li><p><strong>keep-alive-count</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – number of keep-alive packets sent before the connection is
-closed.  Only supported for TCP sockets on systems where TCP_KEEPCNT
-socket option is defined (this includes Linux, Windows, macOS, FreeBSD,
-but not OpenBSD).  When set to 0, system setting is used.  (Since 10.1)</p></li>
-<li><p><strong>keep-alive-idle</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – time in seconds the connection needs to be idle before
-sending a keepalive packet.  Only supported for TCP sockets on systems
-where TCP_KEEPIDLE socket option is defined (this includes Linux,
-Windows, macOS, FreeBSD, but not OpenBSD).  When set to 0, system setting
-is used.  (Since 10.1)</p></li>
-<li><p><strong>keep-alive-interval</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – time in seconds between keep-alive packets.  Only
-supported for TCP sockets on systems where TCP_KEEPINTVL is defined (this
-includes Linux, Windows, macOS, FreeBSD, but not OpenBSD).  When set to
-0, system setting is used.  (Since 10.1)</p></li>
+<li><p><strong>keep-alive-count</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – number of keep-alive packets sent before the
+connection is closed.  Only supported for TCP sockets on systems
+where TCP_KEEPCNT socket option is defined (this includes Linux,
+Windows, macOS, FreeBSD, but not OpenBSD).  When set to 0,
+system setting is used.  (Since 10.1)</p></li>
+<li><p><strong>keep-alive-idle</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – time in seconds the connection needs to be idle
+before sending a keepalive packet.  Only supported for TCP
+sockets on systems where TCP_KEEPIDLE socket option is defined
+(this includes Linux, Windows, macOS, FreeBSD, but not OpenBSD).
+When set to 0, system setting is used.  (Since 10.1)</p></li>
+<li><p><strong>keep-alive-interval</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – time in seconds between keep-alive packets.
+Only supported for TCP sockets on systems where TCP_KEEPINTVL is
+defined (this includes Linux, Windows, macOS, FreeBSD, but not
+OpenBSD).  When set to 0, system setting is used.  (Since 10.1)</p></li>
 <li><p><strong>mptcp</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – enable multi-path TCP.  (Since 6.1)</p></li>
 <li><p>The members of <a class="reference internal" href="#object-QSD-sockets.InetSocketAddressBase" title="QSD:sockets.InetSocketAddressBase"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">InetSocketAddressBase</span></code></a>.</p></li>
 </ul>
@@ -870,7 +872,8 @@ can be used</p></li>
 <dt class="field-odd">Values<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>md5</strong> – MD5.  Should not be used in any new code, legacy compat only</p></li>
-<li><p><strong>sha1</strong> – SHA-1.  Should not be used in any new code, legacy compat only</p></li>
+<li><p><strong>sha1</strong> – SHA-1.  Should not be used in any new code, legacy compat
+only</p></li>
 <li><p><strong>sha224</strong> – SHA-224.  (since 2.7)</p></li>
 <li><p><strong>sha256</strong> – SHA-256.  Current recommended strong hash.</p></li>
 <li><p><strong>sha384</strong> – SHA-384.  (since 2.7)</p></li>
@@ -1153,8 +1156,8 @@ to be written into added active keyslots</p></li>
 <li><p><strong>old-secret</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – Optional (for deactivation only).  If given will
 deactivate all keyslots that match password located in
 QCryptoSecret with this ID</p></li>
-<li><p><strong>iter-time</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – Optional (for activation only).  Number of milliseconds to
-spend in PBKDF passphrase processing for the newly activated
+<li><p><strong>iter-time</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – Optional (for activation only).  Number of milliseconds
+to spend in PBKDF passphrase processing for the newly activated
 keyslot.  Currently defaults to 2000.</p></li>
 <li><p><strong>keyslot</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – <p>Optional.  ID of the keyslot to activate/deactivate.  For
 keyslot activation, keyslot should not be active already (this
@@ -1545,15 +1548,15 @@ earlier than completing the job) and transitions to PENDING instead.</p>
 state.  Completing the job in any other state is an error.</p>
 <p>This is supported only for drive mirroring, where it also switches
 the device to write to the target path only.  Note that drive
-mirroring includes <a class="reference internal" href="#command-QSD-block-core.drive-mirror" title="QSD:block-core.drive-mirror"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">drive-mirror</span></code></a>, <a class="reference internal" href="#command-QSD-block-core.blockdev-mirror" title="QSD:block-core.blockdev-mirror"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-mirror</span></code></a> and <a class="reference internal" href="#command-QSD-block-core.block-commit" title="QSD:block-core.block-commit"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-commit</span></code></a>
-job (only in case of “active commit”, when the node being commited
-is used by the guest).  The ability to complete is signaled with a
-<a class="reference internal" href="#event-QSD-block-core.BLOCK_JOB_READY" title="QSD:block-core.BLOCK_JOB_READY"><code class="xref any qapi qapi-event docutils literal notranslate"><span class="pre">BLOCK_JOB_READY</span></code></a> event.</p>
+mirroring includes <a class="reference internal" href="#command-QSD-block-core.drive-mirror" title="QSD:block-core.drive-mirror"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">drive-mirror</span></code></a>, <a class="reference internal" href="#command-QSD-block-core.blockdev-mirror" title="QSD:block-core.blockdev-mirror"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-mirror</span></code></a> and
+<a class="reference internal" href="#command-QSD-block-core.block-commit" title="QSD:block-core.block-commit"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-commit</span></code></a> job (only in case of “active commit”, when the node
+being committed is used by the guest).  The ability to complete is
+signaled with a <a class="reference internal" href="#event-QSD-block-core.BLOCK_JOB_READY" title="QSD:block-core.BLOCK_JOB_READY"><code class="xref any qapi qapi-event docutils literal notranslate"><span class="pre">BLOCK_JOB_READY</span></code></a> event.</p>
 <p>This command completes an active background block operation
 synchronously.  The ordering of this command’s return with the
-<a class="reference internal" href="#event-QSD-block-core.BLOCK_JOB_COMPLETED" title="QSD:block-core.BLOCK_JOB_COMPLETED"><code class="xref any qapi qapi-event docutils literal notranslate"><span class="pre">BLOCK_JOB_COMPLETED</span></code></a> event is not defined.  Note that if an I/O error
-occurs during the processing of this command: 1) the command itself
-will fail; 2) the error will be processed according to the
+<a class="reference internal" href="#event-QSD-block-core.BLOCK_JOB_COMPLETED" title="QSD:block-core.BLOCK_JOB_COMPLETED"><code class="xref any qapi qapi-event docutils literal notranslate"><span class="pre">BLOCK_JOB_COMPLETED</span></code></a> event is not defined.  Note that if an I/O
+error occurs during the processing of this command: 1) the command
+itself will fail; 2) the error will be processed according to the
 rerror/werror arguments that were specified when starting the
 operation.</p>
 <dl class="field-list simple">
@@ -1570,15 +1573,15 @@ operation.</p>
 <em class="property"><span class="k"><span class="pre">Command</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">job-dismiss</span></span><span class="w"> </span><span><span class="pre">(Since:</span> <span class="pre">3.0)</span></span><a class="headerlink" href="#command-QSD-job.job-dismiss" title="Link to this definition"></a></dt>
 <dd><p>Deletes a job that is in the CONCLUDED state.  This command only
 needs to be run explicitly for jobs that don’t have automatic
-dismiss enabled.  In turn, automatic dismiss may be enabled only
-for jobs that have <code class="docutils literal notranslate"><span class="pre">auto-dismiss</span></code> option, which are <a class="reference internal" href="#command-QSD-block-core.drive-backup" title="QSD:block-core.drive-backup"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">drive-backup</span></code></a>,
-<a class="reference internal" href="#command-QSD-block-core.blockdev-backup" title="QSD:block-core.blockdev-backup"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-backup</span></code></a>, <a class="reference internal" href="#command-QSD-block-core.drive-mirror" title="QSD:block-core.drive-mirror"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">drive-mirror</span></code></a>, <a class="reference internal" href="#command-QSD-block-core.blockdev-mirror" title="QSD:block-core.blockdev-mirror"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-mirror</span></code></a>, <a class="reference internal" href="#command-QSD-block-core.block-commit" title="QSD:block-core.block-commit"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-commit</span></code></a> and
-<a class="reference internal" href="#command-QSD-block-core.block-stream" title="QSD:block-core.block-stream"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-stream</span></code></a>.  <code class="docutils literal notranslate"><span class="pre">auto-dismiss</span></code> is enabled by default for these
+dismiss enabled.  In turn, automatic dismiss may be enabled only for
+jobs that have <code class="docutils literal notranslate"><span class="pre">auto-dismiss</span></code> option, which are <a class="reference internal" href="#command-QSD-block-core.drive-backup" title="QSD:block-core.drive-backup"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">drive-backup</span></code></a>,
+<a class="reference internal" href="#command-QSD-block-core.blockdev-backup" title="QSD:block-core.blockdev-backup"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-backup</span></code></a>, <a class="reference internal" href="#command-QSD-block-core.drive-mirror" title="QSD:block-core.drive-mirror"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">drive-mirror</span></code></a>, <a class="reference internal" href="#command-QSD-block-core.blockdev-mirror" title="QSD:block-core.blockdev-mirror"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-mirror</span></code></a>, <a class="reference internal" href="#command-QSD-block-core.block-commit" title="QSD:block-core.block-commit"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-commit</span></code></a>
+and <a class="reference internal" href="#command-QSD-block-core.block-stream" title="QSD:block-core.block-stream"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-stream</span></code></a>.  <code class="docutils literal notranslate"><span class="pre">auto-dismiss</span></code> is enabled by default for these
 jobs.</p>
 <p>This command will refuse to operate on any job that has not yet
 reached its terminal state, CONCLUDED.  For jobs that make use of
-the JOB_READY event, <a class="reference internal" href="#command-QSD-job.job-cancel" title="QSD:job.job-cancel"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-cancel</span></code></a> or <a class="reference internal" href="#command-QSD-job.job-complete" title="QSD:job.job-complete"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-complete</span></code></a> will still need to
-be used as appropriate.</p>
+the JOB_READY event, <a class="reference internal" href="#command-QSD-job.job-cancel" title="QSD:job.job-cancel"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-cancel</span></code></a> or <a class="reference internal" href="#command-QSD-job.job-complete" title="QSD:job.job-complete"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-complete</span></code></a> will still need
+to be used as appropriate.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1598,8 +1601,8 @@ in the PENDING state.</p>
 <p>For jobs in a transaction, instructing one job to finalize will
 force ALL jobs in the transaction to finalize, so it is only
 necessary to instruct a single member job to finalize.</p>
-<p>The command is applicable only to jobs which have <code class="docutils literal notranslate"><span class="pre">auto-finalize</span></code> option
-and only when this option is set to false.</p>
+<p>The command is applicable only to jobs which have <code class="docutils literal notranslate"><span class="pre">auto-finalize</span></code>
+option and only when this option is set to false.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1770,14 +1773,15 @@ encrypted (since 2.10)</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Members<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>encryption-format</strong> (<span><a class="reference internal" href="#enum-QSD-block-core.RbdImageEncryptionFormat" title="QSD:block-core.RbdImageEncryptionFormat"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">RbdImageEncryptionFormat</span></code></a>, <em>optional</em></span>) – Image encryption format. If encryption is enabled for the
-image (see encrypted in BlockNodeInfo), this is the actual format in which the
-image is accessed. If encryption is not enabled, this is the result of
-probing when the image was opened, to give a suggestion which encryption
-format could be enabled. Note that probing results can be changed by the
-guest by writing a (possibly partial) encryption format header to the
-image, so don’t treat this information as trusted if the guest is not
-trusted.</p></li>
+<li><p><strong>encryption-format</strong> (<span><a class="reference internal" href="#enum-QSD-block-core.RbdImageEncryptionFormat" title="QSD:block-core.RbdImageEncryptionFormat"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">RbdImageEncryptionFormat</span></code></a>, <em>optional</em></span>) – Image encryption format.  If encryption is
+enabled for the image (see encrypted in BlockNodeInfo), this is
+the actual format in which the image is accessed.  If encryption
+is not enabled, this is the result of probing when the image was
+opened, to give a suggestion which encryption format could be
+enabled.  Note that probing results can be changed by the guest
+by writing a (possibly partial) encryption format header to the
+image, so don’t treat this information as trusted if the guest
+is not trusted.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1891,6 +1895,51 @@ structures.</p>
 </dd></dl>
 
 <dl class="qapi object">
+<dt class="sig sig-object qapi" id="object-QSD-block-core.BlockLimitsInfo">
+<em class="property"><span class="k"><span class="pre">Object</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BlockLimitsInfo</span></span><a class="headerlink" href="#object-QSD-block-core.BlockLimitsInfo" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Members<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request-alignment</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code></span>) – Alignment requirement, in bytes, for
+offset/length of I/O requests.</p></li>
+<li><p><strong>max-discard</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – Maximum number of bytes that can be discarded at once.
+If not present, there is no specific maximum.</p></li>
+<li><p><strong>discard-alignment</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – Optimal alignment for discard requests in bytes.
+Note that this doesn’t have to be a power of two.  If not
+present, discards don’t have a alignment requirement different
+from <code class="docutils literal notranslate"><span class="pre">request-alignment</span></code>.</p></li>
+<li><p><strong>max-write-zeroes</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – Maximum number of bytes that can be zeroed out at
+once.  If not present, there is no specific maximum.</p></li>
+<li><p><strong>write-zeroes-alignment</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – Optimal alignment for write zeroes requests
+in bytes.  Note that this doesn’t have to be a power of two.  If
+not present, write_zeroes doesn’t have a alignment requirement
+different from <code class="docutils literal notranslate"><span class="pre">request-alignment</span></code>.</p></li>
+<li><p><strong>opt-transfer</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – Optimal transfer length in bytes.  If not present,
+there is no preferred size.</p></li>
+<li><p><strong>max-transfer</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – Maximal transfer length in bytes.  If not present,
+there is no specific maximum.</p></li>
+<li><p><strong>max-hw-transfer</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – Maximal hardware transfer length in bytes.
+Applies whenever transfers to the device bypass the kernel I/O
+scheduler, for example with SG_IO.  If not present, there is no
+specific maximum.</p></li>
+<li><p><strong>max-iov</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code></span>) – Maximum number of scatter/gather elements</p></li>
+<li><p><strong>max-hw-iov</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – Maximum number of scatter/gather elements allowed by
+the hardware.  Applies whenever transfers to the device bypass
+the kernel I/O scheduler, for example with SG_IO.  If not
+present, the hardware limits is unknown and <code class="docutils literal notranslate"><span class="pre">max-iov</span></code> is always
+used.</p></li>
+<li><p><strong>min-mem-alignment</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code></span>) – Minimal required memory alignment in bytes for
+zero-copy I/O to succeed.  For unaligned requests, a bounce
+buffer will be used.</p></li>
+<li><p><strong>opt-mem-alignment</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code></span>) – Optimal memory alignment in bytes.  This is the
+alignment used for any buffer allocations QEMU performs
+internally.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="qapi object">
 <dt class="sig sig-object qapi" id="object-QSD-block-core.BlockNodeInfo">
 <em class="property"><span class="k"><span class="pre">Object</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BlockNodeInfo</span></span><span class="w"> </span><span><span class="pre">(Since:</span> <span class="pre">8.0)</span></span><a class="headerlink" href="#object-QSD-block-core.BlockNodeInfo" title="Link to this definition"></a></dt>
 <dd><p>Information about a QEMU image file</p>
@@ -1909,6 +1958,7 @@ structures.</p>
 <li><p><strong>full-backing-filename</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – full path of the backing file</p></li>
 <li><p><strong>backing-filename-format</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – the format of the backing file</p></li>
 <li><p><strong>snapshots</strong> (<span><code class="docutils literal notranslate"><span class="pre">[</span></code><a class="reference internal" href="#object-QSD-block-core.SnapshotInfo" title="QSD:block-core.SnapshotInfo"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">SnapshotInfo</span></code></a><code class="docutils literal notranslate"><span class="pre">]</span></code>, <em>optional</em></span>) – list of VM snapshots</p></li>
+<li><p><strong>limits</strong> (<span><a class="reference internal" href="#object-QSD-block-core.BlockLimitsInfo" title="QSD:block-core.BlockLimitsInfo"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">BlockLimitsInfo</span></code></a>, <em>optional</em></span>) – block limits that are used for I/O on the node (Since 10.2)</p></li>
 <li><p><strong>format-specific</strong> (<span><a class="reference internal" href="#object-QSD-block-core.ImageInfoSpecific" title="QSD:block-core.ImageInfoSpecific"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">ImageInfoSpecific</span></code></a>, <em>optional</em></span>) – structure supplying additional format-specific
 information (since 1.7)</p></li>
 </ul>
@@ -1940,8 +1990,8 @@ parent.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Members<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code></span>) – Child name of the root node in the <a class="reference internal" href="#object-QSD-block-core.BlockGraphInfo" title="QSD:block-core.BlockGraphInfo"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">BlockGraphInfo</span></code></a> struct, in
-its role as the child of some undescribed parent node</p></li>
+<li><p><strong>name</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code></span>) – Child name of the root node in the <a class="reference internal" href="#object-QSD-block-core.BlockGraphInfo" title="QSD:block-core.BlockGraphInfo"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">BlockGraphInfo</span></code></a> struct,
+in its role as the child of some undescribed parent node</p></li>
 <li><p><strong>info</strong> (<span><a class="reference internal" href="#object-QSD-block-core.BlockGraphInfo" title="QSD:block-core.BlockGraphInfo"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">BlockGraphInfo</span></code></a></span>) – Block graph information starting at this node</p></li>
 </ul>
 </dd>
@@ -2073,10 +2123,11 @@ added, ‘tftp’ dropped 2.9: ‘archipelago’ dropped</p></li>
 <li><p><strong>backing_file</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – the name of the backing file (for copy-on-write)</p></li>
 <li><p><strong>backing_file_depth</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code></span>) – number of files in the backing file chain
 (since: 1.2)</p></li>
-<li><p><strong>children</strong> (<span><code class="docutils literal notranslate"><span class="pre">[</span></code><a class="reference internal" href="#object-QSD-block-core.BlockdevChild" title="QSD:block-core.BlockdevChild"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">BlockdevChild</span></code></a><code class="docutils literal notranslate"><span class="pre">]</span></code></span>) – Information about child block nodes. (since: 10.1)</p></li>
-<li><p><strong>active</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code></span>) – true if the backend is active; typical cases for inactive backends
-are on the migration source instance after migration completes and on the
-destination before it completes.  (since: 10.0)</p></li>
+<li><p><strong>children</strong> (<span><code class="docutils literal notranslate"><span class="pre">[</span></code><a class="reference internal" href="#object-QSD-block-core.BlockdevChild" title="QSD:block-core.BlockdevChild"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">BlockdevChild</span></code></a><code class="docutils literal notranslate"><span class="pre">]</span></code></span>) – Information about child block nodes.  (since: 10.1)</p></li>
+<li><p><strong>active</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code></span>) – true if the backend is active; typical cases for inactive
+backends are on the migration source instance after migration
+completes and on the destination before it completes.
+(since: 10.0)</p></li>
 <li><p><strong>encrypted</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code></span>) – true if the backing device is encrypted</p></li>
 <li><p><strong>detect_zeroes</strong> (<span><a class="reference internal" href="#enum-QSD-block-core.BlockdevDetectZeroesOptions" title="QSD:block-core.BlockdevDetectZeroesOptions"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">BlockdevDetectZeroesOptions</span></code></a></span>) – detect and optimize zero writes (Since 2.1)</p></li>
 <li><p><strong>bps</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code></span>) – total throughput limit in bytes per second is specified</p></li>
@@ -2292,9 +2343,16 @@ support persistent bitmaps.  (since 5.1)</p></li>
 <em class="property"><span class="k"><span class="pre">Command</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query-block</span></span><span class="w"> </span><span><span class="pre">(Since:</span> <span class="pre">0.14)</span></span><a class="headerlink" href="#command-QSD-block-core.query-block" title="Link to this definition"></a></dt>
 <dd><p>Get a list of <a class="reference internal" href="#object-QSD-block-core.BlockInfo" title="QSD:block-core.BlockInfo"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">BlockInfo</span></code></a> for all virtual block devices.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span><code class="docutils literal notranslate"><span class="pre">[</span></code><a class="reference internal" href="#object-QSD-block-core.BlockInfo" title="QSD:block-core.BlockInfo"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">BlockInfo</span></code></a><code class="docutils literal notranslate"><span class="pre">]</span></code></span> – a list describing each virtual block device.
-Filter nodes that were created implicitly are skipped over.</p>
+<dt class="field-odd">Arguments<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flat</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – Omit nested data about the backing image, i.e. <a class="reference internal" href="#object-QSD-block-core.BlockInfo" title="QSD:block-core.BlockInfo"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">BlockInfo</span></code></a>
+member ‘inserted.image.backing-image’ will be absent.
+Default is false.  (Since 11.0)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><code class="docutils literal notranslate"><span class="pre">[</span></code><a class="reference internal" href="#object-QSD-block-core.BlockInfo" title="QSD:block-core.BlockInfo"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">BlockInfo</span></code></a><code class="docutils literal notranslate"><span class="pre">]</span></code></span> – a list describing each virtual block device.  Filter nodes
+that were created implicitly are skipped over.</p>
 </dd>
 </dl>
 <div class="admonition admonition-example">
@@ -3000,10 +3058,11 @@ block device supports io-status (see <a class="reference internal" href="#object
 default ‘report’ (no limitations, since this applies to a
 different block device than <code class="docutils literal notranslate"><span class="pre">device</span></code>).</p></li>
 <li><p><strong>on-cbw-error</strong> (<span><a class="reference internal" href="#enum-QSD-block-core.OnCbwError" title="QSD:block-core.OnCbwError"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">OnCbwError</span></code></a>, <em>optional</em></span>) – policy defining behavior on I/O errors in
-copy-before-write jobs; defaults to break-guest-write.  (Since 10.1)</p></li>
+copy-before-write jobs; defaults to break-guest-write.
+(Since 10.1)</p></li>
 <li><p><strong>auto-finalize</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – When false, this job will wait in a PENDING state
-after it has finished its work, waiting for <a class="reference internal" href="#command-QSD-job.job-finalize" title="QSD:job.job-finalize"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-finalize</span></code></a> before
-making any block graph changes.  When true, this job will
+after it has finished its work, waiting for <a class="reference internal" href="#command-QSD-job.job-finalize" title="QSD:job.job-finalize"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-finalize</span></code></a>
+before making any block graph changes.  When true, this job will
 automatically perform its abort or commit actions.  Defaults to
 true.  (Since 2.12)</p></li>
 <li><p><strong>auto-dismiss</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – When false, this job will wait in a CONCLUDED state
@@ -3113,7 +3172,8 @@ active image.</p>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>allow-write-only-overlay</strong> – If present, the check whether this
 operation is safe was relaxed so that it can be used to change
-backing file of a destination of a <a class="reference internal" href="#command-QSD-block-core.blockdev-mirror" title="QSD:block-core.blockdev-mirror"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-mirror</span></code></a>.  (since 5.0)</p></li>
+backing file of a destination of a <a class="reference internal" href="#command-QSD-block-core.blockdev-mirror" title="QSD:block-core.blockdev-mirror"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-mirror</span></code></a>.
+(since 5.0)</p></li>
 </ul>
 </dd>
 </dl>
@@ -3175,8 +3235,8 @@ DeviceNotFound</p></li>
 i.e., writes data between ‘top’ and ‘base’ into ‘base’.</p>
 <p>If top == base, that is an error.  If top has no overlays on top of
 it, or if it is in use by a writer, the job will not be completed by
-itself.  The user needs to complete the job with the
-<a class="reference internal" href="#command-QSD-job.job-complete" title="QSD:job.job-complete"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-complete</span></code></a> command after getting the ready event.  (Since 2.0)</p>
+itself.  The user needs to complete the job with the <a class="reference internal" href="#command-QSD-job.job-complete" title="QSD:job.job-complete"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-complete</span></code></a>
+command after getting the ready event.  (Since 2.0)</p>
 <p>If the base image is smaller than top, then the base image will be
 resized to be the same size as top.  If top is smaller than the base
 image, the base will not be truncated.  If you want the base image
@@ -3227,8 +3287,8 @@ filter driver that the commit job inserts into the graph above
 <code class="docutils literal notranslate"><span class="pre">top</span></code>.  If this option is not given, a node name is
 autogenerated.  (Since: 2.9)</p></li>
 <li><p><strong>auto-finalize</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – When false, this job will wait in a PENDING state
-after it has finished its work, waiting for <a class="reference internal" href="#command-QSD-job.job-finalize" title="QSD:job.job-finalize"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-finalize</span></code></a> before
-making any block graph changes.  When true, this job will
+after it has finished its work, waiting for <a class="reference internal" href="#command-QSD-job.job-finalize" title="QSD:job.job-finalize"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-finalize</span></code></a>
+before making any block graph changes.  When true, this job will
 automatically perform its abort or commit actions.  Defaults to
 true.  (Since 3.1)</p></li>
 <li><p><strong>auto-dismiss</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – When false, this job will wait in a CONCLUDED state
@@ -3308,10 +3368,10 @@ instead.</p></li>
 <dt class="sig sig-object qapi" id="command-QSD-block-core.blockdev-backup">
 <em class="property"><span class="k"><span class="pre">Command</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">blockdev-backup</span></span><span class="w"> </span><span><span class="pre">(Since:</span> <span class="pre">2.3)</span></span><a class="headerlink" href="#command-QSD-block-core.blockdev-backup" title="Link to this definition"></a></dt>
 <dd><p>Start a point-in-time copy of a block device to a new destination.
-The status of ongoing <a class="reference internal" href="#command-QSD-block-core.blockdev-backup" title="QSD:block-core.blockdev-backup"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-backup</span></code></a> operations can be checked with
-<a class="reference internal" href="#command-QSD-block-core.query-block-jobs" title="QSD:block-core.query-block-jobs"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">query-block-jobs</span></code></a> where the <a class="reference internal" href="#object-QSD-block-core.BlockJobInfo" title="QSD:block-core.BlockJobInfo"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">BlockJobInfo</span></code></a>.type field has the value
-‘backup’.  The operation can be stopped before it has completed
-using the <a class="reference internal" href="#command-QSD-job.job-cancel" title="QSD:job.job-cancel"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-cancel</span></code></a> or <a class="reference internal" href="#command-QSD-block-core.block-job-cancel" title="QSD:block-core.block-job-cancel"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-job-cancel</span></code></a> command.</p>
+The status of ongoing <a class="reference internal" href="#command-QSD-block-core.blockdev-backup" title="QSD:block-core.blockdev-backup"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-backup</span></code></a> operations can be checked
+with <a class="reference internal" href="#command-QSD-block-core.query-block-jobs" title="QSD:block-core.query-block-jobs"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">query-block-jobs</span></code></a> where the <a class="reference internal" href="#object-QSD-block-core.BlockJobInfo" title="QSD:block-core.BlockJobInfo"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">BlockJobInfo</span></code></a>.type field has the
+value ‘backup’.  The operation can be stopped before it has
+completed using the <a class="reference internal" href="#command-QSD-job.job-cancel" title="QSD:job.job-cancel"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-cancel</span></code></a> or <a class="reference internal" href="#command-QSD-block-core.block-job-cancel" title="QSD:block-core.block-job-cancel"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-job-cancel</span></code></a> command.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -3602,8 +3662,8 @@ Default is true.  (Since 2.4)</p></li>
 <li><p><strong>copy-mode</strong> (<span><a class="reference internal" href="#enum-QSD-block-core.MirrorCopyMode" title="QSD:block-core.MirrorCopyMode"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">MirrorCopyMode</span></code></a>, <em>optional</em></span>) – when to copy data to the destination; defaults to
 ‘background’ (Since: 3.0)</p></li>
 <li><p><strong>auto-finalize</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – When false, this job will wait in a PENDING state
-after it has finished its work, waiting for <a class="reference internal" href="#command-QSD-job.job-finalize" title="QSD:job.job-finalize"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-finalize</span></code></a> before
-making any block graph changes.  When true, this job will
+after it has finished its work, waiting for <a class="reference internal" href="#command-QSD-job.job-finalize" title="QSD:job.job-finalize"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-finalize</span></code></a>
+before making any block graph changes.  When true, this job will
 automatically perform its abort or commit actions.  Defaults to
 true.  (Since 3.1)</p></li>
 <li><p><strong>auto-dismiss</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – When false, this job will wait in a CONCLUDED state
@@ -3644,7 +3704,8 @@ only Qcow2 disks support persistent bitmaps.  Default is false
 for <a class="reference internal" href="#command-QSD-block-core.block-dirty-bitmap-add" title="QSD:block-core.block-dirty-bitmap-add"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-dirty-bitmap-add</span></code></a>.  (Since: 2.10)</p></li>
 <li><p><strong>disabled</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – the bitmap is created in the disabled state, which means
 that it will not track drive changes.  The bitmap may be enabled
-with <a class="reference internal" href="#command-QSD-block-core.block-dirty-bitmap-enable" title="QSD:block-core.block-dirty-bitmap-enable"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-dirty-bitmap-enable</span></code></a>.  Default is false.  (Since: 4.0)</p></li>
+with <a class="reference internal" href="#command-QSD-block-core.block-dirty-bitmap-enable" title="QSD:block-core.block-dirty-bitmap-enable"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-dirty-bitmap-enable</span></code></a>.  Default is false.
+(Since: 4.0)</p></li>
 </ul>
 </dd>
 </dl>
@@ -3713,8 +3774,8 @@ the writes.</p>
 <dt class="sig sig-object qapi" id="command-QSD-block-core.block-dirty-bitmap-remove">
 <em class="property"><span class="k"><span class="pre">Command</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">block-dirty-bitmap-remove</span></span><span class="w"> </span><span><span class="pre">(Since:</span> <span class="pre">2.4)</span></span><a class="headerlink" href="#command-QSD-block-core.block-dirty-bitmap-remove" title="Link to this definition"></a></dt>
 <dd><p>Stop write tracking and remove the dirty bitmap that was created
-with <a class="reference internal" href="#command-QSD-block-core.block-dirty-bitmap-add" title="QSD:block-core.block-dirty-bitmap-add"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-dirty-bitmap-add</span></code></a>.  If the bitmap is persistent, remove it
-from its storage too.</p>
+with <a class="reference internal" href="#command-QSD-block-core.block-dirty-bitmap-add" title="QSD:block-core.block-dirty-bitmap-add"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-dirty-bitmap-add</span></code></a>.  If the bitmap is persistent, remove
+it from its storage too.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -3949,8 +4010,8 @@ autogenerated.  (Since: 2.9)</p></li>
 <li><p><strong>copy-mode</strong> (<span><a class="reference internal" href="#enum-QSD-block-core.MirrorCopyMode" title="QSD:block-core.MirrorCopyMode"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">MirrorCopyMode</span></code></a>, <em>optional</em></span>) – when to copy data to the destination; defaults to
 ‘background’ (Since: 3.0)</p></li>
 <li><p><strong>auto-finalize</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – When false, this job will wait in a PENDING state
-after it has finished its work, waiting for <a class="reference internal" href="#command-QSD-job.job-finalize" title="QSD:job.job-finalize"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-finalize</span></code></a> before
-making any block graph changes.  When true, this job will
+after it has finished its work, waiting for <a class="reference internal" href="#command-QSD-job.job-finalize" title="QSD:job.job-finalize"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-finalize</span></code></a>
+before making any block graph changes.  When true, this job will
 automatically perform its abort or commit actions.  Defaults to
 true.  (Since 3.1)</p></li>
 <li><p><strong>auto-dismiss</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – When false, this job will wait in a CONCLUDED state
@@ -4180,8 +4241,8 @@ filter driver that the stream job inserts into the graph above
 <code class="docutils literal notranslate"><span class="pre">device</span></code>.  If this option is not given, a node name is
 autogenerated.  (Since: 6.0)</p></li>
 <li><p><strong>auto-finalize</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – When false, this job will wait in a PENDING state
-after it has finished its work, waiting for <a class="reference internal" href="#command-QSD-job.job-finalize" title="QSD:job.job-finalize"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-finalize</span></code></a> before
-making any block graph changes.  When true, this job will
+after it has finished its work, waiting for <a class="reference internal" href="#command-QSD-job.job-finalize" title="QSD:job.job-finalize"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-finalize</span></code></a>
+before making any block graph changes.  When true, this job will
 automatically perform its abort or commit actions.  Defaults to
 true.  (Since 3.1)</p></li>
 <li><p><strong>auto-dismiss</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – When false, this job will wait in a CONCLUDED state
@@ -4360,15 +4421,15 @@ This command is deprecated.</div>
 state.  Completing the job in any other state is an error.</p>
 <p>This is supported only for drive mirroring, where it also switches
 the device to write to the target path only.  Note that drive
-mirroring includes <a class="reference internal" href="#command-QSD-block-core.drive-mirror" title="QSD:block-core.drive-mirror"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">drive-mirror</span></code></a>, <a class="reference internal" href="#command-QSD-block-core.blockdev-mirror" title="QSD:block-core.blockdev-mirror"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-mirror</span></code></a> and <a class="reference internal" href="#command-QSD-block-core.block-commit" title="QSD:block-core.block-commit"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-commit</span></code></a>
-job (only in case of “active commit”, when the node being commited
-is used by the guest).  The ability to complete is signaled with a
-<a class="reference internal" href="#event-QSD-block-core.BLOCK_JOB_READY" title="QSD:block-core.BLOCK_JOB_READY"><code class="xref any qapi qapi-event docutils literal notranslate"><span class="pre">BLOCK_JOB_READY</span></code></a> event.</p>
+mirroring includes <a class="reference internal" href="#command-QSD-block-core.drive-mirror" title="QSD:block-core.drive-mirror"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">drive-mirror</span></code></a>, <a class="reference internal" href="#command-QSD-block-core.blockdev-mirror" title="QSD:block-core.blockdev-mirror"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-mirror</span></code></a> and
+<a class="reference internal" href="#command-QSD-block-core.block-commit" title="QSD:block-core.block-commit"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-commit</span></code></a> job (only in case of “active commit”, when the node
+being committed is used by the guest).  The ability to complete is
+signaled with a <a class="reference internal" href="#event-QSD-block-core.BLOCK_JOB_READY" title="QSD:block-core.BLOCK_JOB_READY"><code class="xref any qapi qapi-event docutils literal notranslate"><span class="pre">BLOCK_JOB_READY</span></code></a> event.</p>
 <p>This command completes an active background block operation
 synchronously.  The ordering of this command’s return with the
-<a class="reference internal" href="#event-QSD-block-core.BLOCK_JOB_COMPLETED" title="QSD:block-core.BLOCK_JOB_COMPLETED"><code class="xref any qapi qapi-event docutils literal notranslate"><span class="pre">BLOCK_JOB_COMPLETED</span></code></a> event is not defined.  Note that if an I/O error
-occurs during the processing of this command: 1) the command itself
-will fail; 2) the error will be processed according to the
+<a class="reference internal" href="#event-QSD-block-core.BLOCK_JOB_COMPLETED" title="QSD:block-core.BLOCK_JOB_COMPLETED"><code class="xref any qapi qapi-event docutils literal notranslate"><span class="pre">BLOCK_JOB_COMPLETED</span></code></a> event is not defined.  Note that if an I/O
+error occurs during the processing of this command: 1) the command
+itself will fail; 2) the error will be processed according to the
 rerror/werror arguments that were specified when starting the
 operation.</p>
 <dl class="field-list simple">
@@ -4404,10 +4465,10 @@ This command is deprecated.</div>
 </div>
 <p>Deletes a job that is in the CONCLUDED state.  This command only
 needs to be run explicitly for jobs that don’t have automatic
-dismiss enabled.  In turn, automatic dismiss may be enabled only
-for jobs that have <code class="docutils literal notranslate"><span class="pre">auto-dismiss</span></code> option, which are <a class="reference internal" href="#command-QSD-block-core.drive-backup" title="QSD:block-core.drive-backup"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">drive-backup</span></code></a>,
-<a class="reference internal" href="#command-QSD-block-core.blockdev-backup" title="QSD:block-core.blockdev-backup"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-backup</span></code></a>, <a class="reference internal" href="#command-QSD-block-core.drive-mirror" title="QSD:block-core.drive-mirror"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">drive-mirror</span></code></a>, <a class="reference internal" href="#command-QSD-block-core.blockdev-mirror" title="QSD:block-core.blockdev-mirror"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-mirror</span></code></a>, <a class="reference internal" href="#command-QSD-block-core.block-commit" title="QSD:block-core.block-commit"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-commit</span></code></a> and
-<a class="reference internal" href="#command-QSD-block-core.block-stream" title="QSD:block-core.block-stream"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-stream</span></code></a>.  <code class="docutils literal notranslate"><span class="pre">auto-dismiss</span></code> is enabled by default for these
+dismiss enabled.  In turn, automatic dismiss may be enabled only for
+jobs that have <code class="docutils literal notranslate"><span class="pre">auto-dismiss</span></code> option, which are <a class="reference internal" href="#command-QSD-block-core.drive-backup" title="QSD:block-core.drive-backup"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">drive-backup</span></code></a>,
+<a class="reference internal" href="#command-QSD-block-core.blockdev-backup" title="QSD:block-core.blockdev-backup"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-backup</span></code></a>, <a class="reference internal" href="#command-QSD-block-core.drive-mirror" title="QSD:block-core.drive-mirror"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">drive-mirror</span></code></a>, <a class="reference internal" href="#command-QSD-block-core.blockdev-mirror" title="QSD:block-core.blockdev-mirror"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-mirror</span></code></a>, <a class="reference internal" href="#command-QSD-block-core.block-commit" title="QSD:block-core.block-commit"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-commit</span></code></a>
+and <a class="reference internal" href="#command-QSD-block-core.block-stream" title="QSD:block-core.block-stream"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-stream</span></code></a>.  <code class="docutils literal notranslate"><span class="pre">auto-dismiss</span></code> is enabled by default for these
 jobs.</p>
 <p>This command will refuse to operate on any job that has not yet
 reached its terminal state, CONCLUDED.  For jobs that make use of
@@ -4442,8 +4503,8 @@ in the PENDING state.</p>
 <p>For jobs in a transaction, instructing one job to finalize will
 force ALL jobs in the transaction to finalize, so it is only
 necessary to instruct a single member job to finalize.</p>
-<p>The command is applicable only to jobs which have <code class="docutils literal notranslate"><span class="pre">auto-finalize</span></code> option
-and only when this option is set to false.</p>
+<p>The command is applicable only to jobs which have <code class="docutils literal notranslate"><span class="pre">auto-finalize</span></code>
+option and only when this option is set to false.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -5770,6 +5831,10 @@ name2=content2;” as explained by CURLOPT_COOKIE(3).  Defaults to
 no cookies.</p></li>
 <li><p><strong>cookie-secret</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – ID of a QCryptoSecret object providing the cookie
 data in a secure way.  See <code class="docutils literal notranslate"><span class="pre">cookie</span></code> for the format.  (since 2.10)</p></li>
+<li><p><strong>force-range</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – Don’t issue a HEAD HTTP request to discover if the
+http server supports range requests and rely only on GET
+requests.  This is especially useful for S3 presigned URLs where
+HEAD requests are unauthorized.  (default: false; since 11.0)</p></li>
 <li><p>The members of <a class="reference internal" href="#object-QSD-block-core.BlockdevOptionsCurlBase" title="QSD:block-core.BlockdevOptionsCurlBase"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">BlockdevOptionsCurlBase</span></code></a>.</p></li>
 </ul>
 </dd>
@@ -5784,14 +5849,9 @@ curl backend.  URLs must start with “<a class="reference external" href="https
 <dl class="field-list simple">
 <dt class="field-odd">Members<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cookie</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – List of cookies to set; format is “name1=content1;
-name2=content2;” as explained by CURLOPT_COOKIE(3).  Defaults to
-no cookies.</p></li>
 <li><p><strong>sslverify</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – Whether to verify the SSL certificate’s validity
 (defaults to true)</p></li>
-<li><p><strong>cookie-secret</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – ID of a QCryptoSecret object providing the cookie
-data in a secure way.  See <code class="docutils literal notranslate"><span class="pre">cookie</span></code> for the format.  (since 2.10)</p></li>
-<li><p>The members of <a class="reference internal" href="#object-QSD-block-core.BlockdevOptionsCurlBase" title="QSD:block-core.BlockdevOptionsCurlBase"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">BlockdevOptionsCurlBase</span></code></a>.</p></li>
+<li><p>The members of <a class="reference internal" href="#object-QSD-block-core.BlockdevOptionsCurlHttp" title="QSD:block-core.BlockdevOptionsCurlHttp"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">BlockdevOptionsCurlHttp</span></code></a>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -5988,9 +6048,9 @@ characters.  (Since 2.0)</p></li>
 <li><p><strong>discard</strong> (<span><a class="reference internal" href="#enum-QSD-block-core.BlockdevDiscardOptions" title="QSD:block-core.BlockdevDiscardOptions"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">BlockdevDiscardOptions</span></code></a>, <em>optional</em></span>) – discard-related options (default: ignore)</p></li>
 <li><p><strong>cache</strong> (<span><a class="reference internal" href="#object-QSD-block-core.BlockdevCacheOptions" title="QSD:block-core.BlockdevCacheOptions"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">BlockdevCacheOptions</span></code></a>, <em>optional</em></span>) – cache-related options</p></li>
 <li><p><strong>active</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – whether the block node should be activated (default: true).
-Having inactive block nodes is useful primarily for migration because it
-allows opening an image on the destination while the source is still
-holding locks for it.  (Since 10.0)</p></li>
+Having inactive block nodes is useful primarily for migration
+because it allows opening an image on the destination while the
+source is still holding locks for it.  (Since 10.0)</p></li>
 <li><p><strong>read-only</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – whether the block device should be read-only (default:
 false).  Note that some block drivers support only read-only
 access, either generally or in certain configurations.  In this
@@ -6157,11 +6217,12 @@ will return an error.  All devices in the list are reopened in one
 transaction, so if one of them fails then the whole transaction is
 cancelled.</p>
 <p>The command receives a list of block devices to reopen.  For each
-one of them, the top-level <code class="docutils literal notranslate"><span class="pre">node-name</span></code> option (from <a class="reference internal" href="#object-QSD-block-core.BlockdevOptions" title="QSD:block-core.BlockdevOptions"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">BlockdevOptions</span></code></a>)
-must be specified and is used to select the block device to be
-reopened.  Other <code class="docutils literal notranslate"><span class="pre">node-name</span></code> options must be either omitted or set to
-the current name of the appropriate node.  This command won’t change
-any node name and any attempt to do it will result in an error.</p>
+one of them, the top-level <code class="docutils literal notranslate"><span class="pre">node-name</span></code> option (from
+<a class="reference internal" href="#object-QSD-block-core.BlockdevOptions" title="QSD:block-core.BlockdevOptions"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">BlockdevOptions</span></code></a>) must be specified and is used to select the block
+device to be reopened.  Other <code class="docutils literal notranslate"><span class="pre">node-name</span></code> options must be either
+omitted or set to the current name of the appropriate node.  This
+command won’t change any node name and any attempt to do it will
+result in an error.</p>
 <p>In the case of options that refer to child nodes, the behavior of
 this command depends on the value:</p>
 <blockquote>
@@ -6177,10 +6238,10 @@ with the specified one.</p></li>
 </div></blockquote>
 <p>Options (1) and (2) are supported in all cases.  Option (3) is
 supported for <code class="docutils literal notranslate"><span class="pre">file</span></code> and <code class="docutils literal notranslate"><span class="pre">backing</span></code>, and option (4) for <code class="docutils literal notranslate"><span class="pre">backing</span></code> only.</p>
-<p>Unlike with <a class="reference internal" href="#command-QSD-block-core.blockdev-add" title="QSD:block-core.blockdev-add"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-add</span></code></a>, the <code class="docutils literal notranslate"><span class="pre">backing</span></code> option must always be present
-unless the node being reopened does not have a backing file and its
-image does not have a default backing file name as part of its
-metadata.</p>
+<p>Unlike with <a class="reference internal" href="#command-QSD-block-core.blockdev-add" title="QSD:block-core.blockdev-add"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-add</span></code></a>, the <code class="docutils literal notranslate"><span class="pre">backing</span></code> option must always be
+present unless the node being reopened does not have a backing file
+and its image does not have a default backing file name as part of
+its metadata.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -6193,8 +6254,8 @@ metadata.</p>
 <dl class="qapi command">
 <dt class="sig sig-object qapi" id="command-QSD-block-core.blockdev-del">
 <em class="property"><span class="k"><span class="pre">Command</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">blockdev-del</span></span><span class="w"> </span><span><span class="pre">(Since:</span> <span class="pre">2.9)</span></span><a class="headerlink" href="#command-QSD-block-core.blockdev-del" title="Link to this definition"></a></dt>
-<dd><p>Deletes a block device that has been added using <a class="reference internal" href="#command-QSD-block-core.blockdev-add" title="QSD:block-core.blockdev-add"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-add</span></code></a>.  The
-command will fail if the node is attached to a device or is
+<dd><p>Deletes a block device that has been added using <a class="reference internal" href="#command-QSD-block-core.blockdev-add" title="QSD:block-core.blockdev-add"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">blockdev-add</span></code></a>.
+The command will fail if the node is attached to a device or is
 otherwise being used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Arguments<span class="colon">:</span></dt>
@@ -6229,18 +6290,18 @@ otherwise being used.</p>
 <dl class="qapi command">
 <dt class="sig sig-object qapi" id="command-QSD-block-core.blockdev-set-active">
 <em class="property"><span class="k"><span class="pre">Command</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">blockdev-set-active</span></span><span class="w"> </span><span><span class="pre">(Since:</span> <span class="pre">10.0)</span></span><a class="headerlink" href="#command-QSD-block-core.blockdev-set-active" title="Link to this definition"></a></dt>
-<dd><p>Activate or inactivate a block device.  Use this to manage the handover of
-block devices on migration with qemu-storage-daemon.</p>
-<p>Activating a node automatically activates all of its child nodes first.
-Inactivating a node automatically inactivates any of its child nodes that are
-not in use by a still active node.</p>
+<dd><p>Activate or deactivate a block device.  Use this to manage the
+handover of block devices on migration with qemu-storage-daemon.</p>
+<p>Activating a node automatically activates all of its child nodes
+first.  Deactivating a node automatically deactivates any of its
+child nodes that are not in use by a still active node.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Arguments<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>node-name</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – Name of the graph node to activate or inactivate.  By default, all
-nodes are affected by the operation.</p></li>
-<li><p><strong>active</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code></span>) – true if the nodes should be active when the command returns success,
-false if they should be inactive.</p></li>
+<li><p><strong>node-name</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – Name of the graph node to activate or deactivate.  By
+default, all nodes are affected by the operation.</p></li>
+<li><p><strong>active</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code></span>) – true if the nodes should be active when the command returns
+success, false if they should be inactive.</p></li>
 </ul>
 </dd>
 </dl>
@@ -6832,7 +6893,7 @@ the <a class="reference internal" href="#event-QSD-block-core.BLOCK_IO_ERROR" ti
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This event is rate-limited.</p>
+<p>This event is rate-limited, except if action is “stop”.</p>
 </div>
 <div class="admonition admonition-example">
 <p class="admonition-title">Example:</p>
@@ -6974,9 +7035,9 @@ On failure this is less than len</p></li>
 <dt class="sig sig-object qapi" id="event-QSD-block-core.BLOCK_JOB_PENDING">
 <em class="property"><span class="k"><span class="pre">Event</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BLOCK_JOB_PENDING</span></span><span class="w"> </span><span><span class="pre">(Since:</span> <span class="pre">2.12)</span></span><a class="headerlink" href="#event-QSD-block-core.BLOCK_JOB_PENDING" title="Link to this definition"></a></dt>
 <dd><p>Emitted when a block job is awaiting explicit authorization to
-finalize graph changes via <a class="reference internal" href="#command-QSD-job.job-finalize" title="QSD:job.job-finalize"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-finalize</span></code></a>.  If this job is part
-of a transaction, it will not emit this event until the transaction
-has converged first.</p>
+finalize graph changes via <a class="reference internal" href="#command-QSD-job.job-finalize" title="QSD:job.job-finalize"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">job-finalize</span></code></a>.  If this job is part of a
+transaction, it will not emit this event until the transaction has
+converged first.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Members<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -7401,8 +7462,8 @@ default: 100).</p></li>
 <dl class="qapi object">
 <dt class="sig sig-object qapi" id="object-QSD-block-export.NbdServerOptions">
 <em class="property"><span class="k"><span class="pre">Object</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">NbdServerOptions</span></span><a class="headerlink" href="#object-QSD-block-export.NbdServerOptions" title="Link to this definition"></a></dt>
-<dd><p>Keep this type consistent with the <a class="reference internal" href="#object-QSD-block-export.NbdServerOptionsLegacy" title="QSD:block-export.NbdServerOptionsLegacy"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">NbdServerOptionsLegacy</span></code></a> type.  The
-only intended difference is using <a class="reference internal" href="#object-QSD-sockets.SocketAddress" title="QSD:sockets.SocketAddress"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">SocketAddress</span></code></a> instead of
+<dd><p>Keep this type consistent with the <a class="reference internal" href="#object-QSD-block-export.NbdServerOptionsLegacy" title="QSD:block-export.NbdServerOptionsLegacy"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">NbdServerOptionsLegacy</span></code></a> type.
+The only intended difference is using <a class="reference internal" href="#object-QSD-sockets.SocketAddress" title="QSD:sockets.SocketAddress"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">SocketAddress</span></code></a> instead of
 <a class="reference internal" href="#object-QSD-sockets.SocketAddressLegacy" title="QSD:sockets.SocketAddressLegacy"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">SocketAddressLegacy</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Members<span class="colon">:</span></dt>
@@ -7417,8 +7478,8 @@ only intended difference is using <a class="reference internal" href="#object-QS
 <dl class="qapi object">
 <dt class="sig sig-object qapi" id="object-QSD-block-export.NbdServerOptionsLegacy">
 <em class="property"><span class="k"><span class="pre">Object</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">NbdServerOptionsLegacy</span></span><a class="headerlink" href="#object-QSD-block-export.NbdServerOptionsLegacy" title="Link to this definition"></a></dt>
-<dd><p>Keep this type consistent with the <a class="reference internal" href="#object-QSD-block-export.NbdServerOptions" title="QSD:block-export.NbdServerOptions"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">NbdServerOptions</span></code></a> type.  The only
-intended difference is using <a class="reference internal" href="#object-QSD-sockets.SocketAddressLegacy" title="QSD:sockets.SocketAddressLegacy"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">SocketAddressLegacy</span></code></a> instead of
+<dd><p>Keep this type consistent with the <a class="reference internal" href="#object-QSD-block-export.NbdServerOptions" title="QSD:block-export.NbdServerOptions"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">NbdServerOptions</span></code></a> type.  The
+only intended difference is using <a class="reference internal" href="#object-QSD-sockets.SocketAddressLegacy" title="QSD:sockets.SocketAddressLegacy"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">SocketAddressLegacy</span></code></a> instead of
 <a class="reference internal" href="#object-QSD-sockets.SocketAddress" title="QSD:sockets.SocketAddress"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">SocketAddress</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Members<span class="colon">:</span></dt>
@@ -7500,8 +7561,8 @@ allocation details.  (since 5.2)</p></li>
 <dt class="field-odd">Members<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>addr</strong> (<span><a class="reference internal" href="#object-QSD-sockets.SocketAddress" title="QSD:sockets.SocketAddress"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">SocketAddress</span></code></a></span>) – The vhost-user socket on which to listen.  Both ‘unix’ and
-‘fd’ <a class="reference internal" href="#object-QSD-sockets.SocketAddress" title="QSD:sockets.SocketAddress"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">SocketAddress</span></code></a> types are supported.  Passed fds must be UNIX
-domain sockets.</p></li>
+‘fd’ <a class="reference internal" href="#object-QSD-sockets.SocketAddress" title="QSD:sockets.SocketAddress"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">SocketAddress</span></code></a> types are supported.  Passed fds must be
+UNIX domain sockets.</p></li>
 <li><p><strong>logical-block-size</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – Logical block size in bytes.  Defaults to 512
 bytes.</p></li>
 <li><p><strong>num-queues</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – Number of request virtqueues.  Must be greater than 0.
@@ -7536,6 +7597,10 @@ without allow_other.</p></li>
 </div>
 <p>Options for exporting a block graph node on some (file) mountpoint
 as a raw image.</p>
+<p>Multi-threading note: The FUSE export supports multi-threading.
+Currently, requests are distributed across these threads in a
+round-robin fashion, i.e. independently of the CPU core from which a
+request originates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Members<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -7717,24 +7782,49 @@ types)</p></li>
 <li><p><strong>writethrough</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – If true, caches are flushed after every write request
 to the export before completion is signalled.  (since: 5.2;
 default: false)</p></li>
-<li><p><strong>iothread</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – The name of the iothread object where the export will
-run.  The default is to use the thread currently associated with
-the block node.  (since: 5.2)</p></li>
+<li><p><strong>iothread</strong> (<span><a class="reference internal" href="#alternate-QSD-block-export.BlockExportIothreads" title="QSD:block-export.BlockExportIothreads"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">BlockExportIothreads</span></code></a>, <em>optional</em></span>) – The name(s) of one or more iothread object(s) where the
+export will run.  The default is to use the thread currently
+associated with the block node.  (since: 5.2; multi-threading
+since 10.1)</p></li>
 <li><p><strong>fixed-iothread</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – True prevents the block node from being moved to
 another thread while the export is active.  If true and
 <code class="docutils literal notranslate"><span class="pre">iothread</span></code> is given, export creation fails if the block node
-cannot be moved to the iothread.  The default is false.
+cannot be moved to the iothread.  Must not be true when giving
+multiple iothreads for <code class="docutils literal notranslate"><span class="pre">iothread</span></code>.  The default is false.
 (since: 5.2)</p></li>
-<li><p><strong>allow-inactive</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – If true, the export allows the exported node to be inactive.
-If it is created for an inactive block node, the node remains inactive.  If
-the export type doesn’t support running on an inactive node, an error is
-returned.  If false, inactive block nodes are automatically activated before
-creating the export and trying to inactivate them later fails.
+<li><p><strong>allow-inactive</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – If true, the export allows the exported node to be
+inactive.  If it is created for an inactive block node, the node
+remains inactive.  If the export type doesn’t support running on
+an inactive node, an error is returned.  If false, inactive
+block nodes are automatically activated before creating the
+export and trying to inactivate them later fails.
 (since: 10.0; default: false)</p></li>
 <li><p>When <code class="docutils literal notranslate"><span class="pre">type</span></code> is <code class="docutils literal notranslate"><span class="pre">nbd</span></code>: The members of <a class="reference internal" href="#object-QSD-block-export.BlockExportOptionsNbd" title="QSD:block-export.BlockExportOptionsNbd"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">BlockExportOptionsNbd</span></code></a>.</p></li>
 <li><p>When <code class="docutils literal notranslate"><span class="pre">type</span></code> is <code class="docutils literal notranslate"><span class="pre">vhost-user-blk</span></code>: The members of <a class="reference internal" href="#object-QSD-block-export.BlockExportOptionsVhostUserBlk" title="QSD:block-export.BlockExportOptionsVhostUserBlk"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">BlockExportOptionsVhostUserBlk</span></code></a>.</p></li>
 <li><p>When <code class="docutils literal notranslate"><span class="pre">type</span></code> is <code class="docutils literal notranslate"><span class="pre">fuse</span></code>: The members of <a class="reference internal" href="#object-QSD-block-export.BlockExportOptionsFuse" title="QSD:block-export.BlockExportOptionsFuse"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">BlockExportOptionsFuse</span></code></a>.</p></li>
 <li><p>When <code class="docutils literal notranslate"><span class="pre">type</span></code> is <code class="docutils literal notranslate"><span class="pre">vduse-blk</span></code>: The members of <a class="reference internal" href="#object-QSD-block-export.BlockExportOptionsVduseBlk" title="QSD:block-export.BlockExportOptionsVduseBlk"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">BlockExportOptionsVduseBlk</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="qapi alternate">
+<dt class="sig sig-object qapi" id="alternate-QSD-block-export.BlockExportIothreads">
+<em class="property"><span class="k"><span class="pre">Alternate</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BlockExportIothreads</span></span><span class="w"> </span><span><span class="pre">(Since:</span> <span class="pre">10.1)</span></span><a class="headerlink" href="#alternate-QSD-block-export.BlockExportIothreads" title="Link to this definition"></a></dt>
+<dd><p>Specify a single or multiple I/O threads in which to run a block
+export’s I/O.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Alternatives<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>single</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code></span>) – Run the export’s I/O in the given single I/O thread.</p></li>
+<li><p><strong>multi</strong> (<span><code class="docutils literal notranslate"><span class="pre">[</span></code><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code><code class="docutils literal notranslate"><span class="pre">]</span></code></span>) – Use multi-threading across the given set of I/O threads,
+which must not be empty.  Note: Passing a single I/O thread via
+this variant is still treated as multi-threading, which is
+different from using the <code class="docutils literal notranslate"><span class="pre">single</span></code> variant.  In particular, even
+if there only is a single I/O thread in the set, export types
+that do not support multi-threading will generally reject this
+variant, and BlockExportOptions.fixed-iothread is always
+incompatible with it.</p></li>
 </ul>
 </dd>
 </dl>
@@ -7802,7 +7892,8 @@ existing client connections)</p></li>
 <li><p><strong>type</strong> (<span><a class="reference internal" href="#enum-QSD-block-export.BlockExportType" title="QSD:block-export.BlockExportType"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">BlockExportType</span></code></a></span>) – The block export type</p></li>
 <li><p><strong>node-name</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code></span>) – The node name of the block node that is exported</p></li>
 <li><p><strong>shutting-down</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code></span>) – True if the export is shutting down (e.g. after a
-<a class="reference internal" href="#command-QSD-block-export.block-export-del" title="QSD:block-export.block-export-del"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-export-del</span></code></a> command, but before the shutdown has completed)</p></li>
+<a class="reference internal" href="#command-QSD-block-export.block-export-del" title="QSD:block-export.block-export-del"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">block-export-del</span></code></a> command, but before the shutdown has
+completed)</p></li>
 </ul>
 </dd>
 </dl>
@@ -8021,6 +8112,8 @@ any other string.</p></li>
 <li><p><strong>logfile</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – The name of a logfile to save output</p></li>
 <li><p><strong>logappend</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – true to append instead of truncate (default to false to
 truncate)</p></li>
+<li><p><strong>logtimestamp</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – true to insert timestamps into logfile
+(default false) (since 11.0)</p></li>
 </ul>
 </dd>
 </dl>
@@ -8083,22 +8176,11 @@ deprecated.</p></li>
 (Since: 2.10)</p></li>
 <li><p><strong>websocket</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – enable websocket protocol on server sockets
 (default: false) (Since: 3.1)</p></li>
-<li><p><strong>reconnect</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – For a client socket, if a socket is disconnected, then
-attempt a reconnect after the given number of seconds.  Setting
-this to zero disables this function.  The use of this member is
-deprecated, use <code class="docutils literal notranslate"><span class="pre">reconnect-ms</span></code> instead.  (default: 0) (Since: 2.2)</p></li>
 <li><p><strong>reconnect-ms</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – For a client socket, if a socket is disconnected,
 then attempt a reconnect after the given number of milliseconds.
-Setting this to zero disables this function.  This member is
-mutually exclusive with <code class="docutils literal notranslate"><span class="pre">reconnect</span></code>.
+Setting this to zero disables this function.
 (default: 0) (Since: 9.2)</p></li>
 <li><p>The members of <a class="reference internal" href="#object-QSD-char.ChardevCommon" title="QSD:char.ChardevCommon"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">ChardevCommon</span></code></a>.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Features<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>deprecated</strong> – Member <code class="docutils literal notranslate"><span class="pre">reconnect</span></code> is deprecated.  Use <code class="docutils literal notranslate"><span class="pre">reconnect-ms</span></code>
-instead.</p></li>
 </ul>
 </dd>
 </dl>
@@ -9334,10 +9416,10 @@ emulator, control in qemu-storage-daemon)</p></li>
 <dd><p>Command <a class="reference internal" href="#command-QSD-introspect.query-qmp-schema" title="QSD:introspect.query-qmp-schema"><code class="xref any qapi qapi-cmd docutils literal notranslate"><span class="pre">query-qmp-schema</span></code></a> exposes the QMP wire ABI as an array of
 <a class="reference internal" href="#object-QSD-introspect.SchemaInfo" title="QSD:introspect.SchemaInfo"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">SchemaInfo</span></code></a>.  This lets QMP clients figure out what commands and
 events are available in this QEMU, and their parameters and results.</p>
-<p>However, the <a class="reference internal" href="#object-QSD-introspect.SchemaInfo" title="QSD:introspect.SchemaInfo"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">SchemaInfo</span></code></a> can’t reflect all the rules and restrictions
-that apply to QMP.  It’s interface introspection (figuring out
-what’s there), not interface specification.  The specification is in
-the QAPI schema.</p>
+<p>However, the <a class="reference internal" href="#object-QSD-introspect.SchemaInfo" title="QSD:introspect.SchemaInfo"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">SchemaInfo</span></code></a> can’t reflect all the rules and
+restrictions that apply to QMP.  It’s interface introspection
+(figuring out what’s there), not interface specification.  The
+specification is in the QAPI schema.</p>
 <p>Furthermore, while we strive to keep the QMP wire format
 backwards-compatible across QEMU versions, the introspection output
 is not guaranteed to have the same stability.  For example, one
@@ -9654,7 +9736,8 @@ graph.</p></li>
 <dt class="field-odd">Members<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code></span>) – the name of the property.</p></li>
-<li><p><strong>type</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code></span>) – the type of the property, as described in <a class="reference internal" href="#object-QSD-qom.ObjectPropertyInfo" title="QSD:qom.ObjectPropertyInfo"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">ObjectPropertyInfo</span></code></a>.</p></li>
+<li><p><strong>type</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code></span>) – the type of the property, as described in
+<a class="reference internal" href="#object-QSD-qom.ObjectPropertyInfo" title="QSD:qom.ObjectPropertyInfo"><code class="xref any qapi qapi-obj docutils literal notranslate"><span class="pre">ObjectPropertyInfo</span></code></a>.</p></li>
 <li><p><strong>value</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">value</span></code>, <em>optional</em></span>) – the value of the property.  Absent when the property cannot
 be read.</p></li>
 </ul>
@@ -9716,7 +9799,7 @@ supported paths–absolute and partial paths.</p>
 <p>Absolute paths are derived from the root object and can follow
 child&lt;&gt; or link&lt;&gt; properties.  Since they can follow link&lt;&gt;
 properties, they can be arbitrarily long.  Absolute paths look
-like absolute filenames and are prefixed  with a leading slash.</p>
+like absolute filenames and are prefixed with a leading slash.</p>
 <p>Partial paths look like relative filenames.  They do not begin
 with a prefix.  The matching rules for partial paths are subtle
 but designed to make specifying objects easy.  At each level of
@@ -10466,14 +10549,14 @@ initiator to target characteristics this information must be
 combined with information retrieved from the discoverable part
 of the path.  An example would use CDAT (see UEFI.org)
 information read from devices and switches in conjunction with
-link characteristics read from PCIe Configuration space.
-To get the full path latency from CPU to CXL attached DRAM
-CXL device: Add the latency from CPU to Generic Port (from
-HMAT indexed via the node ID in this SRAT structure) to
-that for CXL bus links, the latency across intermediate switches
-and from the EP port to the actual memory.  Bandwidth is more
-complex as there may be interleaving across multiple devices
-and shared links in the path.</p></li>
+link characteristics read from PCIe Configuration space.  To get
+the full path latency from CPU to CXL attached DRAM CXL device:
+Add the latency from CPU to Generic Port (from HMAT indexed via
+the node ID in this SRAT structure) to that for CXL bus links,
+the latency across intermediate switches and from the EP port to
+the actual memory.  Bandwidth is more complex as there may be
+interleaving across multiple devices and shared links in the
+path.</p></li>
 </ul>
 </dd>
 </dl>
@@ -10568,6 +10651,12 @@ designated guest firmware page for measured boot with -kernel
 (default: false) (since 6.2)</p></li>
 </ul>
 </dd>
+<dt class="field-even">Features<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>confidential-guest-reset</strong> – If present, the hypervisor supports
+confidential guest resets (since 11.0).</p></li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
 
@@ -10591,8 +10680,7 @@ versions that rely on legacy KVM_SEV_INIT behavior.  ‘auto’ will
 behave identically to ‘on’, but will automatically switch to
 using KVM_SEV_INIT2 if the user specifies any additional options
 that require it.  If set to ‘off’, QEMU will require
-KVM_SEV_INIT2 unconditionally.
-(default: off) (since 9.1)</p></li>
+KVM_SEV_INIT2 unconditionally.  (default: off) (since 9.1)</p></li>
 <li><p>The members of <a class="reference internal" href="#object-QSD-qom.SevCommonProperties" title="QSD:qom.SevCommonProperties"><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">SevCommonProperties</span></code></a>.</p></li>
 </ul>
 </dd>
@@ -10625,8 +10713,8 @@ SEV-SNP firmware ABI (default: all-zero)</p></li>
 <li><p><strong>id-auth</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – 4096-byte, base64-encoded blob to provide the ‘ID
 Authentication Information Structure’ for the SNP_LAUNCH_FINISH
 command defined in the SEV-SNP firmware ABI (default: all-zero)</p></li>
-<li><p><strong>author-key-enabled</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – true if ‘id-auth’ blob contains the ‘AUTHOR_KEY’
-field defined SEV-SNP firmware ABI (default: false)</p></li>
+<li><p><strong>author-key-enabled</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – true if ‘id-auth’ blob contains the
+‘AUTHOR_KEY’ field defined SEV-SNP firmware ABI (default: false)</p></li>
 <li><p><strong>host-data</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – 32-byte, base64-encoded, user-defined blob to provide to
 the guest, as documented for the ‘HOST_DATA’ parameter of the
 SNP_LAUNCH_FINISH command in the SEV-SNP firmware ABI (default:
@@ -10651,15 +10739,15 @@ firmware.  Set this to true to disable the use of VCEK.
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>attributes</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">int</span></code>, <em>optional</em></span>) – The ‘attributes’ of a TD guest that is passed to
 KVM_TDX_INIT_VM</p></li>
-<li><p><strong>sept-ve-disable</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – toggle bit 28 of TD attributes to control disabling
-of EPT violation conversion to #VE on guest TD access of PENDING
-pages.  Some guest OS (e.g., Linux TD guest) may require this to
-be set, otherwise they refuse to boot.</p></li>
+<li><p><strong>sept-ve-disable</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">boolean</span></code>, <em>optional</em></span>) – toggle bit 28 of TD attributes to control
+disabling of EPT violation conversion to #VE on guest TD access
+of PENDING pages.  Some guest OS (e.g., Linux TD guest) may
+require this to be set, otherwise they refuse to boot.</p></li>
 <li><p><strong>mrconfigid</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – ID for non-owner-defined configuration of the guest TD,
-e.g., run-time or OS configuration (base64 encoded SHA384 digest).
-Defaults to all zeros.</p></li>
-<li><p><strong>mrowner</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – ID for the guest TD’s owner (base64 encoded SHA384 digest).
-Defaults to all zeros.</p></li>
+e.g., run-time or OS configuration (base64 encoded SHA384
+digest).  Defaults to all zeros.</p></li>
+<li><p><strong>mrowner</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – ID for the guest TD’s owner (base64 encoded SHA384
+digest).  Defaults to all zeros.</p></li>
 <li><p><strong>mrownerconfig</strong> (<span><code class="xref qapi qapi-type docutils literal notranslate"><span class="pre">string</span></code>, <em>optional</em></span>) – ID for owner-defined configuration of the guest TD,
 e.g., specific to the workload rather than the run-time or OS
 (base64 encoded SHA384 digest).  Defaults to all zeros.</p></li>
@@ -10667,6 +10755,12 @@ e.g., specific to the workload rather than the run-time or OS
 Service (QGS).  QGS is a daemon running on the host.  Without
 it, the guest will not be able to get a TD quote for
 attestation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Features<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>confidential-guest-reset</strong> – If present, the hypervisor supports
+confidential guest resets (since 11.0).</p></li>
 </ul>
 </dd>
 </dl>
@@ -10890,7 +10984,7 @@ experimental.</p></li>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -10901,7 +10995,7 @@ experimental.</p></li>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

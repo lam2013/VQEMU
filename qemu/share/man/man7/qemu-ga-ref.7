@@ -27,12 +27,12 @@ level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
 .in \\n[rst2man-indent\\n[rst2man-indent-level]]u
 ..
-.TH "QEMU-GA-REF" "7" "Aug 26, 2025" "10.1.0" "QEMU"
+.TH "QEMU-GA-REF" "7" "Apr 16, 2026" "10.2.94" "QEMU"
 .SH NAME
 qemu-ga-ref \- QEMU Guest Agent Protocol Reference
 .sp
-This manual describes the commands supported by the QEMU Guest
-Agent Protocol.
+This manual describes the commands supported by the QEMU Guest Agent
+Protocol.
 .sp
 For locating  a particular item, please see the \fI\%QGA Index\fP\&.
 .sp
@@ -109,8 +109,8 @@ such a way that this response can be obtained.
 In cases where a partial stale response was previously received by
 the client, this cannot always be done reliably.  One particular
 scenario being if qemu\-ga responses are fed character\-by\-character
-into a JSON parser.  In these situations, using \fI\%guest\-sync\-delimited\fP
-may be optimal.
+into a JSON parser.  In these situations, using
+\fI\%guest\-sync\-delimited\fP may be optimal.
 .sp
 For clients that fetch responses line by line and convert them to
 JSON objects, \fI\%guest\-sync\fP should be sufficient, but note that in
@@ -161,9 +161,9 @@ resynchronize the guest.
 This command tries to set guest\(aqs System Time to the given value,
 then sets the Hardware Clock (RTC) to the current System Time.  This
 will make it easier for a guest to resynchronize without waiting for
-NTP. If no \fBtime\fP is specified, then the time to set is read from
-RTC. However, this may not be supported on all platforms (i.e.
-Windows). If that\(aqs the case users are advised to always pass a
+NTP.  If no \fBtime\fP is specified, then the time to set is read from
+RTC.  However, this may not be supported on all platforms (i.e.
+Windows).  If that\(aqs the case users are advised to always pass a
 value.
 .INDENT 7.0
 .TP
@@ -488,8 +488,8 @@ remain \(dqthawed\(dq and calling \fI\%guest\-fsfreeze\-thaw\fP is not necessary
 .INDENT 7.0
 .INDENT 3.5
 On Windows, the command is implemented with the help of a
-Volume Shadow\-copy Service DLL helper.  The frozen state is limited
-for up to 10 seconds by VSS.
+Volume Shadow\-copy Service DLL helper.  The frozen state is
+limited for up to 10 seconds by VSS.
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -532,9 +532,9 @@ Unfreeze all frozen guest filesystems
 .INDENT 7.0
 .INDENT 3.5
 If the return value does not match the previous call to
-\fI\%guest\-fsfreeze\-freeze\fP, this likely means some freezable filesystems
-were unfrozen before this call, and that the filesystem state may
-have changed before issuing this command.
+\fI\%guest\-fsfreeze\-freeze\fP, this likely means some freezable
+filesystems were unfrozen before this call, and that the
+filesystem state may have changed before issuing this command.
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -564,7 +564,8 @@ have changed before issuing this command.
 .B Members
 .INDENT 7.0
 .IP \(bu 2
-\fBpaths\fP (\fB[\fP\fI\%GuestFilesystemTrimResult\fP\fB]\fP) \-\- list of \fI\%GuestFilesystemTrimResult\fP per path that was trimmed
+\fBpaths\fP (\fB[\fP\fI\%GuestFilesystemTrimResult\fP\fB]\fP) \-\- list of \fI\%GuestFilesystemTrimResult\fP per path that was
+trimmed
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -612,9 +613,9 @@ manual write into sysfs
 .sp
 This command does NOT return a response on success.  There is a high
 chance the command succeeded if the VM exits with a zero exit status
-or, when running with \-\-no\-shutdown, by issuing the \fI\%query\-status\fP QMP
-command to to confirm the VM status is \(dqshutdown\(dq. However, the VM
-could also exit (or set its status to \(dqshutdown\(dq) due to other
+or, when running with \-\-no\-shutdown, by issuing the \fI\%query\-status\fP
+QMP command to to confirm the VM status is \(dqshutdown\(dq.  However, the
+VM could also exit (or set its status to \(dqshutdown\(dq) due to other
 reasons.
 .INDENT 7.0
 .TP
@@ -629,8 +630,8 @@ If suspend to disk is not supported, Unsupported
 \fBNOTE:\fP
 .INDENT 7.0
 .INDENT 3.5
-It\(aqs strongly recommended to issue the \fI\%guest\-sync\fP command
-before sending commands when the guest resumes.
+It\(aqs strongly recommended to issue the \fI\%guest\-sync\fP
+command before sending commands when the guest resumes.
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -653,7 +654,7 @@ manual write into sysfs
 .UNINDENT
 .sp
 IMPORTANT: \fI\%guest\-suspend\-ram\fP requires working wakeup support in
-QEMU. You should check QMP command \fI\%query\-current\-machine\fP returns
+QEMU.  You should check QMP command \fI\%query\-current\-machine\fP returns
 wakeup\-suspend\-support: true before issuing this command.  Failure
 in doing so can result in a suspended guest that QEMU will not be
 able to awaken, forcing the user to power cycle the guest to bring
@@ -681,8 +682,8 @@ If suspend to ram is not supported, Unsupported
 \fBNOTE:\fP
 .INDENT 7.0
 .INDENT 3.5
-It\(aqs strongly recommended to issue the \fI\%guest\-sync\fP command
-before sending commands when the guest resumes.
+It\(aqs strongly recommended to issue the \fI\%guest\-sync\fP
+command before sending commands when the guest resumes.
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -703,7 +704,7 @@ pm\-utils (via pm\-suspend\-hybrid)
 .UNINDENT
 .sp
 IMPORTANT: \fI\%guest\-suspend\-hybrid\fP requires working wakeup support in
-QEMU. You should check QMP command \fI\%query\-current\-machine\fP returns
+QEMU.  You should check QMP command \fI\%query\-current\-machine\fP returns
 wakeup\-suspend\-support: true before issuing this command.  Failure
 in doing so can result in a suspended guest that QEMU will not be
 able to awaken, forcing the user to power cycle the guest to bring
@@ -731,8 +732,8 @@ If hybrid suspend is not supported, Unsupported
 \fBNOTE:\fP
 .INDENT 7.0
 .INDENT 3.5
-It\(aqs strongly recommended to issue the \fI\%guest\-sync\fP command
-before sending commands when the guest resumes.
+It\(aqs strongly recommended to issue the \fI\%guest\-sync\fP
+command before sending commands when the guest resumes.
 .UNINDENT
 .UNINDENT
 .UNINDENT
@@ -1166,10 +1167,11 @@ NBD, etc.
 .IP \(bu 2
 \fBused\-bytes\fP (\fBint\fP, \fIoptional\fP) \-\- file system used bytes (since 3.0)
 .IP \(bu 2
-\fBtotal\-bytes\fP (\fBint\fP, \fIoptional\fP) \-\- filesystem capacity in bytes for unprivileged users (since 3.0)
+\fBtotal\-bytes\fP (\fBint\fP, \fIoptional\fP) \-\- filesystem capacity in bytes for unprivileged users
+(since 3.0)
 .IP \(bu 2
-\fBtotal\-bytes\-privileged\fP (\fBint\fP, \fIoptional\fP) \-\- filesystem capacity in bytes for privileged users
-(since 9.1)
+\fBtotal\-bytes\-privileged\fP (\fBint\fP, \fIoptional\fP) \-\- filesystem capacity in bytes for privileged
+users (since 9.1)
 .IP \(bu 2
 \fBdisk\fP (\fB[\fP\fI\%GuestDiskAddress\fP\fB]\fP) \-\- an array of disk hardware information that the volume lies
 on, which may be empty if the disk type is not supported
@@ -1286,7 +1288,8 @@ fails, because of some errors happen.
 .B Members
 .INDENT 7.0
 .IP \(bu 2
-\fBphys\-index\fP (\fBint\fP) \-\- same with the \(aqphys\-index\(aq member of \fI\%GuestMemoryBlock\fP\&.
+\fBphys\-index\fP (\fBint\fP) \-\- same with the \(aqphys\-index\(aq member of
+\fI\%GuestMemoryBlock\fP\&.
 .IP \(bu 2
 \fBresponse\fP (\fI\%GuestMemoryBlockResponseType\fP) \-\- the result of memory block operation.
 .IP \(bu 2
@@ -1663,10 +1666,11 @@ Windows: contains string \(dqserver\(dq or \(dqclient\(dq
 .INDENT 3.5
 On POSIX systems the fields \fBid\fP, \fBname\fP, \fBpretty\-name\fP,
 \fBversion\fP, \fBversion\-id\fP, \fBvariant\fP and \fBvariant\-id\fP follow the
-definition specified in os\-release(5). Refer to the manual page for
-exact description of the fields.  Their values are taken from the
-os\-release file.  If the file is not present in the system, or the
-values are not present in the file, the fields are not included.
+definition specified in os\-release(5).  Refer to the manual page
+for exact description of the fields.  Their values are taken from
+the os\-release file.  If the file is not present in the system,
+or the values are not present in the file, the fields are not
+included.
 .sp
 On Windows the values are filled from information gathered from
 the system.
@@ -1808,7 +1812,7 @@ format)
 .TP
 .B Command guest\-ssh\-remove\-authorized\-keys (Since: 5.2)
 Remove public keys from the user .ssh/authorized_keys on Unix
-systems (not implemented for other systems). It\(aqs not an error if
+systems (not implemented for other systems).  It\(aqs not an error if
 the key is already missing.
 .INDENT 7.0
 .TP
@@ -2006,10 +2010,10 @@ Retrieve CPU process load information
 \fBNOTE:\fP
 .INDENT 7.0
 .INDENT 3.5
-Windows does not have load average API, so QGA emulates it by
-calculating the average CPU usage in the last 1, 5, 15 minutes
-similar as Linux does this.
-Calculation starts from the first time this command is called.
+Windows does not have load average API, so QGA emulates it
+by calculating the average CPU usage in the last 1, 5, 15 minutes
+similar as Linux does this.  Calculation starts from the first
+time this command is called.
 .UNINDENT
 .UNINDENT
 .INDENT 7.0
@@ -2020,18 +2024,21 @@ Calculation starts from the first time this command is called.
 .UNINDENT
 .INDENT 0.0
 .TP
-.B Object GuestNetworkRoute (Since: 9.1)
-\fIAvailability\fP: \fBCONFIG_LINUX\fP
+.B Object GuestNetworkRoute (Since: 9.1 (Linux only); 11.0 (Windows))
+\fIAvailability\fP: \fBCONFIG_LINUX or CONFIG_WIN32\fP
 .sp
-Route information, currently, only linux supported.
+Route information.  Supported on Linux (since 9.1) and Windows
+(since 11.0).
 .INDENT 7.0
 .TP
 .B Members
 .INDENT 7.0
 .IP \(bu 2
-\fBiface\fP (\fBstring\fP) \-\- The destination network or host\(aqs egress network interface in the routing table
+\fBiface\fP (\fBstring\fP) \-\- The destination network or host\(aqs egress network interface
+in the routing table
 .IP \(bu 2
-\fBdestination\fP (\fBstring\fP) \-\- The IP address of the target network or host, The final destination of the packet
+\fBdestination\fP (\fBstring\fP) \-\- The IP address of the target network or host, The
+final destination of the packet
 .IP \(bu 2
 \fBmetric\fP (\fBint\fP) \-\- Route metric
 .IP \(bu 2
@@ -2047,7 +2054,8 @@ Route information, currently, only linux supported.
 .IP \(bu 2
 \fBuse\fP (\fBint\fP, \fIoptional\fP) \-\- Route usage count (not for windows)
 .IP \(bu 2
-\fBwindow\fP (\fBint\fP, \fIoptional\fP) \-\- TCP window size, used for flow control (not for windows, IPv4 only)
+\fBwindow\fP (\fBint\fP, \fIoptional\fP) \-\- TCP window size, used for flow control (not for windows,
+IPv4 only)
 .IP \(bu 2
 \fBmtu\fP (\fBint\fP, \fIoptional\fP) \-\- Data link layer maximum packet size (not for windows)
 .IP \(bu 2
@@ -2065,8 +2073,8 @@ Route information, currently, only linux supported.
 .UNINDENT
 .INDENT 0.0
 .TP
-.B Command guest\-network\-get\-route (Since: 9.1)
-\fIAvailability\fP: \fBCONFIG_LINUX\fP
+.B Command guest\-network\-get\-route (Since: 9.1 (Linux only); 11.0 (Windows))
+\fIAvailability\fP: \fBCONFIG_LINUX or CONFIG_WIN32\fP
 .sp
 Retrieve information about route of network.
 .INDENT 7.0
@@ -2076,6 +2084,6 @@ Retrieve information about route of network.
 .UNINDENT
 .UNINDENT
 .SH COPYRIGHT
-2025, The QEMU Project Developers
+2026, The QEMU Project Developers
 .\" Generated by docutils manpage writer.
 .

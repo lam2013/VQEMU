@@ -9,7 +9,7 @@
   <title>Migration framework &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../../_static/qemu_32x32.png"/>
@@ -540,6 +540,22 @@ load the state for the cpu that we have just loaded from the QEMUFile.</p>
 (even upon failure, unless the call to pre_save returned an error).</p>
 </li>
 </ul>
+<p>Following are the errp variants of these functions.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">bool</span> <span class="pre">(*pre_load_errp)(void</span> <span class="pre">*opaque,</span> <span class="pre">Error</span> <span class="pre">**errp);</span></code></p>
+<p>This function is called before we load the state of one device.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bool</span> <span class="pre">(*post_load_errp)(void</span> <span class="pre">*opaque,</span> <span class="pre">int</span> <span class="pre">version_id,</span> <span class="pre">Error</span> <span class="pre">**errp);</span></code></p>
+<p>This function is called after we load the state of one device.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bool</span> <span class="pre">(*pre_save_errp)(void</span> <span class="pre">*opaque,</span> <span class="pre">Error</span> <span class="pre">**errp);</span></code></p>
+<p>This function is called before we save the state of one device.</p>
+</li>
+</ul>
+<p>New impls should preferentally use ‘errp’ variants of these
+methods and existing impls incrementally converted.
+The variants without ‘errp’ are intended to be removed
+once all usage is converted.</p>
 <p>Example: You can look at hpet.c, that uses the first three functions
 to massage the state that is transferred.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">VMSTATE_WITH_TMP</span></code> macro may be useful when the migration
@@ -708,7 +724,7 @@ thread (protected by rp_mutex)</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -719,7 +735,7 @@ thread (protected by rp_mutex)</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../../about/license.html">QEMU and this manual are released under the

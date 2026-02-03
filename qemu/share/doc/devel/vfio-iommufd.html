@@ -9,7 +9,7 @@
   <title>IOMMUFD BACKEND usage with VFIO &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -230,20 +230,10 @@ container:</p>
 </section>
 <section id="supported-platform">
 <h2>Supported platform<a class="headerlink" href="#supported-platform" title="Link to this heading"></a></h2>
-<p>Supports x86, ARM and s390x currently.</p>
+<p>Supports x86, Arm and s390x currently.</p>
 </section>
 <section id="caveats">
 <h2>Caveats<a class="headerlink" href="#caveats" title="Link to this heading"></a></h2>
-<section id="dirty-page-sync">
-<h3>Dirty page sync<a class="headerlink" href="#dirty-page-sync" title="Link to this heading"></a></h3>
-<p>Dirty page sync with iommufd backend is unsupported yet, live migration is
-disabled by default. But it can be force enabled like below, low efficient
-though.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>-object<span class="w"> </span>iommufd,id<span class="o">=</span>iommufd0
--device<span class="w"> </span>vfio-pci,host<span class="o">=</span><span class="m">0000</span>:02:00.0,iommufd<span class="o">=</span>iommufd0,enable-migration<span class="o">=</span>on
-</pre></div>
-</div>
-</section>
 <section id="p2p-dma">
 <h3>P2P DMA<a class="headerlink" href="#p2p-dma" title="Link to this heading"></a></h3>
 <p>PCI p2p DMA is unsupported as IOMMUFD doesn’t support mapping hardware PCI
@@ -265,6 +255,26 @@ RAM discarding for mdev.</p>
 <p><code class="docutils literal notranslate"><span class="pre">vfio-ap</span></code> and <code class="docutils literal notranslate"><span class="pre">vfio-ccw</span></code> devices don’t have same issue as their backend
 devices are always mdev and RAM discarding is force enabled.</p>
 </section>
+<section id="usage-with-intel-iommu-featuring-x-flts-on">
+<h3>Usage with intel_iommu featuring x-flts=on<a class="headerlink" href="#usage-with-intel-iommu-featuring-x-flts-on" title="Link to this heading"></a></h3>
+<p>Only IOMMUFD backed VFIO device is supported when intel_iommu is configured
+with x-flts=on, for legacy container backed VFIO device, below error shows:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>qemu-system-x86_64: -device vfio-pci,host=0000:02:00.0: vfio 0000:02:00.0: Failed to set vIOMMU: Need IOMMUFD backend when x-flts=on
+</pre></div>
+</div>
+<p>VFIO device under PCI bridge is unsupported, use PCIE bridge if necessary,
+otherwise below error shows:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>qemu-system-x86_64: -device vfio-pci,host=0000:02:00.0,bus=bridge1,iommufd=iommufd0: vfio 0000:02:00.0: Failed to set vIOMMU: Host device downstream to a PCI bridge is unsupported when x-flts=on
+</pre></div>
+</div>
+<p>If host IOMMU has ERRATA_772415_SPR17, running guest with “intel_iommu=on,sm_off”
+is unsupported, kexec or reboot guest from “intel_iommu=on,sm_on” to
+“intel_iommu=on,sm_off” is also unsupported. Configure scalable mode off as
+below if it’s not needed by guest:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>-device<span class="w"> </span>intel-iommu,x-scalable-mode<span class="o">=</span>off
+</pre></div>
+</div>
+</section>
 </section>
 </section>
 
@@ -279,7 +289,7 @@ devices are always mdev and RAM discarding is force enabled.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -290,7 +300,7 @@ devices are always mdev and RAM discarding is force enabled.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the

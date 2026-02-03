@@ -9,7 +9,7 @@
   <title>QEMU Device (qdev) API Reference &mdash; QEMU  documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=f5127f15" />
-      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=197ba1a6" />
+      <link rel="stylesheet" type="text/css" href="../_static/theme_overrides.css?v=b3ae9cc8" />
 
   
     <link rel="shortcut icon" href="../_static/qemu_32x32.png"/>
@@ -111,7 +111,7 @@
              
   <section id="qemu-device-qdev-api-reference">
 <span id="qdev-api"></span><h1>QEMU Device (qdev) API Reference<a class="headerlink" href="#qemu-device-qdev-api-reference" title="Link to this heading"></a></h1>
-<p><strong>The QEMU Device API</strong></p>
+<p id="the-qemu-device-api"><strong>The QEMU Device API</strong></p>
 <p>All modern devices should represented as a derived QOM class of
 TYPE_DEVICE. The device API introduces the additional methods of
 <strong>realize</strong> and <strong>unrealize</strong> to represent additional stages in a device
@@ -167,21 +167,22 @@ it was marked visible and qdev_device_add called again.</p>
 <dd><p>The base class for all devices.</p>
 </dd></dl>
 
-<p><strong>Definition</strong></p>
+<div class="kernelindent docutils container">
+<p><strong>Definition</strong>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">struct</span> <span class="n">DeviceClass</span> <span class="p">{</span>
-  <span class="n">unsigned</span> <span class="n">long</span> <span class="n">categories</span><span class="p">[</span><span class="n">BITS_TO_LONGS</span><span class="p">(</span><span class="n">DEVICE_CATEGORY_MAX</span><span class="p">)];</span>
-  <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">fw_name</span><span class="p">;</span>
-  <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">desc</span><span class="p">;</span>
-  <span class="n">const</span> <span class="n">Property</span> <span class="o">*</span><span class="n">props_</span><span class="p">;</span>
-  <span class="n">uint16_t</span> <span class="n">props_count_</span><span class="p">;</span>
-  <span class="nb">bool</span> <span class="n">user_creatable</span><span class="p">;</span>
-  <span class="nb">bool</span> <span class="n">hotpluggable</span><span class="p">;</span>
-  <span class="n">DeviceReset</span> <span class="n">legacy_reset</span><span class="p">;</span>
-  <span class="n">DeviceRealize</span> <span class="n">realize</span><span class="p">;</span>
-  <span class="n">DeviceUnrealize</span> <span class="n">unrealize</span><span class="p">;</span>
-  <span class="n">DeviceSyncConfig</span> <span class="n">sync_config</span><span class="p">;</span>
-  <span class="n">const</span> <span class="n">VMStateDescription</span> <span class="o">*</span><span class="n">vmsd</span><span class="p">;</span>
-  <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">bus_type</span><span class="p">;</span>
+    <span class="n">unsigned</span> <span class="n">long</span> <span class="n">categories</span><span class="p">[</span><span class="n">BITS_TO_LONGS</span><span class="p">(</span><span class="n">DEVICE_CATEGORY_MAX</span><span class="p">)];</span>
+    <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">fw_name</span><span class="p">;</span>
+    <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">desc</span><span class="p">;</span>
+    <span class="n">const</span> <span class="n">Property</span> <span class="o">*</span><span class="n">props_</span><span class="p">;</span>
+    <span class="n">uint16_t</span> <span class="n">props_count_</span><span class="p">;</span>
+    <span class="nb">bool</span> <span class="n">user_creatable</span><span class="p">;</span>
+    <span class="nb">bool</span> <span class="n">hotpluggable</span><span class="p">;</span>
+    <span class="n">DeviceReset</span> <span class="n">legacy_reset</span><span class="p">;</span>
+    <span class="n">DeviceRealize</span> <span class="n">realize</span><span class="p">;</span>
+    <span class="n">DeviceUnrealize</span> <span class="n">unrealize</span><span class="p">;</span>
+    <span class="n">DeviceSyncConfig</span> <span class="n">sync_config</span><span class="p">;</span>
+    <span class="n">const</span> <span class="n">VMStateDescription</span> <span class="o">*</span><span class="n">vmsd</span><span class="p">;</span>
+    <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">bus_type</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
 </div>
@@ -236,31 +237,33 @@ migration/save/restore</p>
 private: to qdev / bus.</p>
 </dd>
 </dl>
+</div>
 <dl class="c struct">
 <dt class="sig sig-object c" id="c.DeviceState">
 <span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DeviceState</span></span></span><a class="headerlink" href="#c.DeviceState" title="Link to this definition"></a><br /></dt>
 <dd><p>common device state, accessed with qdev helpers</p>
 </dd></dl>
 
-<p><strong>Definition</strong></p>
+<div class="kernelindent docutils container">
+<p><strong>Definition</strong>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">struct</span> <span class="n">DeviceState</span> <span class="p">{</span>
-  <span class="n">char</span> <span class="o">*</span><span class="nb">id</span><span class="p">;</span>
-  <span class="n">char</span> <span class="o">*</span><span class="n">canonical_path</span><span class="p">;</span>
-  <span class="nb">bool</span> <span class="n">realized</span><span class="p">;</span>
-  <span class="nb">bool</span> <span class="n">pending_deleted_event</span><span class="p">;</span>
-  <span class="n">int64_t</span> <span class="n">pending_deleted_expires_ms</span><span class="p">;</span>
-  <span class="nb">int</span> <span class="n">hotplugged</span><span class="p">;</span>
-  <span class="nb">bool</span> <span class="n">allow_unplug_during_migration</span><span class="p">;</span>
-  <span class="n">BusState</span> <span class="o">*</span><span class="n">parent_bus</span><span class="p">;</span>
-  <span class="n">NamedGPIOListHead</span> <span class="n">gpios</span><span class="p">;</span>
-  <span class="n">NamedClockListHead</span> <span class="n">clocks</span><span class="p">;</span>
-  <span class="n">BusStateHead</span> <span class="n">child_bus</span><span class="p">;</span>
-  <span class="nb">int</span> <span class="n">num_child_bus</span><span class="p">;</span>
-  <span class="nb">int</span> <span class="n">instance_id_alias</span><span class="p">;</span>
-  <span class="nb">int</span> <span class="n">alias_required_for_version</span><span class="p">;</span>
-  <span class="n">ResettableState</span> <span class="n">reset</span><span class="p">;</span>
-  <span class="n">GSList</span> <span class="o">*</span><span class="n">unplug_blockers</span><span class="p">;</span>
-  <span class="n">MemReentrancyGuard</span> <span class="n">mem_reentrancy_guard</span><span class="p">;</span>
+    <span class="n">char</span> <span class="o">*</span><span class="nb">id</span><span class="p">;</span>
+    <span class="n">char</span> <span class="o">*</span><span class="n">canonical_path</span><span class="p">;</span>
+    <span class="nb">bool</span> <span class="n">realized</span><span class="p">;</span>
+    <span class="nb">bool</span> <span class="n">pending_deleted_event</span><span class="p">;</span>
+    <span class="n">int64_t</span> <span class="n">pending_deleted_expires_ms</span><span class="p">;</span>
+    <span class="nb">int</span> <span class="n">hotplugged</span><span class="p">;</span>
+    <span class="nb">bool</span> <span class="n">allow_unplug_during_migration</span><span class="p">;</span>
+    <span class="n">BusState</span> <span class="o">*</span><span class="n">parent_bus</span><span class="p">;</span>
+    <span class="n">NamedGPIOListHead</span> <span class="n">gpios</span><span class="p">;</span>
+    <span class="n">NamedClockListHead</span> <span class="n">clocks</span><span class="p">;</span>
+    <span class="n">BusStateHead</span> <span class="n">child_bus</span><span class="p">;</span>
+    <span class="nb">int</span> <span class="n">num_child_bus</span><span class="p">;</span>
+    <span class="nb">int</span> <span class="n">instance_id_alias</span><span class="p">;</span>
+    <span class="nb">int</span> <span class="n">alias_required_for_version</span><span class="p">;</span>
+    <span class="n">ResettableState</span> <span class="n">reset</span><span class="p">;</span>
+    <span class="n">GSList</span> <span class="o">*</span><span class="n">unplug_blockers</span><span class="p">;</span>
+    <span class="n">MemReentrancyGuard</span> <span class="n">mem_reentrancy_guard</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
 </div>
@@ -303,6 +306,7 @@ needed for migration</p>
 <p>Used to prevent re-entrancy confusing things.</p>
 </dd>
 </dl>
+</div>
 <p><strong>Description</strong></p>
 <p>This structure should not be accessed directly.  We declare it here
 so that it can be embedded in individual device state structures.</p>
@@ -311,18 +315,19 @@ so that it can be embedded in individual device state structures.</p>
 <span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">BusState</span></span></span><a class="headerlink" href="#c.BusState" title="Link to this definition"></a><br /></dt>
 <dd></dd></dl>
 
-<p><strong>Definition</strong></p>
+<div class="kernelindent docutils container">
+<p><strong>Definition</strong>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">struct</span> <span class="n">BusState</span> <span class="p">{</span>
-  <span class="n">DeviceState</span> <span class="o">*</span><span class="n">parent</span><span class="p">;</span>
-  <span class="n">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
-  <span class="n">HotplugHandler</span> <span class="o">*</span><span class="n">hotplug_handler</span><span class="p">;</span>
-  <span class="nb">int</span> <span class="n">max_index</span><span class="p">;</span>
-  <span class="nb">bool</span> <span class="n">realized</span><span class="p">;</span>
-  <span class="nb">bool</span> <span class="n">full</span><span class="p">;</span>
-  <span class="nb">int</span> <span class="n">num_children</span><span class="p">;</span>
-  <span class="n">BusChildHead</span> <span class="n">children</span><span class="p">;</span>
-  <span class="n">BusStateEntry</span> <span class="n">sibling</span><span class="p">;</span>
-  <span class="n">ResettableState</span> <span class="n">reset</span><span class="p">;</span>
+    <span class="n">DeviceState</span> <span class="o">*</span><span class="n">parent</span><span class="p">;</span>
+    <span class="n">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
+    <span class="n">HotplugHandler</span> <span class="o">*</span><span class="n">hotplug_handler</span><span class="p">;</span>
+    <span class="nb">int</span> <span class="n">max_index</span><span class="p">;</span>
+    <span class="nb">bool</span> <span class="n">realized</span><span class="p">;</span>
+    <span class="nb">bool</span> <span class="n">full</span><span class="p">;</span>
+    <span class="nb">int</span> <span class="n">num_children</span><span class="p">;</span>
+    <span class="n">BusChildHead</span> <span class="n">children</span><span class="p">;</span>
+    <span class="n">BusStateEntry</span> <span class="n">sibling</span><span class="p">;</span>
+    <span class="n">ResettableState</span> <span class="n">reset</span><span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
 </div>
@@ -350,6 +355,7 @@ to access it, and writers must hold the big qemu lock</p>
 <dt><code class="docutils literal notranslate"><span class="pre">reset</span></code></dt><dd><p>ResettableState for the bus; handled by Resettable interface.</p>
 </dd>
 </dl>
+</div>
 <dl class="c type">
 <dt class="sig sig-object c" id="c.GlobalProperty">
 <span class="k"><span class="pre">type</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GlobalProperty</span></span></span><a class="headerlink" href="#c.GlobalProperty" title="Link to this definition"></a><br /></dt>
@@ -364,6 +370,7 @@ to access it, and writers must hold the big qemu lock</p>
 <dd><p>Create a device on the heap</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*name</span></code></dt><dd><p>device type to create (we assert() that this type exists)</p>
@@ -375,12 +382,14 @@ structure, ready for the caller to set properties if they wish.
 The device still needs to be realized.</p>
 <p><strong>Return</strong></p>
 <p>a derived DeviceState object with a reference count of 1.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_try_new">
 <a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qdev_try_new</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_try_new" title="Link to this definition"></a><br /></dt>
 <dd><p>Try to create a device on the heap</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*name</span></code></dt><dd><p>device type to create</p>
@@ -392,12 +401,14 @@ does not exist, rather than asserting.</p>
 <p><strong>Return</strong></p>
 <p>a derived DeviceState object with a reference count of 1 or
 NULL if type <strong>name</strong> does not exist.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_is_realized">
 <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_is_realized</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_is_realized" title="Link to this definition"></a><br /></dt>
 <dd><p>check if device is realized</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>The device to check.</p>
@@ -407,12 +418,14 @@ NULL if type <strong>name</strong> does not exist.</p>
 <p>May be called outside big qemu lock.</p>
 <p><strong>Return</strong></p>
 <p>true if the device has been fully constructed, false otherwise.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_realize">
 <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_realize</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span>, <a class="reference internal" href="#c.BusState" title="BusState"><span class="n"><span class="pre">BusState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">bus</span></span>, <span class="n"><span class="pre">Error</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">errp</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_realize" title="Link to this definition"></a><br /></dt>
 <dd><p>Realize <strong>dev</strong>.</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>device to realize</p>
@@ -432,12 +445,14 @@ If <strong>dev</strong> has no QOM parent, make one up, taking another reference
 qdev_realize_and_unref() instead.</p>
 <p><strong>Return</strong></p>
 <p>true on success, else false setting <strong>errp</strong> with error</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_realize_and_unref">
 <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_realize_and_unref</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span>, <a class="reference internal" href="#c.BusState" title="BusState"><span class="n"><span class="pre">BusState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">bus</span></span>, <span class="n"><span class="pre">Error</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">errp</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_realize_and_unref" title="Link to this definition"></a><br /></dt>
 <dd><p>Realize <strong>dev</strong> and drop a reference</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>device to realize</p>
@@ -466,12 +481,14 @@ via the child&lt;&gt; property, and so the reference-count-drop done here
 would be incorrect. For that use case you want qdev_realize().</p>
 <p><strong>Return</strong></p>
 <p>true on success, else false setting <strong>errp</strong> with error</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_unrealize">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_unrealize</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_unrealize" title="Link to this definition"></a><br /></dt>
 <dd><p>Unrealize a device</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>device to unrealize</p>
@@ -493,12 +510,14 @@ to zero.</p>
 devices which are hot-unpluggable should be unrealized (as part of
 the unplugging process); all other devices are expected to last for
 the life of the simulation and should not be unrealized and freed.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_get_hotplug_handler">
 <span class="n"><span class="pre">HotplugHandler</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qdev_get_hotplug_handler</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_get_hotplug_handler" title="Link to this definition"></a><br /></dt>
 <dd><p>Get handler responsible for device wiring</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>the device we want the HOTPLUG_HANDLER for.</p>
@@ -510,12 +529,14 @@ machine handler overrides it.</p>
 <p><strong>Return</strong></p>
 <p>pointer to object that implements TYPE_HOTPLUG_HANDLER interface
 or NULL if there aren’t any.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_add_unplug_blocker">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_add_unplug_blocker</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span>, <span class="n"><span class="pre">Error</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">reason</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_add_unplug_blocker" title="Link to this definition"></a><br /></dt>
 <dd><p>Add an unplug blocker to a device</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>Device to be blocked from unplug</p>
@@ -523,12 +544,14 @@ or NULL if there aren’t any.</p>
 <dt><code class="docutils literal notranslate"><span class="pre">Error</span> <span class="pre">*reason</span></code></dt><dd><p>Reason for blocking</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_del_unplug_blocker">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_del_unplug_blocker</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span>, <span class="n"><span class="pre">Error</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">reason</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_del_unplug_blocker" title="Link to this definition"></a><br /></dt>
 <dd><p>Remove an unplug blocker from a device</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>Device to be unblocked</p>
@@ -537,12 +560,14 @@ or NULL if there aren’t any.</p>
 Used as a handle to lookup the blocker for deletion.</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_unplug_blocked">
 <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_unplug_blocked</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span>, <span class="n"><span class="pre">Error</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">errp</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_unplug_blocked" title="Link to this definition"></a><br /></dt>
 <dd><p>Confirm if a device is blocked from unplug</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>Device to be tested</p>
@@ -553,6 +578,7 @@ Used as a handle to lookup the blocker for deletion.</p>
 <p><strong>Return</strong></p>
 <p>true (also setting <strong>errp</strong>) if device is blocked from unplug,
 false otherwise</p>
+</div>
 <dl class="c type">
 <dt class="sig sig-object c" id="c.GpioPolarity">
 <span class="k"><span class="pre">type</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">GpioPolarity</span></span></span><a class="headerlink" href="#c.GpioPolarity" title="Link to this definition"></a><br /></dt>
@@ -572,6 +598,7 @@ is active when the voltage on the pin is low (or grounded).</p>
 <dd><p>Get one of a device’s anonymous input GPIO lines</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>Device whose GPIO we want</p>
@@ -592,12 +619,14 @@ connect another device’s output GPIO line to this input.</p>
 <p>For named input GPIO lines, use qdev_get_gpio_in_named().</p>
 <p><strong>Return</strong></p>
 <p>qemu_irq corresponding to anonymous input GPIO line</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_get_gpio_in_named">
 <span class="n"><span class="pre">qemu_irq</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_get_gpio_in_named</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">n</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_get_gpio_in_named" title="Link to this definition"></a><br /></dt>
 <dd><p>Get one of a device’s named input GPIO lines</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>Device whose GPIO we want</p>
@@ -618,12 +647,14 @@ array); this function will assert() if passed an invalid name or index.</p>
 <p>For anonymous input GPIO lines, use qdev_get_gpio_in().</p>
 <p><strong>Return</strong></p>
 <p>qemu_irq corresponding to named input GPIO line</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_connect_gpio_out">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_connect_gpio_out</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">n</span></span>, <span class="n"><span class="pre">qemu_irq</span></span><span class="w"> </span><span class="n"><span class="pre">pin</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_connect_gpio_out" title="Link to this definition"></a><br /></dt>
 <dd><p>Connect one of a device’s anonymous output GPIO lines</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>Device whose GPIO to connect</p>
@@ -653,12 +684,14 @@ of the splitter’s outputs to a different device.  For fan-in you
 can use the TYPE_OR_IRQ device, which is a model of a logical OR
 gate with multiple inputs and one output.</p>
 <p>For named output GPIO lines, use qdev_connect_gpio_out_named().</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_connect_gpio_out_named">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_connect_gpio_out_named</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">n</span></span>, <span class="n"><span class="pre">qemu_irq</span></span><span class="w"> </span><span class="n"><span class="pre">input_pin</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_connect_gpio_out_named" title="Link to this definition"></a><br /></dt>
 <dd><p>Connect one of a device’s named output GPIO lines</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>Device whose GPIO to connect</p>
@@ -685,15 +718,17 @@ the qemu_irq returned by qdev_get_gpio_in() or qdev_get_gpio_in_named().</p>
 qemu_irqs at once, or to connect multiple outbound GPIOs to the
 same qemu_irq; see qdev_connect_gpio_out() for details.</p>
 <p>For anonymous output GPIO lines, use qdev_connect_gpio_out().</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_get_gpio_out_connector">
-<span class="n"><span class="pre">qemu_irq</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_get_gpio_out_connector</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">n</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_get_gpio_out_connector" title="Link to this definition"></a><br /></dt>
+<span class="n"><span class="pre">qemu_irq</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_get_gpio_out_connector</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">n</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_get_gpio_out_connector" title="Link to this definition"></a><br /></dt>
 <dd><p>Get the qemu_irq connected to an output GPIO</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>Device whose output GPIO we are interested in</p>
+<dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>Device whose output GPIO we are interested in</p>
 </dd>
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*name</span></code></dt><dd><p>Name of the output GPIO array</p>
 </dd>
@@ -711,12 +746,14 @@ output GPIO.</p>
 by the platform-bus subsystem.</p>
 <p><strong>Return</strong></p>
 <p>qemu_irq associated with GPIO or NULL if un-wired.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_intercept_gpio_out">
 <span class="n"><span class="pre">qemu_irq</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_intercept_gpio_out</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span>, <span class="n"><span class="pre">qemu_irq</span></span><span class="w"> </span><span class="n"><span class="pre">icpt</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">n</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_intercept_gpio_out" title="Link to this definition"></a><br /></dt>
 <dd><p>Intercept an existing GPIO connection</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>Device to intercept the outbound GPIO line from</p>
@@ -741,12 +778,14 @@ The previously connected qemu_irq is returned, so it can be restored
 by a second call to qdev_intercept_gpio_out() if desired.</p>
 <p><strong>Return</strong></p>
 <p>old disconnected qemu_irq if one existed</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_init_gpio_in">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_init_gpio_in</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span>, <span class="n"><span class="pre">qemu_irq_handler</span></span><span class="w"> </span><span class="n"><span class="pre">handler</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">n</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_init_gpio_in" title="Link to this definition"></a><br /></dt>
 <dd><p>create an array of anonymous input GPIO lines</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>Device to create input GPIOs for</p>
@@ -766,12 +805,14 @@ has exactly one uniform kind of GPIO input whose purpose is obvious.
 Note that input GPIO lines can serve as ‘sinks’ for IRQ lines.</p>
 <p>See qdev_get_gpio_in() for how code that uses such a device can get
 hold of an input GPIO line to manipulate it.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_init_gpio_out">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_init_gpio_out</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span>, <span class="n"><span class="pre">qemu_irq</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">pins</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">n</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_init_gpio_out" title="Link to this definition"></a><br /></dt>
 <dd><p>create an array of anonymous output GPIO lines</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>Device to create output GPIOs for</p>
@@ -799,12 +840,14 @@ can connect to one of its output GPIO lines.</p>
 <p>There is no need to release the <strong>pins</strong> allocated array because it
 will be automatically released when <strong>dev</strong> calls its instance_finalize()
 handler.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_init_gpio_out_named">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_init_gpio_out_named</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span>, <span class="n"><span class="pre">qemu_irq</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">pins</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">n</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_init_gpio_out_named" title="Link to this definition"></a><br /></dt>
 <dd><p>create an array of named output GPIO lines</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>Device to create output GPIOs for</p>
@@ -820,12 +863,14 @@ handler.</p>
 <p>Like qdev_init_gpio_out(), but creates an array of GPIO output lines
 with a name. Code using the device can then connect these GPIO lines
 using qdev_connect_gpio_out_named().</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_init_gpio_in_named_with_opaque">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_init_gpio_in_named_with_opaque</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span>, <span class="n"><span class="pre">qemu_irq_handler</span></span><span class="w"> </span><span class="n"><span class="pre">handler</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">opaque</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">n</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_init_gpio_in_named_with_opaque" title="Link to this definition"></a><br /></dt>
 <dd><p>create an array of input GPIO lines</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>Device to create input GPIOs for</p>
@@ -839,12 +884,14 @@ using qdev_connect_gpio_out_named().</p>
 <dt><code class="docutils literal notranslate"><span class="pre">int</span> <span class="pre">n</span></code></dt><dd><p>Number of GPIO lines in this input set</p>
 </dd>
 </dl>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_init_gpio_in_named">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_init_gpio_in_named</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span>, <span class="n"><span class="pre">qemu_irq_handler</span></span><span class="w"> </span><span class="n"><span class="pre">handler</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">n</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_init_gpio_in_named" title="Link to this definition"></a><br /></dt>
 <dd><p>create an array of input GPIO lines</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>device to add array to</p>
@@ -859,12 +906,14 @@ using qdev_connect_gpio_out_named().</p>
 <p><strong>Description</strong></p>
 <p>Like qdev_init_gpio_in_named_with_opaque(), but the opaque pointer
 passed to the handler is <strong>dev</strong> (which is the most commonly desired behaviour).</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_pass_gpios">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_pass_gpios</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span>, <a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">container</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_pass_gpios" title="Link to this definition"></a><br /></dt>
 <dd><p>create GPIO lines on container which pass through to device</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>Device which has GPIO lines</p>
@@ -885,12 +934,14 @@ be passed through. It is not possible to pass a subset of the array
 with this function.</p>
 <p>To users of the container device, the GPIO array created on <strong>container</strong>
 behaves exactly like any other.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.device_cold_reset">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">device_cold_reset</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.device_cold_reset" title="Link to this definition"></a><br /></dt>
 <dd><p>perform a recursive cold reset on a device</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>device to reset.</p>
@@ -899,12 +950,14 @@ behaves exactly like any other.</p>
 <p><strong>Description</strong></p>
 <p>Reset device <strong>dev</strong> and perform a recursive processing using the resettable
 interface. It triggers a RESET_TYPE_COLD.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.bus_cold_reset">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bus_cold_reset</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.BusState" title="BusState"><span class="n"><span class="pre">BusState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">bus</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.bus_cold_reset" title="Link to this definition"></a><br /></dt>
 <dd><p>perform a recursive cold reset on a bus</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">BusState</span> <span class="pre">*bus</span></code></dt><dd><p>bus to reset</p>
@@ -913,12 +966,14 @@ interface. It triggers a RESET_TYPE_COLD.</p>
 <p><strong>Description</strong></p>
 <p>Reset bus <strong>bus</strong> and perform a recursive processing using the resettable
 interface. It triggers a RESET_TYPE_COLD.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.device_is_in_reset">
 <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">device_is_in_reset</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.device_is_in_reset" title="Link to this definition"></a><br /></dt>
 <dd><p>check device reset state</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>device to check</p>
@@ -926,12 +981,14 @@ interface. It triggers a RESET_TYPE_COLD.</p>
 </dl>
 <p><strong>Return</strong></p>
 <p>true if the device <strong>dev</strong> is currently being reset.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.bus_is_in_reset">
 <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bus_is_in_reset</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.BusState" title="BusState"><span class="n"><span class="pre">BusState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">bus</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.bus_is_in_reset" title="Link to this definition"></a><br /></dt>
 <dd><p>check bus reset state</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">BusState</span> <span class="pre">*bus</span></code></dt><dd><p>bus to check</p>
@@ -939,6 +996,7 @@ interface. It triggers a RESET_TYPE_COLD.</p>
 </dl>
 <p><strong>Return</strong></p>
 <p>true if the bus <strong>bus</strong> is currently being reset.</p>
+</div>
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.device_class_set_props">
 <span class="sig-name descname"><span class="n"><span class="pre">device_class_set_props</span></span></span><a class="headerlink" href="#c.device_class_set_props" title="Link to this definition"></a><br /></dt>
@@ -948,6 +1006,7 @@ interface. It triggers a RESET_TYPE_COLD.</p>
 <blockquote>
 <div><p>add a set of properties to an device</p>
 </div></blockquote>
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">dc</span></code></dt><dd><p>the parent DeviceClass all devices inherit</p>
@@ -963,12 +1022,14 @@ To modify an inherited property you need to use????</p>
 Validate that <strong>props</strong> is an array, not a pointer, via ARRAY_SIZE.
 Validate that the array does not have a legacy terminator at compile-time;
 requires -O2 and the array to be const.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.device_class_set_props_n">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">device_class_set_props_n</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceClass" title="DeviceClass"><span class="n"><span class="pre">DeviceClass</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dc</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Property</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">props</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">n</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.device_class_set_props_n" title="Link to this definition"></a><br /></dt>
 <dd><p>add a set of properties to an device</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceClass</span> <span class="pre">*dc</span></code></dt><dd><p>the parent DeviceClass all devices inherit</p>
@@ -982,12 +1043,14 @@ requires -O2 and the array to be const.</p>
 <p>This will add a set of properties to the object. It will fault if
 you attempt to add an existing property defined by a parent class.
 To modify an inherited property you need to use????</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.device_class_set_parent_realize">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">device_class_set_parent_realize</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceClass" title="DeviceClass"><span class="n"><span class="pre">DeviceClass</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dc</span></span>, <span class="n"><span class="pre">DeviceRealize</span></span><span class="w"> </span><span class="n"><span class="pre">dev_realize</span></span>, <span class="n"><span class="pre">DeviceRealize</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">parent_realize</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.device_class_set_parent_realize" title="Link to this definition"></a><br /></dt>
 <dd><p>set up for chaining realize fns</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceClass</span> <span class="pre">*dc</span></code></dt><dd><p>The device class</p>
@@ -1003,12 +1066,14 @@ eventually call its parent realization function during creation.
 This requires storing the function call somewhere (usually in the
 instance structure) so you can eventually call
 dc-&gt;parent_realize(dev, errp)</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.device_class_set_legacy_reset">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">device_class_set_legacy_reset</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceClass" title="DeviceClass"><span class="n"><span class="pre">DeviceClass</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dc</span></span>, <span class="n"><span class="pre">DeviceReset</span></span><span class="w"> </span><span class="n"><span class="pre">dev_reset</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.device_class_set_legacy_reset" title="Link to this definition"></a><br /></dt>
 <dd><p>set the DeviceClass::reset method</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceClass</span> <span class="pre">*dc</span></code></dt><dd><p>The device class</p>
@@ -1022,12 +1087,14 @@ used in existing code, but new code should prefer to use the
 Resettable API as documented in docs/devel/reset.rst.
 In addition, devices which need to chain to their parent class’s
 reset methods or which need to be subclassed must use Resettable.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.device_class_set_parent_unrealize">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">device_class_set_parent_unrealize</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceClass" title="DeviceClass"><span class="n"><span class="pre">DeviceClass</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dc</span></span>, <span class="n"><span class="pre">DeviceUnrealize</span></span><span class="w"> </span><span class="n"><span class="pre">dev_unrealize</span></span>, <span class="n"><span class="pre">DeviceUnrealize</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">parent_unrealize</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.device_class_set_parent_unrealize" title="Link to this definition"></a><br /></dt>
 <dd><p>set up for chaining unrealize fns</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceClass</span> <span class="pre">*dc</span></code></dt><dd><p>The device class</p>
@@ -1043,12 +1110,14 @@ eventually call its parent unrealization function during the
 unrealize phase. This requires storing the function call somewhere
 (usually in the instance structure) so you can eventually call
 dc-&gt;parent_unrealize(dev);</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_create_fake_machine">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_create_fake_machine</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_create_fake_machine" title="Link to this definition"></a><br /></dt>
 <dd><p>Create a fake machine container.</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">void</span></code></dt><dd><p>no arguments</p>
@@ -1061,11 +1130,13 @@ dc-&gt;parent_unrealize(dev);</p>
 because when thread (TYPE_CPU) are realized, qdev_realize()
 access a machine container.</p>
 </div>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.machine_get_container">
 <a class="reference internal" href="qom-api.html#c.Object" title="Object"><span class="n"><span class="pre">Object</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">machine_get_container</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">name</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.machine_get_container" title="Link to this definition"></a><br /></dt>
 <dd></dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">char</span> <span class="pre">*name</span></code></dt><dd><p>The name of container to lookup</p>
@@ -1075,12 +1146,14 @@ access a machine container.</p>
 <p>Get a container of the machine (QOM path “/machine/NAME”).</p>
 <p><strong>Return</strong></p>
 <p>the machine container object.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_get_human_name">
 <span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qdev_get_human_name</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_get_human_name" title="Link to this definition"></a><br /></dt>
 <dd><p>Return a human-readable name for a device</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>The device. Must be a valid and non-NULL pointer.</p>
@@ -1095,12 +1168,68 @@ access a machine container.</p>
 <p><strong>Return</strong></p>
 <p>A newly allocated string containing the device id if not null,
 else the object canonical path.</p>
+</div>
+<dl class="c function">
+<dt class="sig sig-object c" id="c.qdev_get_dev_path">
+<span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qdev_get_dev_path</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_get_dev_path" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the path of a device on its bus</p>
+</dd></dl>
+
+<div class="kernelindent docutils container">
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>device to get the path of</p>
+</dd>
+</dl>
+<p><strong>Return</strong></p>
+<p>A newly allocated string containing the dev path of
+<strong>dev</strong>. The caller must free this with g_free().
+The format of the string depends on the bus; for instance a
+PCI device’s path will be in the format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">**</span><span class="n">Description</span><span class="o">**</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Domain:00:Slot.Function:Slot.Function….:Slot.Function</p>
+</div></blockquote>
+<p>and a SCSI device’s path will be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">channel</span><span class="p">:</span><span class="n">ID</span><span class="p">:</span><span class="n">LUN</span>
+</pre></div>
+</div>
+<p>(possibly prefixed by the path of the SCSI controller).</p>
+<p>If <strong>dev</strong> is NULL or not on a bus, returns NULL.</p>
+</div>
+<dl class="c function">
+<dt class="sig sig-object c" id="c.qdev_get_printable_name">
+<span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">qdev_get_printable_name</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.DeviceState" title="DeviceState"><span class="n"><span class="pre">DeviceState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">dev</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_get_printable_name" title="Link to this definition"></a><br /></dt>
+<dd><p>Return human readable name for device</p>
+</dd></dl>
+
+<div class="kernelindent docutils container">
+<p><strong>Parameters</strong></p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">DeviceState</span> <span class="pre">*dev</span></code></dt><dd><p>Device to get name of</p>
+</dd>
+</dl>
+<p><strong>Return</strong></p>
+<p>A newly allocated string containing some human
+readable name for the device, suitable for printing in
+user-facing error messages. The function will never return NULL,
+so the name can be used without further checking or fallbacks.</p>
+<p><strong>Description</strong></p>
+<p>If the device has an explicitly set ID (e.g. by the user on the
+command line via “-device thisdev,id=myid”) this is preferred.
+Otherwise we try the canonical QOM device path (which will be
+the PCI ID for PCI devices, for example). If all else fails
+we will return the placeholder “&lt;unknown device”&gt;.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qbus_mark_full">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qbus_mark_full</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.BusState" title="BusState"><span class="n"><span class="pre">BusState</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">bus</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qbus_mark_full" title="Link to this definition"></a><br /></dt>
 <dd><p>Mark this bus as full, so no more devices can be attached</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">BusState</span> <span class="pre">*bus</span></code></dt><dd><p>Bus to mark as full</p>
@@ -1120,12 +1249,14 @@ can use this function to mark the internal-only buses as full
 after you have created all their internal devices. Then user
 created devices will appear on the expansion-port bus where
 guest software expects them.</p>
+</div>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.qdev_should_hide_device">
 <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">qdev_should_hide_device</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">QDict</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">opts</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n"><span class="pre">from_json</span></span>, <span class="n"><span class="pre">Error</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">errp</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.qdev_should_hide_device" title="Link to this definition"></a><br /></dt>
 <dd><p>check if device should be hidden</p>
 </dd></dl>
 
+<div class="kernelindent docutils container">
 <p><strong>Parameters</strong></p>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">QDict</span> <span class="pre">*opts</span></code></dt><dd><p>options QDict</p>
@@ -1139,6 +1270,7 @@ guest software expects them.</p>
 <p>When a device is added via qdev_device_add() this will be called.</p>
 <p><strong>Return</strong></p>
 <p>if the device should be added now or not.</p>
+</div>
 </section>
 </section>
 
@@ -1153,7 +1285,7 @@ guest software expects them.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, The QEMU Project Developers.</p>
+    <p>&#169; Copyright 2026, The QEMU Project Developers.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
@@ -1164,7 +1296,7 @@ guest software expects them.</p>
 <!-- Empty para to force a blank line after "Built with Sphinx ..." -->
 <p></p>
 
-<p>This documentation is for QEMU version 10.1.0.</p>
+<p>This documentation is for QEMU version 10.2.94.</p>
 
 
 <p><a href="../about/license.html">QEMU and this manual are released under the
