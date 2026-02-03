@@ -1,7 +1,9 @@
 from pathlib import Path
 import sys
 import shutil
+from functools import lru_cache
 
+@lru_cache(maxsize=None)
 def find_qemu_img(start_file=__file__, max_up=6):
     """
     Trả về Path tới qemu-img.exe (hoặc qemu-img trên Linux).
@@ -16,12 +18,20 @@ def find_qemu_img(start_file=__file__, max_up=6):
     for root in roots:
         qemu_dir = root / "qemu"
         if qemu_dir.exists():
-            candidate = qemu_dir / "build" / exe_name
+            # Check directly in qemu folder
+            candidate = qemu_dir / exe_name
             if candidate.exists():
                 return candidate
+            
+            # Check in qemu/build
+            candidate = qemu_dir / exe_name
+            if candidate.exists():
+                return candidate
+            
+            # Check in qemu/qemu-*/build
             for sub in sorted(qemu_dir.iterdir(), reverse=True):
                 if sub.is_dir() and sub.name.startswith("qemu-"):
-                    candidate = sub / "build" / exe_name
+                    candidate = sub / exe_name
                     if candidate.exists():
                         return candidate
 
@@ -31,6 +41,7 @@ def find_qemu_img(start_file=__file__, max_up=6):
 
     return None
 
+@lru_cache(maxsize=None)
 def find_qemu_system(arch="x86_64", start_file=__file__, max_up=6):
     """
     Tìm file qemu-system tương ứng với kiến trúc (x86_64, i386, arm, v.v.)
@@ -44,12 +55,20 @@ def find_qemu_system(arch="x86_64", start_file=__file__, max_up=6):
     for root in roots:
         qemu_dir = root / "qemu"
         if qemu_dir.exists():
-            candidate = qemu_dir / "build" / exe_name
+            # Check directly in qemu folder
+            candidate = qemu_dir / exe_name
             if candidate.exists():
                 return candidate
+
+            # Check in qemu/build
+            candidate = qemu_dir / exe_name
+            if candidate.exists():
+                return candidate
+            
+            # Check in qemu/qemu-*/build
             for sub in sorted(qemu_dir.iterdir(), reverse=True):
                 if sub.is_dir() and sub.name.startswith("qemu-"):
-                    candidate = sub / "build" / exe_name
+                    candidate = sub / exe_name
                     if candidate.exists():
                         return candidate
 
@@ -59,6 +78,7 @@ def find_qemu_system(arch="x86_64", start_file=__file__, max_up=6):
 
     return None
 
+@lru_cache(maxsize=None)
 def find_qemu_storage_daemon(start_file=__file__, max_up=6):
     """
     Tìm file qemu-storage-daemon.exe (hoặc qemu-storage-daemon trên Linux).
@@ -72,12 +92,20 @@ def find_qemu_storage_daemon(start_file=__file__, max_up=6):
     for root in roots:
         qemu_dir = root / "qemu"
         if qemu_dir.exists():
-            candidate = qemu_dir / "build" / exe_name
+            # Check directly in qemu folder 
+            candidate = qemu_dir / exe_name
             if candidate.exists():
                 return candidate
+
+            # Check in qemu/build
+            candidate = qemu_dir / exe_name
+            if candidate.exists():
+                return candidate
+            
+            # Check in qemu/qemu-*/build
             for sub in sorted(qemu_dir.iterdir(), reverse=True):
                 if sub.is_dir() and sub.name.startswith("qemu-"):
-                    candidate = sub / "build" / exe_name
+                    candidate = sub / exe_name
                     if candidate.exists():
                         return candidate
 
@@ -88,7 +116,8 @@ def find_qemu_storage_daemon(start_file=__file__, max_up=6):
     return None
 
 
-def find_icon(name: str, start_file=__file__, max_up: int = 6):
+@lru_cache(maxsize=None)
+def find_icon(name: str, start_file=str(__file__), max_up: int = 6):
     """
     Tìm một file icon (ví dụ 'icon_VQEMU.png' hoặc 'icon_VQEMU.ico') bằng cách
     duyệt từ thư mục chứa `start_file` lên các thư mục cha (tối đa `max_up`).
@@ -135,16 +164,85 @@ def find_icon(name: str, start_file=__file__, max_up: int = 6):
 
     return None
 
+@lru_cache(maxsize=None)
+def find_qemu_storage_daemon(start_file=__file__, max_up=6):
+    """
+    Tìm file qemu-storage-daemon.exe (hoặc qemu-storage-daemon trên Linux).
+    """
+    exe_name = "qemu-storage-daemon.exe" if sys.platform == "win32" else "qemu-storage-daemon"
+    start = Path(start_file).resolve()
+    start_dir = start.parent
 
-def get_icon_vqemu_png(start_file=__file__, max_up: int = 6):
+    roots = [start_dir] + list(start_dir.parents[:max_up])
+
+    for root in roots:
+        qemu_dir = root / "qemu"
+        if qemu_dir.exists():
+            # Check directly in qemu folder 
+            candidate = qemu_dir / exe_name
+            if candidate.exists():
+                return candidate
+
+            # Check in qemu/build
+            candidate = qemu_dir / exe_name
+            if candidate.exists():
+                return candidate
+            
+            # Check in qemu/qemu-*/build
+            for sub in sorted(qemu_dir.iterdir(), reverse=True):
+                if sub.is_dir() and sub.name.startswith("qemu-"):
+                    candidate = sub / exe_name
+                    if candidate.exists():
+                        return candidate
+
+    which = shutil.which(exe_name)
+    if which:
+        return Path(which)
+
+    return None
+
+@lru_cache(maxsize=None)
+def find_qemu_edid(start_file=__file__, max_up=6):
+    """
+    Tìm file qemu-edid.exe (hoặc qemu-edid trên Linux).
+    """
+    exe_name = "qemu-edid.exe" if sys.platform == "win32" else "qemu-edid"
+    start = Path(start_file).resolve()
+    start_dir = start.parent
+
+    roots = [start_dir] + list(start_dir.parents[:max_up])
+
+    for root in roots:
+        qemu_dir = root / "qemu"
+        if qemu_dir.exists():
+            # Check directly in qemu folder 
+            candidate = qemu_dir / exe_name
+            if candidate.exists():
+                return candidate
+
+            # Check in qemu/build
+            candidate = qemu_dir / exe_name
+            if candidate.exists():
+                return candidate
+            
+            # Check in qemu/qemu-*/build
+            for sub in sorted(qemu_dir.iterdir(), reverse=True):
+                if sub.is_dir() and sub.name.startswith("qemu-"):
+                    candidate = sub / exe_name
+                    if candidate.exists():
+                        return candidate
+
+    which = shutil.which(exe_name)
+    if which:
+        return Path(which)
+
+    return None
+
+def get_icon_vqemu_png(start_file=str(__file__), max_up: int = 6):
     """Return Path to icon_VQEMU.png or None if not found."""
     return find_icon("icon_VQEMU.png", start_file=start_file, max_up=max_up)
 
 
-def get_icon_vqemu_ico(start_file=__file__, max_up: int = 6):
+def get_icon_vqemu_ico(start_file=str(__file__), max_up: int = 6):
     """Return Path to icon_VQEMU.ico or None if not found."""
     return find_icon("icon_VQEMU.ico", start_file=start_file, max_up=max_up)
-
-
-
-

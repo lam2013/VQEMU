@@ -1,0 +1,78 @@
+QTabWidget::pane {
+    border: none;
+    background: #23272e;
+}
+QTabBar::tab {
+    background: #2c313c;
+    color: #e0e0e0;
+    min-width: 190px;
+    min-height: 32px;
+    margin-right: 4px;
+    padding: 8px 24px;
+    font-size: 16px;
+    outline: None;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+QTabBar::tab:selected {
+    background: #5e81ac;
+    color: #fff;
+    font-weight: bold;
+}
+QTabBar::tab:hover {
+    background: #434c5e;
+    color: #fff;
+}
+QWidget {
+    background: #23272e;
+    color: #e0e0e0;
+    font-size: 15px;
+}
+QFrame {
+    border: 3px solid #495266;
+    border-radius: 9px;
+    margin-top: 21px;
+    font-size: 18px;
+    font-weight: bold;
+    alignment: right;
+    background: #414650;
+}
+QGroupBox {
+    border: 2px solid #3b4252;
+    border-radius: 8px;
+    margin-top: 20px;
+    background: #2c313c;
+    font-weight: bold;
+    font-size: 18px;
+    alignment: right;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 10px;
+    color: #cacdcf;
+}
+QPushButton {
+    background: #3b4252;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 15px;
+}
+QPushButton:hover {
+    background: #5e81ac;
+    color: #fff;
+}
+QLineEdit, QComboBox, QSpinBox, QTextEdit {
+    background: #23272e;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 6px;
+    color: #e0e0e0;
+    min-height: 28px;
+}
+QLabel {
+    font-weight: bold;
+    margin-right: 5px;
+}

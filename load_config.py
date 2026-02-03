@@ -11,6 +11,20 @@ import signal
 import time
 log = Logger()
 
+def get_config_path():
+    if sys.platform == "win32":
+        app_data = os.environ.get('LOCALAPPDATA') or os.environ.get('APPDATA') or os.path.expanduser('~')
+        base_path = Path(app_data) / "VQEMU"
+    else:
+        base_path = Path.home() / ".vqemu"
+        
+    try:
+        base_path.mkdir(parents=True, exist_ok=True)
+    except Exception:
+        pass
+        
+    return base_path / "config_VQEMU.json"
+
 
 def load_config(config_path: str):
     """Đọc file JSON cấu hình."""
@@ -31,11 +45,96 @@ def build_qemu_cmd(cfg: dict, data: dict = None):
     """Ghép lệnh QEMU từ config."""
     arch = cfg.get("arch", "x86_64")
     exe_path = find_qemu_system(arch)
+    if not exe_path:
+        raise FileNotFoundError(f"Không tìm thấy QEMU cho kiến trúc {arch}. Hãy cài đặt QEMU.")
     cmd = [str(exe_path)]
+    path_json = get_config_path()
 
-    cmd_part = ["arch", "ram", "smp", "cpu", "vga", "audio", "cdrom", "hda", "hdb", "hdc", "hdd", "fda", "fdb", "fdc", "fdd", "net_model", "portfwd", "exe"]
+    cmd_part = ["arch", "ram", "smp", "cpu", "audio", "cdrom", "hda", "hdb", "hdc", "hdd", "fda", "fdb", "fdc", "fdd", "net_model", "portfwd", "exe"]
     val_part = [cfg.get(part, "") for part in cmd_part]
     result_part = []
+
+    if "vga" in cfg.keys():
+        edid_cfg: dict = cfg.get("edid-vga", {})
+        edid_str = ""
+        if cfg.get("edid-vga-check", False):
+            if not cfg.get("edid-path-vga", False):
+                edid_str += f",edid=on,xres={edid_cfg.get('xres')},yres={edid_cfg.get('yres')},refresh={edid_cfg.get('refresh-hz')}"
+                if edid_cfg.get("max_xres", None) != None:
+                    edid_str += f",max-xres={edid_cfg.get('max_xres')}"
+                if edid_cfg.get("max_yres", None) != None:
+                    edid_str += f",max-yres={edid_cfg.get('max_yres')}"
+                if edid_cfg.get("srw", None) != None:
+                    edid_str += f",screen_raw_width={edid_cfg.get('srw')}"
+                if edid_cfg.get("srh", None) != None:
+                    edid_str += f",screen_raw_height={edid_cfg.get('srh')}"
+            else:
+                edid_str += f",edid=on,edid-file='{edid_cfg.get("path", '')}'"
+        result_part.extend("-vga", f"{cfg.get('vga', '')}{edid_str}")
+
+    # Machine Type
+    machine_type = cfg.get("machine_type", "")
+    if machine_type and machine_type != "none":
+        result_part.extend(["-machine", str(machine_type)])
+
+    # Accelerator
+    accel = cfg.get("accel", "")
+    if accel and accel != "off":
+         result_part.extend(["-accel", str(accel)])
+
+
+
+    # Custom BIOS
+    if cfg.get("bios_enable") and cfg.get("bios_path"):
+        if cfg.get("bios_path") != "":
+            result_part.extend(["-bios", str(cfg.get("bios_path"))])
+
+    # Boot Order
+    boot_order = cfg.get("boot_order", "")
+    if "-boot" in boot_order:
+        try:
+            import re
+            match = re.search(r'\(-boot\s+(.*?)\)', boot_order)
+            if match:
+                order = match.group(1).replace(" ", "")
+                result_part.extend(["-boot", f"order={order}"])
+        except:
+            pass
+    
+    if cfg.get("boot_menu"):
+        # Check if we already have a -boot argument to append menu=on
+        found_boot = False
+        for i in range(len(result_part)):
+            if result_part[i] == "-boot" and i + 1 < len(result_part):
+                if "order=" in result_part[i+1]:
+                    result_part[i+1] += ",menu=on"
+                    found_boot = True
+                    break
+        if not found_boot:
+             result_part.extend(["-boot", "menu=on"])
+
+    # Shared Folder
+    if cfg.get("shared_folder_enable") and cfg.get("shared_folder_path"):
+        path = cfg.get("shared_folder_path")
+        tag = cfg.get("shared_folder_tag", "shared")
+        # -virtfs local,path=path,mount_tag=tag,security_model=none
+        result_part.extend(["-virtfs", f"local,path={path},mount_tag={tag},security_model=none"])
+
+    # Guest Agent (Feature 10)
+    if cfg.get("guest_agent_enable"):
+        # QEMU Guest Agent
+        # Use named pipe for Windows host
+        pipe_name = "qga" 
+        result_part.extend(["-chardev", f"socket,path=\\\\.\\pipe\\{pipe_name},server,nowait,id=qga0"])
+        result_part.extend(["-device", "virtio-serial"])
+        result_part.extend(["-device", "virtserialport,chardev=qga0,name=org.qemu.guest_agent.0"])
+        # Hint for clipboard: Ideally requires spice-vdagent running in guest and spicevmc chardev, 
+        # but spicevmc requires -spice. We only add QGA here to avoid breaking boot without -spice.
+        # If user wants clipboard, they might need to ensure valid display/agent setup.
+        # However, adding the device for spice (without chardev) is harmless? 
+        # -device virtserialport,chardev=spicechannel0,name=com.redhat.spice.0 -> needs chardev
+        # So we skip it to be safe.
+
 
     for i in range(len(cmd_part)):
         if cmd_part[i] == "arch":
@@ -54,7 +153,7 @@ def build_qemu_cmd(cfg: dict, data: dict = None):
             else:
                 result_part.extend(["-vga", str(val_part[i])])
         if cmd_part[i] == "audio":
-            if val_part[i] == "":
+            if val_part[i] == "" or val_part[i] == "none":
                 continue
             else:
                 result_part.extend(["-device", str(val_part[i])])
@@ -107,7 +206,9 @@ def build_qemu_cmd(cfg: dict, data: dict = None):
             if val_part[i] == "none":
                 continue
             else:
-                result_part.extend(["-net", str(val_part[i])])
+                a = ["-net", f"{str(val_part[i])}"]
+                a.append(f",netdev = {cfg.get('netad').get('id_netad')}") if cfg.get("enable_netad", False) == True else []
+                result_part.extend(a)
         else:
             continue
         if cmd_part[i] == "portfwd":
@@ -133,7 +234,7 @@ def build_qemu_cmd(cfg: dict, data: dict = None):
         config_DS = data.get("config_DS", {})
         # User requirement: add lines for running daemon processes
         for key, info in caches.items():
-            path_json = Path(__file__).parent / "config_VQEMU.json"
+            path_json = get_config_path()
             with open(path_json, "r", encoding="utf-8") as f:
                 data = json.load(f)
             name = data.get("config", {}).get("daemon_current", "")
@@ -169,6 +270,19 @@ def build_qemu_cmd(cfg: dict, data: dict = None):
                         part_args = part.split()
                     result_part.extend(part_args)
 
+
+
+    # Add USB Passthrough parts
+    usb_passthrough = cfg.get("usb_passthrough", [])
+    if usb_passthrough:
+        # Enable XHCI controller
+        result_part.extend(["-device", "qemu-xhci,id=xhci"])
+        for dev in usb_passthrough:
+            vid = dev.get("vendorid")
+            pid = dev.get("productid")
+            if vid and pid:
+                result_part.extend(["-device", f"usb-host,bus=xhci.0,vendorid={vid},productid={pid}"])
+
     if cfg.get("enb_command_qemu"):
         cmd.clear()
         import shlex
@@ -178,6 +292,261 @@ def build_qemu_cmd(cfg: dict, data: dict = None):
         except:
             cmd.extend(custom_cmd.split())
         return cmd
+
+    # Feature 11: -readconfig
+    if cfg.get("readconfig_enable") and cfg.get("readconfig_path"):
+        result_part.extend(["-readconfig", str(cfg.get("readconfig_path"))])
+    
+    # Feature 12: -sandbox
+    sandbox_cfg = cfg.get("sandbox", {})
+    string_sanbox = ""
+    if sandbox_cfg.get("check", ''):
+        string_sandbox += "-sandbox on"
+        if sandbox_cfg.get("obsolete", '') != "none":
+            string_sandbox += f",obsolete={sandbox_cfg.get("obsolete", '')}"
+        if sandbox_cfg.get("elevateprivileges", '') != "none":
+            string_sandbox += f",elevateprivileges={sandbox_cfg.get("elevateprivileges", '')}"
+        if sandbox_cfg.get("spawn", '') != "none":
+            string_sandbox += f",spawn={sandbox_cfg.get("spawn", '')}"
+        if sandbox_cfg.get("resourcecontrol", '') != "none":
+            string_sandbox += f",resourcecontrol={sandbox_cfg.get("resourcecontrol", '')}"
+        if sandbox_cfg.get("seccomp mode", '') != "off":
+            string_sandbox += f",strict=yes"
+        cmd += string_sandbox
+
+    # Feature 13: watchdog
+    watchdog = cfg.get("watchdog", "")
+    check_watchdog = cfg.get("checkbox_watchdog", '')
+    none_watchdog = cfg.get("none_watchdog_device", '')
+    if check_watchdog == True:
+        if watchdog == "none":
+            cmd += ["-device", str(watchdog)]
+        # Feature 14: Watchdog-action
+        if none_watchdog == False:
+            watchdog_action = cfg.get("watchdog-action", "")
+            cmd += ["-watchdog-action", str(watchdog_action)]
+
+    # Feature 15: nographics
+    if cfg.get("nographics"):
+        cmd.append("-nographic")
+
+    # Feature 16: displayoptions
+    display_options = cfg.get("display_options", {})
+    display_command = ""
+    
+    # Helper to convert string boolean
+    def to_bool(val):
+        if isinstance(val, bool):
+            return val
+        return str(val).lower() == "true"
+    
+    if to_bool(display_options.get("Enable", False)):
+        mode = display_options.get("mode", "")
+        options = display_options.get("options", {})
+        if mode == "sdl":
+            display_command += "-display sdl"
+            gl_val = options.get("sdl", {}).get("gl2", "")
+            if gl_val and gl_val != "0" and gl_val != "none":
+                display_command += f",gl={gl_val}"
+            if to_bool(options.get("sdl", {}).get("check_grap_mod", False)):
+                grap_mod_val = options.get("sdl", {}).get("grap_mod", "")
+                if grap_mod_val:
+                    display_command += f",grap_mod={grap_mod_val}"
+            if to_bool(options.get("sdl", {}).get("show_cursor", True)):
+                display_command += ",show-cursor=on"
+            if to_bool(options.get("sdl", {}).get("windows_close", True)):
+                display_command += ",window-close=on"
+        elif mode == "spice-app":
+            display_command += "-display spice-app"
+            if to_bool(options.get("spice-app", {}).get("gl", False)):
+                display_command += ",gl=on"
+        elif mode == "gtk":
+            display_command += "-display gtk"
+            if to_bool(options.get("gtk", {}).get("gl", False)):
+                display_command += ",gl=on"
+            if to_bool(options.get("gtk", {}).get("fullscreen", False)):
+                display_command += ",fullscreen=on"
+            if to_bool(options.get("gtk", {}).get("show_tab", True)):
+                display_command += ",show-tabs=on"
+            if to_bool(options.get("gtk", {}).get("show_curser", True)):
+                display_command += ",show-cursor=on"
+            if to_bool(options.get("gtk", {}).get("windows_close", True)):
+                display_command += ",window-close=on"
+            if to_bool(options.get("gtk", {}).get("show_menubar", True)):
+                display_command += ",show-menubar=on"
+            if to_bool(options.get("gtk", {}).get("zoom_to_fit", False)):
+                display_command += ",zoom-to-fit=on"
+        elif mode == "curses":
+            display_command += "-display curses"
+            if to_bool(options.get("curses", {}).get("charset_enable", False)):
+                charset_val = options.get("curses", {}).get("charset", "")
+                if charset_val:
+                    display_command += f",charset={charset_val}"
+        elif mode == "egl-headless":
+            display_command += "-display egl-headless"
+            if to_bool(options.get("egl-headless", {}).get("readnode_enable", False)):
+                readnode_val = options.get("egl-headless", {}).get("readnode", "")
+                if readnode_val:
+                    display_command += f",readnode={readnode_val}"
+        elif mode == "dbus":
+            display_command += "-display dbus"
+            if to_bool(options.get("dbus", {}).get("addr_enable", False)):
+                addr_val = options.get("dbus", {}).get("addr", "")
+                if addr_val:
+                    display_command += f",addr={addr_val}"
+            gl_val = options.get("dbus", {}).get("gl2", "")
+            if gl_val and gl_val != "0" and gl_val != "none":
+                display_command += f",gl={gl_val}"
+            if to_bool(options.get("dbus", {}).get("readnode_enable", False)):
+                readnode_val = options.get("dbus", {}).get("readnode", "")
+                if readnode_val:
+                    display_command += f",readnode={readnode_val}"
+    if display_command:
+        cmd += display_command.split()
+
+    #Feature 17 spice option:
+    spice_option = cfg.get("spice_options", {}).get("options", {})
+    spice_mode = cfg.get("spice_options", {}).get("mode", "")
+    spice_enable = bool(cfg.get("spice_options", {}).get("enable", "False"))
+    spice_command = ""
+    if spice_enable:
+        if spice_mode == "cơ bản":
+            basic = spice_option.get("basic", {})
+            if bool(basic.get("port", {}).get("enable", "True")):
+                spice_command += f"port={basic.get("port", {}).get("value","")}"
+            if bool(basic.get("tls-port", {}).get("enable", "False")):
+                if bool(basic.get("port", {}).get("enable", "True")):
+                    spice_command += f",tls-port={basic.get("tls-port", {}).get("value", "")}"
+                else:
+                    spice_command += f"tls-port={basic.get("tls-port", {}).get("value", "")}"
+            spice_command += ",ipv4=on" if bool(basic.get("ipv4", "False")) else ",ipv4=off"
+            spice_command += ",ipv6=on" if bool(basic.get("ipv6", "False")) else ",ipv6=off"
+            spice_command += ",disable-ticketing=on" if bool(basic.get("disable_ticketing", "False")) else ",disable_ticketing=off"
+            if bool(basic.get("password_secret",{}).get("enable", "False")):
+                spice_command += f",password-secret={basic.get("password_secret", {}).get("value", "")}"
+            spice_command += ",disable-copy-paste=on" if bool(basic.get("disable_copy_paste", "False")) else ",disable-copy-paste=off"
+            spice_command += ",agent-mouse=on" if bool(basic.get("agent_mouse", "False")) else ",agent-mouse=off" 
+        if spice_mode == "nâng cao":
+            advanced = spice_option.get("advanced", {})
+            if bool(advanced.get("port", {}).get("enable", "True")):
+                spice_command += f"port={advanced.get("port", {}).get("value","")}"
+            if bool(advanced.get("tls-port", {}).get("enable", "False")):
+                if bool(advanced.get("port", {}).get("enable", "True")):
+                    spice_command += f",tls-port={advanced.get("tls-port", {}).get("value", "")}"
+                else:
+                    spice_command += f"tls-port={advanced.get("tls-port", {}).get("value", "")}"
+            spice_command += ",ipv4=on" if bool(advanced.get("ipv4", "False")) else ",ipv4=off"
+            spice_command += ",ipv6=on" if bool(advanced.get("ipv6", "False")) else ",ipv6=off"
+            spice_command += ",disable-ticketing=on" if bool(advanced.get("disable_ticketing", "False")) else ",disable_ticketing=off"
+            if bool(advanced.get("password_secret",{}).get("enable", "False")):
+                spice_command += f",password-secret={advanced.get("password_secret", {}).get("value", "")}"
+            spice_command += ",disable-copy-paste=on" if bool(advanced.get("disable_copy_paste", "False")) else ",disable-copy-paste=off"
+            spice_command += ",agent-mouse=on" if bool(advanced.get("agent_mouse", "False")) else ",agent-mouse=off"
+            x509_options_spice = advanced.get("x509", {})
+            if bool(x509_options_spice.get("Enable", "False")):
+                if bool(x509_options_spice.get("x509_dir", {}).get("enable")):
+                    spice_command += f",x509-dir={x509_options_spice.get("x509_dir", {}).get("value", "")}"
+                if bool(x509_options_spice.get("x509_key_file", {}).get("enable", "")):
+                    spice_command += f",x509-key-file={x509_options_spice.get("x509_key_file", {}).get("value", "")}"
+                if bool(x509_options_spice.get("x509_key_password", {}).get("enable", "False")):
+                    spice_command += f",x509-key-password={x509_options_spice.get("x509_key_password", {}).get("value", "")}"
+                if bool(x509_options_spice.get("x509_cert_file", {}).get("enable", "False")):
+                    spice_command += f",x509-cert-file={x509_options_spice.get("x509_cert_file", {}).get("value", "")}"
+                if bool(x509_options_spice.get("x509_cacert_file", {}).get("enable", "False")):
+                    spice_command += f",x509-cacert-file={x509_options_spice.get("x509_cacert_file", {}).get("value", "")}"
+                if bool(x509_options_spice.get("x509_dh_key_file", {}).get("enable", "")):
+                    spice_command += f",x509-dh-key-file={x509_options_spice.get("x509_dh_key_file", {}).get("value", "")}"
+            if bool(advanced.get("addr", {}).get("enable", "False")):
+                spice_command += f",addr={advanced.get("addr", {}).get("value", "")}"
+            spice_command += ",unix=on" if bool(advanced.get("unix", "False")) else ",unix=off"
+            spice_command += f",tls-ciphers={advanced.get("tls_ciphers", {}).get("value", "")}" if bool(advanced.get("tls_ciphers", {}).get("enable", "False")) else ""
+            if bool(advanced.get("tls_channel", {}).get("enable", "False")):
+                spice_command += f",tls-channel={advanced.get("tls_ciphers", {}).get("value", "")}"
+            if bool(advanced.get("plaintext_channel", {}).get("enable", "False")):
+                spice_command += f",plaintext-channel={advanced.get("plaintext_channel", {}).get("value", "")}"
+            spice_command += ",sasl=on" if bool(advanced.get("sasl", "False")) else ",sasl=off"
+            if bool(advanced.get("image_compression", {}).get("enable", "False")):
+                spice_command += f",image-compression={advanced.get("image_compression", {}).get("value", "")}"
+            if bool(advanced.get("jpeg_wan_compression", {}).get("enable")):
+                spice_command += f",jpeg-wan-compression={advanced.get("jpeg_wan_compression", {}).get("value", "")}"
+            if bool(advanced.get("zlib_glz_wan_compression", {}).get("enable", "False")):
+                spice_command += f",zlib-glz-wan-compression={advanced.get("zlib_glz_wan_compression", {}).get("value", "")}"
+            if bool(advanced.get("streaming_video", {}).get("enable", "False")):
+                spice_command += f",streaming-video={advanced.get("streaming_video", {}).get("value", "")}"
+            spice_command += f",disable-agent-file-xfer=on" if bool(advanced.get("disable_agent_file_xfer", "False")) else ",disable-agent-file-xfer=off"
+            spice_command += f",playback-compression=on" if bool(advanced.get("playback_compression", "False")) else ",playback-compression=off"
+            spice_command += f",seamless-migration=on" if bool(advanced.get("seamless_migration", "False")) else ".seamless-migration=off"
+            if bool(advanced.get("video_codec", {}).get("enable", "False")):
+                spice_command += f",video-codec={advanced.get("video_codec", {}).get("value", "")}"
+            if bool(advanced.get("max_refresh_rate", {}).get("enable", "False")):
+                spice_command += f",max-refresh-rate={advanced.get("max_refresh_rate", {}).get("value", "")}"
+            spice_command += ",gl=on" if bool(advanced.get("gl", "False")) else ",gl=off"
+            if bool(advanced.get("rendernode", {}).get("enable", "False")):
+                spice_command += f",rendernode={advanced.get("rendernode", {}).get("value", "")}"
+        
+        #i386 advanced options
+        if bool(cfg.get("win2k-hack")):
+            cmd += "-win2k-hack"
+        if bool(cfg.get("no-fd-bootcheck")):
+            cmd += "-no-fd-bootcheck"
+            
+        cmd += spice_command.split() 
+
+        #keyboard layout
+        if bool(cfg.get("klc", "False")):
+            cmd += f"-k {cfg.get("keyboard_layout", "en")}"
+
+        #multi_option
+        if cfg.get("multi_options", False):
+            with open(get_config_path(), 'r', encoding="utf-8") as f:
+                data = json.load(f)
+                mocc = data["multi_options"]
+            for key in mocc:
+                cmd_moc = ""
+                if mocc.get(f"{key}")["type"] == "fw_cfg":
+                    cmd_moc += "-fw_cfg"
+                    if "path" in mocc.get(f"{key}")["mode"]:
+                        cmd_moc += f" name={key}, file={mocc.get(key)["Line"]}"
+                    else:
+                        cmd_moc += f' name={key}, string="{mocc.get(key)["Text"]}"'
+                cmd += cmd_moc.split()
+        
+        #netad
+        netad = cfg.get("netad", {})
+        if cfg.get("enable_netad", False):
+            cmd = f"-netdev {cfg.get("netad_mode", "user")}, id={netad.get("id_netad", "")}, "
+            if not netad.get("ipv4_enable", False):
+                cmd += "ipv4=off, "
+            if netad.get("net_addr_netad", "N\A") != "N\A":
+                cmd += f"net={netad.get("net_addr_netad", "")}, "
+            if netad.get("net_host_netad", "N\A") != "N\A":
+                cmd += f"host={netad.get("net_host_netad", "")}, "
+            if not netad.get("ipv6_enable", False):
+                cmd += "ipv6=off, "
+            if netad.get("ipv6_addr_netad", "N\A") != "N\A":
+                cmd += f"ipv6-net={netad.get("ipv6_addr_netad", "")}, "
+            if netad.get("ipv6_host_netad", "N\A") != "N\A":
+                cmd += f"ipv6-host={netad.get("ipv6_host_netad", "")}, "
+            if netad.get("restrict_netad", False):
+                cmd += "restrict=on, "
+            if netad.get("hostname_netad", "N\A") != "N\A":
+                cmd += f"hostname={netad.get("hostname_netad", "")}, "
+            if netad.get("dns_netad", "N\A") != "N\A":
+                cmd += f"dns={netad.get("dns_netad", "")}, "
+            if netad.get("dnssearch_netad", "N\A") != "N\A":
+                cmd += f"dnssearch={netad.get("dnssearch_netad", "")}, "
+            if netad.get("domainname_netad", "N\A") != "N\A":
+                cmd += f"domainname={netad.get("domainname_netad", "")}, "
+            if netad.get("tftp_netad", "N\A") != "N\A":
+                cmd += f"tftp={netad.get("tftp_netad", "")}, "
+            if netad.get("tftpname_netad", "N\A") != "N\A":
+                cmd += f"tftp-server-name={netad.get("tftpname_netad", "")}, "
+            if netad.get("bootfile_netad", "N\A") != "N\A":
+                cmd += f"bootfile={netad.get("bootfile_netad", "")}, "
+            if netad.get("hostfwd_netad", "N\A") != "N\A":
+                cmd += f"hostfwd={netad.get("hostfwd_netad", "")}, "
+            if netad.get("guestfwd_netad", "N\A") != "N\A":
+                cmd += f"guestfwd={netad.get("guestfwd_netad", "")}"
     
     # Prepend the executable
     with open(path_json, 'r', encoding="utf-8") as f:
@@ -218,22 +587,41 @@ def run_qemu_direct(config_path):
 
     cmd = build_qemu_cmd(cfg, data)
     
-    log.log("👉 Lệnh QEMU được tạo:")
+    log.log("Lệnh QEMU được tạo:")
     log.log(" ".join(cmd))
-    log.log("🚀 QEMU started!")
+    log.log("QEMU đã bắt đầu!")
     
+    import threading
+
+    def monitor_process(proc):
+        try:
+            for line in proc.stdout:
+                if line:
+                    log.log(f"[QEMU] {line.strip()}")
+            proc.wait()
+            log.log(f"QEMU đã thoát với mã {proc.returncode}")
+        except Exception as e:
+            log.error(f"Lỗi giám sát tiến trình: {e}")
+
     try:
-        log.log(">>> Running QEMU command...")
-        # Capture output to diagnose errors
-        result = subprocess.run(cmd, check=True, capture_output=True, text=True, encoding="utf-8", errors="replace")
-        log.log("QEMU Output:\n" + result.stdout)
-        log.log("QEMU chạy thành công!")
-    except subprocess.CalledProcessError as e:
-        log.error(f"Khi chạy QEMU (Exit Code {e.returncode}):")
-        log.error(f"STDOUT: {e.stdout}")
-        log.error(f"STDERR: {e.stderr}")
+        log.log(">>> Đang chạy lệnh QEMU (Nền)...")
+        # Use Popen to allow real-time logging and non-blocking UI
+        proc = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT, # Merge stderr to stdout
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0
+        )
+        
+        # Start monitoring thread
+        t = threading.Thread(target=monitor_process, args=(proc,), daemon=True)
+        t.start()
+        
     except Exception as e:
-        log.error(f"Khi chạy QEMU (Lỗi khác): {e}")
+        log.error(f"Khi chạy QEMU (Lỗi khởi tạo): {e}")
 
 def run_daemon_storage_direct(config_path, name_ds):
     """Chạy daemon storage với name_ds được chỉ định trong config."""
@@ -282,20 +670,20 @@ def run_daemon_storage_direct(config_path, name_ds):
         # Chạy background
         proc = subprocess.Popen(args, close_fds = False if sys.platform == "win32" else True, creationflags=subprocess.CREATE_NO_WINDOW if sys.platform=='win32' else 0)
         
-        path_config = Path(__file__).resolve().parent / "config_VQEMU.json"
+        path_config = get_config_path()
         
         # Check if process crashed immediately
         try:
             time.sleep(1)
             if proc.poll() is not None:
-                log.error(f"Daemon process exited immediately with code {proc.returncode}")
+                log.error(f"Daemon đã thoát ngay lập tức với mã {proc.returncode}")
                 return
         except Exception:
             pass
             
         pid = proc.pid
         data["config_DS"][name_ds]["pid"] = pid
-        log.log(f"Daemon started with PID: {pid}")
+        log.log(f"Daemon đã bắt đầu với PID: {pid}")
 
         if "caches" not in data:
             data["caches"] = {}
@@ -333,7 +721,7 @@ def kill_daemon_storage_direct(config_path, cache_key):
     name_ds = info.get("name") 
 
     if pid:
-        log.step(f"Kill process {pid} ({name_ds})")
+        log.step(f"Dừng tiến trình {pid} ({name_ds})")
         try:
              # Windows kill force
             subprocess.run(f"taskkill /F /PID {pid}", shell=True)
@@ -375,7 +763,7 @@ def kill_all_daemons(config_path):
         pid = info.get("pid")
         name_ds = info.get("name")
         if pid:
-            log.log(f"Killing {name_ds} (PID: {pid})...")
+            log.log(f"Đang dừng {name_ds} (PID: {pid})...")
             try:
                 subprocess.run(f"taskkill /F /PID {pid}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             except Exception:
@@ -397,7 +785,7 @@ def main():
     print(">>> sys.argv:", sys.argv)
 
     if len(sys.argv) < 2:
-        print("Usage: python load_config.py <config.json>")
+        print("Cách dùng: python load_config.py <config.json>")
         sys.exit(1)
 
     config_path = sys.argv[1]

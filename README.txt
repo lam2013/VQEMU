@@ -35,11 +35,48 @@ tính năng:
 +tính năng custom qemu
 +tính năng snapshot
 +tính năng FDA,FDB,FDC,FDD
-
-những thứ được thêm và cải thiện:
 +daemon storage
 +cải tiến wifi
-+thêm system w
++system w
++update card sound (Thêm danh sách sound card đa dạng: intel-hda, ac97, es1370, sb16, hda-duplex...)
++update card IO daemon storage (Tối ưu hóa quản lý tiến trình daemon, thêm tùy chọn cache mode và aio)
++Log Viewer (Tab vm_tab: View Log, Save Log, Clear Log button)
++USB Device Manager (Giao diện tích chọn để passthrough thiết bị USB từ Host vào Guest)
++update thêm tính năng machine type (Thêm tùy chọn chọn version chipset: pc-i440fx-x.x hoặc q35-x.x để tương thích OS cũ/mới)
++Custom bios
++Shared Folder Integration (Hỗ trợ VirtFS để chia sẻ thư mục Host-Guest dễ dàng mà không cần mạng)
++Performance & Acceleration (tùy chọn bật do user quyết định WHPX/HAXM/Hyper-V, nhận biết win nào có thể bật WHPX/HAXM/Hyper-V và cảnh báo những win không thể bật)
++check qemu daemon có đang chạy không, nêu các thông tin về PID, thời gian chạy, tên gì
++Guest Agent Integration (Hỗ trợ QEMU Guest Agent để Shutdown/Reboot máy ảo an toàn, đồng bộ clipboard Host-Guest)
++thêm -readconfig để đọc config file
++thêm -sandbox để chạy qemu trong sandbox
++thêm -watchdog-action để set watchdog action
++thêm watchdog driver
++ thêm -nographic
++ thêm các option -display
++ thêm -spice
++ thêm full-screen
+
+v1.7:
+
+fix:
+-thay qemu hiện tại trở lại thành qemu trong những bản trước đó
+major update:
+-i386:
++ thêm các tùy chọn đặc biệt của i386:
+    - win2k-hack
+    - no-fd-bootchk
+- qemu-img:
++ thêm nhiều loại format ổ cứng ảo
++ thêm option:
+    - resize
+-qemu:
+    + keyboard layout
+
+update v1.8:
+- thêm -fw_cfg
+- thêm option edid cho vga
+- thêm qemu-edid
 
 cách chạy:
 1. chạy thủ công(nếu bạn biết sơ về command):
