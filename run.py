@@ -170,6 +170,248 @@ def can_write(folder):
 def always_return_true():
     return True
 
+class LogViewerDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Trình xem Log")
+        self.resize(800, 600)
+        
+        layout = QVBoxLayout(self)
+        
+        self.text_edit = QTextEdit()
+        self.text_edit.setReadOnly(True)
+        layout.addWidget(self.text_edit)
+        
+        btn_layout = QHBoxLayout()
+        
+        self.btn_refresh = QPushButton("Làm mới")
+        self.btn_refresh.clicked.connect(self.load_log)
+        btn_layout.addWidget(self.btn_refresh)
+        
+        self.btn_save = QPushButton("Lưu Log")
+        self.btn_save.clicked.connect(self.save_log)
+        btn_layout.addWidget(self.btn_save)
+        
+        self.btn_clear = QPushButton("Xóa Log")
+        self.btn_clear.clicked.connect(self.clear_log)
+        btn_layout.addWidget(self.btn_clear)
+        
+        self.btn_close = QPushButton("Đóng")
+        self.btn_close.clicked.connect(self.close)
+        btn_layout.addWidget(self.btn_close)
+        
+        layout.addLayout(btn_layout)
+        
+        self.log_file = self.get_latest_log()
+        self.load_log()
+        
+        # Auto-refresh timer
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.load_log)
+        self.timer.start(100) # Refresh every 2 seconds
+
+    def get_latest_log(self):
+        log_dir = Path(__file__).resolve().parent / "logs"
+        if not log_dir.exists():
+            return None
+        logs = sorted(log_dir.glob("*.log"), key=os.path.getmtime, reverse=True)
+        return logs[0] if logs else None
+
+    def load_log(self):
+        self.log_file = self.get_latest_log()
+        if self.log_file and self.log_file.exists():
+            try:
+                with open(self.log_file, "r", encoding="utf-8") as f:
+                    content = f.read()
+                self.text_edit.setPlainText(content)
+                self.text_edit.moveCursor(QTextCursor.End)
+            except Exception as e:
+                self.text_edit.setPlainText(f"Error reading log: {e}")
+        else:
+            self.text_edit.setPlainText(f"No log file found in {Path(__file__).resolve().parent / 'logs'}")
+
+    def save_log(self):
+        file_path, _ = QFileDialog.getSaveFileName(self, "Lưu File Log", "", "Log Files (*.log);;Text Files (*.txt)")
+        if file_path:
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(self.text_edit.toPlainText())
+            QMessageBox.information(self, "Thành công", "Đã lưu log thành công!")
+
+    def clear_log(self):
+        if self.log_file and self.log_file.exists():
+            reply = QMessageBox.question(self, "Xác nhận", "Bạn có chắc muốn xóa nội dung file log hiện tại?", QMessageBox.Yes | QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                with open(self.log_file, "w", encoding="utf-8") as f:
+                    f.write("")
+                self.load_log()
+
+class USBScanThread(QThread):
+    scan_finished = pyqtSignal(list)
+    scan_error = pyqtSignal(str)
+
+    def run(self):
+        cmd = 'Get-PnpDevice -PresentOnly | Where-Object { $_.InstanceId -match "^USB" } | Select-Object FriendlyName, InstanceId | ConvertTo-Json'
+        try:
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            
+            proc = subprocess.run(["powershell", "-Command", cmd], capture_output=True, text=True, startupinfo=startupinfo)
+            if proc.returncode == 0:
+                devices = json.loads(proc.stdout)
+                if not isinstance(devices, list):
+                    devices = [devices]
+                self.scan_finished.emit(devices)
+            else:
+                self.scan_error.emit(f"Process returned {proc.returncode}")
+        except Exception as e:
+            self.scan_error.emit(str(e))
+
+class USBManagerDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Quản lý thiết bị USB")
+        self.resize(600, 400)
+        
+        layout = QVBoxLayout(self)
+        
+        self.table = QTableWidget()
+        self.table.setColumnCount(4)
+        self.table.setHorizontalHeaderLabels(["Chọn", "Tên thiết bị", "Vendor ID", "Product ID"])
+        self.table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+        self.table.setStyleSheet("""
+            QTableWidget {
+                background-color: #2c313c;
+                color: #e0e0e0;
+                gridline-color: #444;
+                border: 1px solid #444;
+            }
+            QHeaderView::section {
+                background-color: #3b4252;
+                color: #fff;
+                padding: 5px;
+                border: 1px solid #444;
+            }
+            QTableWidget::item {
+                padding: 5px;
+            }
+            QTableCornerButton::section {
+                background-color: #3b4252;
+                border: 1px solid #444;
+            }
+            QCheckBox {
+                margin-left: 10px;
+            }
+        """)
+        layout.addWidget(self.table)
+        
+        btn_layout = QHBoxLayout()
+        self.btn_scan = QPushButton("Quét thiết bị")
+        self.btn_scan.clicked.connect(self.scan_devices)
+        btn_layout.addWidget(self.btn_scan)
+        
+        self.btn_close = QPushButton("Đóng")
+        self.btn_close.clicked.connect(self.close)
+        btn_layout.addWidget(self.btn_close)
+        
+        layout.addLayout(btn_layout)
+        
+        self.load_current_config()
+        self.scan_devices()
+
+    def load_current_config(self):
+        # Use parent's transient list instead of reading file again
+        parent = self.parent()
+        if parent and hasattr(parent, 'usb_passthrough_list'):
+            self.selected_devices = parent.usb_passthrough_list
+        else:
+            self.selected_devices = []
+
+    def on_checkbox_changed(self, state):
+        # Update parent list immediately
+        self.update_parent_list()
+        # Trigger parent snapshot save
+        parent = self.parent()
+        if parent and hasattr(parent, 'save_timer'):
+            parent.save_timer.start()
+
+    def update_parent_list(self):
+        usb_list = []
+        for i in range(self.table.rowCount()):
+            # Access checkbox via cell widget layout
+            widget = self.table.cellWidget(i, 0)
+            if widget and widget.layout().count() > 0:
+                chk = widget.layout().itemAt(0).widget()
+                
+                if chk.isChecked():
+                    vid = self.table.item(i, 2).text()
+                    pid = self.table.item(i, 3).text()
+                    name = self.table.item(i, 1).text()
+                    usb_list.append({
+                        "vendorid": vid,
+                        "productid": pid,
+                        "name": name
+                    })
+        
+        parent = self.parent()
+        if parent:
+            parent.usb_passthrough_list = usb_list
+
+    def scan_devices(self):
+        self.table.setRowCount(0)
+        self.btn_scan.setEnabled(False)
+        self.btn_scan.setText("Đang quét...")
+        
+        self.scan_thread = USBScanThread()
+        self.scan_thread.scan_finished.connect(self.on_scan_finished)
+        self.scan_thread.scan_error.connect(self.on_scan_error)
+        self.scan_thread.start()
+
+    def on_scan_finished(self, devices):
+        self.btn_scan.setEnabled(True)
+        self.btn_scan.setText("Quét thiết bị")
+        
+        row = 0
+        for dev in devices:
+            name = dev.get("FriendlyName", "Unknown")
+            instance_id = dev.get("InstanceId", "")
+            
+            # Regex to extract VID and PID
+            match_vid = re.search(r'VID_([0-9A-Fa-f]{4})', instance_id)
+            match_pid = re.search(r'PID_([0-9A-Fa-f]{4})', instance_id)
+            
+            if match_vid and match_pid:
+                vid = "0x" + match_vid.group(1).lower()
+                pid = "0x" + match_pid.group(1).lower()
+                
+                self.table.insertRow(row)
+                
+                chk = QCheckBox()
+                chk.stateChanged.connect(self.on_checkbox_changed)
+
+                for s_dev in self.selected_devices:
+                    if s_dev.get("vendorid") == vid and s_dev.get("productid") == pid:
+                        chk.setChecked(True)
+                        break
+                
+                chk_widget = QWidget()
+                chk_layout = QHBoxLayout(chk_widget)
+                chk_layout.addWidget(chk)
+                chk_layout.setAlignment(Qt.AlignCenter)
+                chk_layout.setContentsMargins(0,0,0,0)
+                
+                self.table.setCellWidget(row, 0, chk_widget)
+                self.table.setItem(row, 1, QTableWidgetItem(name))
+                self.table.setItem(row, 2, QTableWidgetItem(vid))
+                self.table.setItem(row, 3, QTableWidgetItem(pid))
+                row += 1
+
+    def on_scan_error(self, error):
+        self.btn_scan.setEnabled(True)
+        self.btn_scan.setText("Quét thiết bị")
+        QMessageBox.warning(self, "Lỗi quét USB", f"Không thể quét thiết bị: {error}")
+
+
+
 class QG(QTabWidget):
     def __init__(self):
         super().__init__()
@@ -243,8 +485,28 @@ class QG(QTabWidget):
         self.save_timer.setSingleShot(True)
         self.save_timer.setInterval(500)  # Debounce 500ms
         self.save_timer.timeout.connect(self._perform_save_snapshot)
+        
+        # Load config once
+        try:
+            with open(get_config_path(), 'r', encoding='utf-8') as f:
+                self.cached_config = json.load(f)
+        except Exception:
+            self.cached_config = {"disks": {}, "config_DS": {}, "profiles": {}}
+            
         self.init_tabs()
     
+    def open_log_viewer(self):
+        if not hasattr(self, 'log_viewer_dialog') or not self.log_viewer_dialog.isVisible():
+            self.log_viewer_dialog = LogViewerDialog(self)
+            self.log_viewer_dialog.show()
+        else:
+            self.log_viewer_dialog.raise_()
+            self.log_viewer_dialog.activateWindow()
+
+    def open_usb_manager(self):
+        dlg = USBManagerDialog(self)
+        dlg.exec_()
+
     def update_system_qemu(self):
         try:
             if self.AQEW.isChecked():
@@ -390,13 +652,59 @@ class QG(QTabWidget):
 
         layout_vm.addWidget(QLabel("Âm thanh:"), 6, 0)
         self.A = QComboBox()
-        self.A.addItems(["None","ac97","es1370","hda","sb16"])
+        self.update_audio_list()
+        self.K.currentIndexChanged.connect(self.update_audio_list)
         layout_vm.addWidget(self.A, 6, 1)
+
+        self.MT = QComboBox()
+        self.update_machine_type()
+        self.K.currentIndexChanged.connect(self.update_machine_type)
+        layout_vm.addWidget(QLabel("machine type:"), 7,0)
+        layout_vm.addWidget(self.MT, 7,1)
+
+        # Feature 8: Acceleration
+        layout_vm.addWidget(QLabel("Tăng tốc (Accel):"), 8, 0)
+        
+        acc_widget = QWidget()
+        acc_layout = QHBoxLayout(acc_widget)
+        acc_layout.setContentsMargins(0,0,0,0)
+        
+        self.ACC = QComboBox()
+        self.ACC.addItems(["tcg", "whpx", "hax", "off"])
+        self.ACC.setToolTip("Chọn 'tcg' nếu không chắc chắn. 'whpx' yêu cầu Hyper-V/WHPX.")
+        
+        self.L_ACC_Status = QLabel("")
+        
+        acc_layout.addWidget(self.ACC)
+        acc_layout.addWidget(self.L_ACC_Status)
+        
+        layout_vm.addWidget(acc_widget, 8, 1)
+
+        self.ACC.currentIndexChanged.connect(self.validate_accelerator)
+
         self.group_vm = group_vm
         vm_layout.addWidget(group_vm)
         self.run = QPushButton("Khởi động máy ảo")
+        
+        self.btn_view_log = QPushButton("")
+        self.btn_view_log.setToolTip("Xem Log")
+        log_icon_path = find_icon("log_icon_VEQMU.png")
+        if log_icon_path:
+             self.btn_view_log.setIcon(QIcon(str(log_icon_path)))
+        else:
+             self.btn_view_log.setText("Xem Log")
+        self.btn_view_log.clicked.connect(self.open_log_viewer)
+        
+        self.btn_usb_manager = QPushButton("Quản lý USB")
+        self.btn_usb_manager.clicked.connect(self.open_usb_manager)
+
+        run_layout = QHBoxLayout()
+        run_layout.addWidget(self.run)
+        run_layout.addWidget(self.btn_view_log)
+        run_layout.addWidget(self.btn_usb_manager)
+        
         vm_layout.addWidget(self.CCRQT)
-        vm_layout.addWidget(self.run)
+        vm_layout.addLayout(run_layout)
         self.addTab(vm_tab, "Máy ảo")
 
 
@@ -413,9 +721,10 @@ class QG(QTabWidget):
         mini_layout_1 = QHBoxLayout()
         self.HD = QComboBox()
         check_list_disk_D = []
-        with open(get_config_path(), 'r', encoding="utf-8") as f:
-            data = json.load(f)
-        listdisk = data["disks"].keys()
+        self.HD = QComboBox()
+        check_list_disk_D = []
+        # Use cached config
+        listdisk = self.cached_config.get("disks", {}).keys()
         self.HD.addItems(listdisk)
         self.HD.clear()
         check_list_disk = []
@@ -436,8 +745,8 @@ class QG(QTabWidget):
         layout_DT.addWidget(self.ENPDS, 5, 0)
         self.RHD = QPushButton("chạy daemon storage")
         self.RHD.setEnabled(False)
-        layout_DT.addWidget(self.RHD, 6 , 0)
-        self.CDPDS = QCheckBox("kill DS process")
+        layout_DT.addWidget(self.RHD, 6, 0)
+        self.CDPDS = QCheckBox("Dừng tiến trình DS")
         self.CDPDS.setChecked(False)
         self.CDPDS.setEnabled(False)
         mini_layout_1.addWidget(self.CDPDS)
@@ -445,9 +754,24 @@ class QG(QTabWidget):
         self.update_daemon_list_kill()
         self.CDPDS2.setEnabled(False)
         mini_layout_1.addWidget(self.CDPDS2)
-        self.BCTDPDS = QPushButton("kill process")
+        self.BCTDPDS = QPushButton("Dừng tiến trình")
         self.BCTDPDS.setEnabled(False)
         mini_layout_1.addWidget(self.BCTDPDS)
+        layout_DT.addLayout(mini_layout_1, 7, 0)
+        
+        # Feature 9: Daemon Status Table
+        layout_DT.addWidget(QLabel("Trạng thái Daemon:"), 8, 0)
+        self.table_daemon_status = QTableWidget()
+        self.table_daemon_status.setColumnCount(4)
+        self.table_daemon_status.setHorizontalHeaderLabels(["Tên", "PID", "Trạng thái", "Thời gian chạy"])
+        self.table_daemon_status.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+        self.table_daemon_status.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table_daemon_status.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.table_daemon_status.setStyleSheet("QTableWidget { background-color: #2c313c; color: white; border: 1px solid #444; } QHeaderView::section { background-color: #3b4252; color: white; border: 1px solid #444; }")
+        layout_DT.addWidget(self.table_daemon_status, 9, 0)
+        
+        self.btn_refresh_daemon = QPushButton("Cập nhật trạng thái")
+        layout_DT.addWidget(self.btn_refresh_daemon, 10, 0)
         layout_DT.addLayout(mini_layout_1, 7, 0)
         daemon_storage_layout.addWidget(group_DT)
         self.addTab(self.daemon_storage_tab, "Daemon storage")
@@ -470,6 +794,7 @@ class QG(QTabWidget):
         layout_disk.addWidget(self.HDD, 3, 1)
         self.BCD = QPushButton("Thêm/Tạo/Xóa ổ đĩa")
         layout_disk.addWidget(self.BCD, 4, 0, 1, 2)
+        self.CLD = QPushButton("Xóa danh sách ổ đĩa")
         self.CLD = QPushButton("Xóa danh sách ổ đĩa")
         layout_disk.addWidget(self.CLD, 5, 0, 1, 2)
         disk_layout.addWidget(group_disk)
@@ -498,6 +823,7 @@ class QG(QTabWidget):
             self.HDD.clear()
             for i in load_disk_path_json_file():
                 self.HDD.addItem(str(i))
+        
 
         self.boot_tab = QWidget()
         boot_layout = QVBoxLayout(self.boot_tab)
@@ -527,6 +853,11 @@ class QG(QTabWidget):
         self.LEDD.setPlaceholderText("Đường dẫn file floppy D")
         self.BDDD = QPushButton("Chọn file floppy D")
         self.BDDD.setEnabled(False)
+        self.CB_BIOS = QCheckBox("Dùng BIOS")
+        self.LE_BIOS = QLineEdit()
+        self.LE_BIOS.setPlaceholderText("Đường dẫn file BIOS")
+        self.BIOS = QPushButton("Chọn file BIOS")
+        self.BIOS.setEnabled(False)
         layout_boot.addWidget(self.CBI, 0, 0)
         layout_boot.addWidget(self.LEI, 0, 1)
         layout_boot.addWidget(self.bi, 0, 2)
@@ -536,12 +867,31 @@ class QG(QTabWidget):
         layout_boot.addWidget(self.CFDB, 2, 0)
         layout_boot.addWidget(self.LEDB, 2, 1)
         layout_boot.addWidget(self.BDBD, 2, 2)
+        layout_boot.addWidget(self.CFDC, 3, 0)
         layout_boot.addWidget(self.LEDC, 3, 1)
         layout_boot.addWidget(self.BDCD, 3, 2)
         layout_boot.addWidget(self.LEDD, 4, 1)
         layout_boot.addWidget(self.BDDD, 4, 2)
-        layout_boot.addWidget(self.CFDC, 3, 0)
         layout_boot.addWidget(self.CFDD, 4, 0)
+        
+        # Custom BIOS (User added manually + my addition cleanup)
+        # Note: self.CB_BIOS, self.LE_BIOS, self.BIOS are defined above by user.
+        # I will reuse them but position them correctly.
+        layout_boot.addWidget(self.CB_BIOS, 5, 0)
+        layout_boot.addWidget(self.LE_BIOS, 5, 1)
+        layout_boot.addWidget(self.BIOS, 5, 2)
+        
+        # Boot Order (Adding this as user may have missed it or I need to re-add)
+        layout_boot.addWidget(QLabel("Boot Order:"), 6, 0)
+        self.BOOT_ORDER = QComboBox()
+        self.BOOT_ORDER.addItems(["Default", "CD-ROM -> HDD (-boot d c)", "HDD -> CD-ROM (-boot c d)", "HDD Only (-boot c)", "CD-ROM Only (-boot d)", "Floppy -> HDD (-boot a c)", "Network (-boot n)"])
+        layout_boot.addWidget(self.BOOT_ORDER, 6, 1)
+        self.BOOT_MENU = QCheckBox("Boot Menu")
+        layout_boot.addWidget(self.BOOT_MENU, 6, 2)
+
+        self.CB_BIOS.toggled.connect(lambda checked: (self.LE_BIOS.setEnabled(checked), self.BIOS.setEnabled(checked)))
+        self.BIOS.clicked.connect(self.browse_bios)
+
         boot_layout.addWidget(group_boot)
         self.addTab(self.boot_tab, "Khởi động")
 
@@ -560,8 +910,6 @@ class QG(QTabWidget):
         self.KN = QComboBox()
         self.KN.addItems(list(QEMU_SYSTEMS_WIFIS.get("connection", [])))
         self.KN.setEnabled(False)
-
-# ... (implicitly keeping intermediate lines, but replace_file_content needs distinct chunks or one contiguous block. Since these are far apart, I should use multi_replace or 2 calls. The prompt says "Do NOT make multiple parallel calls to this tool". I will use multi_replace_file_content instead.)
         self.CPF = QCheckBox("Mở port forward")
         self.PF = QLineEdit()
         self.PF.setPlaceholderText("hostfwd=tcp::2222-:22")
@@ -576,31 +924,64 @@ class QG(QTabWidget):
         self.addTab(self.net_tab, "Mạng")
         self.update_arch_dependent_widgets()
 
-        adco_tab = QWidget()
-        adco_layout = QVBoxLayout(adco_tab)
+        adco_scroll = QScrollArea()
+        adco_scroll.setWidgetResizable(True)
+        adco_content = QWidget()
+        adco_layout = QVBoxLayout(adco_content)
         group_adco = QGroupBox("cấu hình nâng cao")
         layout_adco = QGridLayout(group_adco)
         self.CAD = QCheckBox("Bật tùy chọn daemon storage")
         self.CAD.setChecked(False)
         layout_adco.addWidget(self.CAD, 0, 0)
         self.DHD = QComboBox()
-        self.DHD.addItems(QEMU_IO_DAEMON_STORAGE)
+        list_io_ds = QEMU_IO_DAEMON_STORAGE.get(self.K.currentText(), ["none"])
+        self.DHD.addItems(list_io_ds)
         self.DHD.setEnabled(False)
         self.label2 = QLabel("IO daemon storage:")
         layout_adco.addWidget(self.label2, 1, 0)
         layout_adco.addWidget(self.DHD, 1, 1)
         self.DSNTR = QComboBox()
-        with open(get_config_path(), 'r', encoding='utf-8') as f:
-            config = json.load(f)
-        list_key_DSTR = config['config_DS'].keys()
+        self.DSNTR = QComboBox()
+        # Use cached config
+        list_key_DSTR = self.cached_config.get("config_DS", {}).keys()
         self.DSNTR.addItems(list_key_DSTR)
         self.DSNTR.setEnabled(False)
         layout_adco.addWidget(QLabel("daemon để chạy:"), 2, 0)
         layout_adco.addWidget(self.DSNTR, 2, 1)
         adco_layout.addWidget(group_adco)
+
+        # Feature 7: Shared Folder
+        group_sf = QGroupBox("Shared Folder (Thư mục chia sẻ)")
+        layout_sf = QGridLayout(group_sf)
+        self.CB_SF = QCheckBox("Bật chia sẻ thư mục")
+        self.CB_SF.setChecked(False)
+        layout_sf.addWidget(self.CB_SF, 0, 0, 1, 3)
         
-        adco_layout.addWidget(group_adco)
-        self.addTab(adco_tab, "Cấu hình nâng cao")
+        layout_sf.addWidget(QLabel("Đường dẫn host:"), 1, 0)
+        self.LE_SF_Path = QLineEdit()
+        layout_sf.addWidget(self.LE_SF_Path, 1, 1)
+        self.BTN_SF_Browse = QPushButton("Chọn...")
+        layout_sf.addWidget(self.BTN_SF_Browse, 1, 2)
+        
+        layout_sf.addWidget(QLabel("Mount Tag:"), 2, 0)
+        self.LE_SF_Tag = QLineEdit("shared")
+        layout_sf.addWidget(self.LE_SF_Tag, 2, 1)
+        
+        adco_layout.addWidget(group_sf)
+
+        # Feature 10: Guest Agent
+        group_ga = QGroupBox("Tích hợp Guest Agent")
+        layout_ga = QGridLayout(group_ga)
+        self.CB_GuestAgent = QCheckBox("Bật QEMU Guest Agent (Tắt/Khởi động lại, Clipboard)")
+        self.CB_GuestAgent.setChecked(False)
+        self.CB_GuestAgent.setToolTip("Hỗ trợ QEMU Guest Agent để giao tiếp với Host.\nCần cài đặt driver virtio-serial và agent trong máy ảo.\nLệnh kích hoạt: -device virtio-serial -device virtserialport,chardev=qga0,name=org.qemu.guest_agent.0...")
+        layout_ga.addWidget(self.CB_GuestAgent, 0, 0)
+        
+        adco_layout.addWidget(group_ga)
+
+        
+        adco_scroll.setWidget(adco_content)
+        self.addTab(adco_scroll, "Cấu hình nâng cao")
 
         prof_tab = QWidget()
         prof_layout = QVBoxLayout(prof_tab)
@@ -640,6 +1021,10 @@ class QG(QTabWidget):
 
 
         self.CAD.toggled.connect(self.update_advanced_tab)
+        
+        self.CB_SF.toggled.connect(self.update_sf_ui)
+        self.BTN_SF_Browse.clicked.connect(self.browse_shared_folder)
+        self.update_sf_ui() # Initialize state
 
         self.BCD.clicked.connect(self.open_disk_dialog)
         self.CLD.clicked.connect(self.clear_disk_list)
@@ -654,6 +1039,8 @@ class QG(QTabWidget):
         self.btn_prof_load.clicked.connect(create_json)
         self.btn_prof_delete.clicked.connect(create_json)
         self.btn_prof_rename.clicked.connect(create_json)
+        self.AQEW.toggled.connect(self.update_io_ds)
+        self.K.currentIndexChanged.connect(self.update_io_ds)
 
 
         # Initialize UI state
@@ -664,6 +1051,11 @@ class QG(QTabWidget):
         self.update_disk_list()
         self.update_daemon_list()
 
+    def browse_bios(self):
+        filename, _ = QFileDialog.getOpenFileName(self, "Chọn File BIOS", "", "Pulse Files (*.bin *.rom *.fd);;All Files (*.*)")
+        if filename:
+            self.LE_BIOS.setText(filename)
+
     def connect_snapshot_signals(self):
         # Connect all relevant widgets to save_snapshot
         # VM Tab
@@ -673,6 +1065,8 @@ class QG(QTabWidget):
         self.RM.valueChanged.connect(self.save_snapshot)
         self.V.currentIndexChanged.connect(self.save_snapshot)
         self.A.currentIndexChanged.connect(self.save_snapshot)
+        self.MT.currentIndexChanged.connect(self.save_snapshot)
+        self.ACC.currentIndexChanged.connect(self.save_snapshot)
         self.CCRQ.toggled.connect(self.save_snapshot)
         self.CCRQT.textChanged.connect(self.save_snapshot)
         self.AQEW.toggled.connect(self.save_snapshot)
@@ -694,6 +1088,7 @@ class QG(QTabWidget):
         self.CDPDS2.currentIndexChanged.connect(self.save_snapshot)
         self.BCTDPDS.clicked.connect(self.save_snapshot)
         self.BCTDPDS.clicked.connect(self.click_kill_daemon)
+        self.btn_refresh_daemon.clicked.connect(self.check_daemon_status)
         
         # Boot Tab
         self.CBI.toggled.connect(self.save_snapshot)
@@ -706,6 +1101,10 @@ class QG(QTabWidget):
         self.LEDC.textChanged.connect(self.save_snapshot)
         self.CFDD.toggled.connect(self.save_snapshot)
         self.LEDD.textChanged.connect(self.save_snapshot)
+        self.CB_BIOS.toggled.connect(self.save_snapshot)
+        self.LE_BIOS.textChanged.connect(self.save_snapshot)
+        self.BOOT_ORDER.currentIndexChanged.connect(self.save_snapshot)
+        self.BOOT_MENU.toggled.connect(self.save_snapshot)
         
         # Net Tab
         self.CN.toggled.connect(self.save_snapshot)
@@ -717,6 +1116,16 @@ class QG(QTabWidget):
         #advanced tab
         self.CAD.toggled.connect(self.save_snapshot)
         self.DSNTR.currentIndexChanged.connect(self.save_snapshot)
+
+        # Shared Folder
+        self.CB_SF.toggled.connect(self.save_snapshot)
+        self.LE_SF_Path.textChanged.connect(self.save_snapshot)
+        self.LE_SF_Tag.textChanged.connect(self.save_snapshot)
+
+        # Guest Agent
+        self.CB_GuestAgent.toggled.connect(self.save_snapshot)
+
+
     def save_snapshot(self):
         if self.is_loading:
             return
@@ -775,6 +1184,74 @@ class QG(QTabWidget):
         self.HD.addItems(list_disk)
         self.HD.removeItem(0)
 
+    def update_machine_type(self):
+        self.MT.clear()
+        check_w = self.AQEW.isChecked()
+        if check_w == True:
+            self.list_m = QEMU_MACHINE_W.get(self.K.currentText(), ["none"])
+        else:
+            self.list_m = QEMU_MACHINE.get(self.K.currentText(), ["none"])
+        self.MT.addItems(self.list_m)
+
+    def validate_accelerator(self):
+        acc = self.ACC.currentText()
+        if acc in ["tcg", "off"]:
+             self.L_ACC_Status.setText("")
+             return
+        
+        threading.Thread(target=self._validate_accel_thread, args=(acc,), daemon=True).start()
+
+    def _validate_accel_thread(self, acc):
+        try:
+            exe = self.get_qemu_exe()
+            # Run check
+            cmd = [exe, "-accel", acc, "-machine", "help"]
+            # Use startupinfo to hide window
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            
+            # Run with timeout
+            proc = subprocess.run(cmd, capture_output=True, timeout=3, startupinfo=startupinfo)
+            if proc.returncode != 0:
+                 self.L_ACC_Status.setText("❌ Không hỗ trợ")
+                 self.L_ACC_Status.setStyleSheet("color: red")
+                 self.L_ACC_Status.setToolTip(f"QEMU trả về mã lỗi {proc.returncode}. Có thể máy không hỗ trợ {acc} hoặc chưa bật feature.")
+            else:
+                 self.L_ACC_Status.setText("✅ Hỗ trợ")
+                 self.L_ACC_Status.setStyleSheet("color: green")
+                 self.L_ACC_Status.setToolTip("Accelerator khả dụng.")
+        except Exception as e:
+             self.L_ACC_Status.setText("⚠️ Lỗi kiểm tra")
+             self.L_ACC_Status.setStyleSheet("color: orange")
+             self.L_ACC_Status.setToolTip(str(e))
+
+
+    def update_io_ds(self):
+        if self.K.currentText() == "rx" or self.K.currentText() == "avr" or self.K.currentText() == "tricore" or self.K.currentText() == "rxw" or self.K.currentText() == "avrw" or self.K.currentText() == "tricorew":
+            self.CAD.setChecked(False)
+            self.CAD.setEnabled(False)
+            self.DHD.clear()
+            self.DHD.addItems(["none"])
+            self.DHD.setEnabled(False)
+            return
+        self.CAD.setEnabled(True)
+        self.DHD.clear()
+        check_w = self.AQEW.isChecked()
+        if check_w == True:
+            list_io_ds = QEMU_IO_DAEMON_STORAGE_W.get(self.K.currentText(), ["none"])
+        else:
+            list_io_ds = QEMU_IO_DAEMON_STORAGE.get(self.K.currentText(), ["none"])
+        self.DHD.addItems(list_io_ds)
+
+    def update_audio_list(self):
+        self.A.clear()
+        check_W = self.AQEW.isChecked()
+        if check_W == True:
+            self.audio_list = QEMU_SYSTEMS_SOUNDS_W.get(self.K.currentText(), ["none"])
+        else:
+            self.audio_list = QEMU_SYSTEMS_SOUNDS.get(self.K.currentText(), ["none"])
+        self.A.addItems(self.audio_list)
+
     def update_DSNTR(self):
         self.DSNTR.clear()
         try:
@@ -801,6 +1278,7 @@ class QG(QTabWidget):
         self.daemon_storage_tab.setEnabled(not checked)
 
     def update_daemon_list(self):
+        # We need fresh config here to reset it
         with open(get_config_path(), 'r', encoding="utf-8") as f:
             data = json.load(f)
         del data["caches"]
@@ -844,7 +1322,18 @@ class QG(QTabWidget):
     def update_advanced_tab(self):
         self.DSNTR.setEnabled(self.CAD.isChecked())
         self.DHD.setEnabled(self.CAD.isChecked())
-        
+
+    def update_sf_ui(self):
+        enabled = self.CB_SF.isChecked()
+        self.LE_SF_Path.setEnabled(enabled)
+        self.BTN_SF_Browse.setEnabled(enabled)
+        self.LE_SF_Tag.setEnabled(enabled)
+
+    def browse_shared_folder(self):
+        folder = QFileDialog.getExistingDirectory(self, "Chọn thư mục chia sẻ")
+        if folder:
+            self.LE_SF_Path.setText(folder)
+
 
     def update_FDA(self):
         self.LEDA.setEnabled(self.CFDA.isChecked())
@@ -987,7 +1476,8 @@ class QG(QTabWidget):
             else:
                 config = {
                     "arch": arch,
-                    "exe": exe_path,
+                    "machine_type": self.MT.currentText(),
+                    "accel": self.ACC.currentText(),
                     "cpu": self.CP.currentText(),
                     "ram": self.RM.value(),
                     "smp": int(self.SC.currentText()),
@@ -1016,14 +1506,89 @@ class QG(QTabWidget):
                     "daemon_edit_name": self.ENPDS.text() if self.ENPDS.text().lower() != "" else "",
                     "IO_daemon_storage": self.DHD.currentText(),
                     "daemon_current": self.DSNTR.currentText(),
-                    "check_advanced_tab": self.CAD.isChecked()
+                    "check_advanced_tab": self.CAD.isChecked(),
+                    "shared_folder_enable": self.CB_SF.isChecked(),
+                    "shared_folder_path": self.LE_SF_Path.text(),
+                    "shared_folder_tag": self.LE_SF_Tag.text(),
+                    "bios_enable": self.CB_BIOS.isChecked(),
+                    "bios_path": self.LE_BIOS.text().strip() if self.CB_BIOS.isChecked() else "",
+                    "boot_order": self.BOOT_ORDER.currentText(),
+                    "boot_menu": self.BOOT_MENU.isChecked(),
+                    "guest_agent_enable": self.CB_GuestAgent.isChecked()
                 }
+                
+                # Use in-memory list if available, else load from file
+                if hasattr(self, 'usb_passthrough_list'):
+                    config["usb_passthrough"] = self.usb_passthrough_list
+                else:
+                    try:
+                        with open(get_config_path(), "r", encoding="utf-8") as f:
+                            data = json.load(f)
+                        config["usb_passthrough"] = data.get("config", {}).get("usb_passthrough", [])
+                        # Initialize list if missing
+                        self.usb_passthrough_list = config["usb_passthrough"]
+                    except:
+                        config["usb_passthrough"] = []
+                        self.usb_passthrough_list = []
+                    
         return config
 
     def apply_config(self, cfg):
         self.is_loading = True
         try:
-            return self._apply_config_internal(cfg)
+            # Block signals to prevent snowballing updates during load
+            self.K.blockSignals(True)
+            self.CP.blockSignals(True)
+            self.SC.blockSignals(True)
+            self.RM.blockSignals(True)
+            self.V.blockSignals(True)
+            self.RM.blockSignals(True)
+            self.V.blockSignals(True)
+            self.A.blockSignals(True)
+            self.MT.blockSignals(True)
+            self.ACC.blockSignals(True)
+            self.CB_BIOS.blockSignals(True)
+            self.LE_BIOS.blockSignals(True)
+            self.BOOT_ORDER.blockSignals(True)
+            self.BOOT_MENU.blockSignals(True)
+            
+            self.CB_SF.blockSignals(True)
+            self.LE_SF_Path.blockSignals(True)
+            self.LE_SF_Tag.blockSignals(True)
+            self.CB_GuestAgent.blockSignals(True)
+            
+            
+            try:
+                result = self._apply_config_internal(cfg)
+                
+                # Manually trigger necessary updates after loading
+                self.update_arch_dependent_widgets()
+                
+                # Restore USB Passthrough in memory
+                if "usb_passthrough" in cfg:
+                    self.usb_passthrough_list = cfg["usb_passthrough"]
+
+                return result
+            finally:
+                # Restore signals
+                self.K.blockSignals(False)
+                self.CP.blockSignals(False)
+                self.SC.blockSignals(False)
+                self.RM.blockSignals(False)
+                self.V.blockSignals(False)
+                self.A.blockSignals(False)
+                self.MT.blockSignals(False)
+                self.ACC.blockSignals(False)
+                self.CB_BIOS.blockSignals(False)
+                self.LE_BIOS.blockSignals(False)
+                self.BOOT_ORDER.blockSignals(False)
+                self.BOOT_MENU.blockSignals(False)
+
+                self.CB_SF.blockSignals(False)
+                self.LE_SF_Path.blockSignals(False)
+                self.LE_SF_Tag.blockSignals(False)
+                self.CB_GuestAgent.blockSignals(False)
+
         finally:
             self.is_loading = False
 
@@ -1031,6 +1596,25 @@ class QG(QTabWidget):
         # Custom Command
         enb_cmd = cfg.get('enb_command_qemu', False)
         self.CCRQ.setChecked(enb_cmd)
+        
+        # Restore USB Passthrough if present in snapshot/profile
+        if "usb_passthrough" in cfg:
+            try:
+                path = get_config_path()
+                if path.exists():
+                    with open(path, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                    
+                    if "config" not in data:
+                        data["config"] = {}
+                    
+                    data["config"]["usb_passthrough"] = cfg["usb_passthrough"]
+                    
+                    with open(path, "w", encoding="utf-8") as f:
+                        json.dump(data, f, indent=4, ensure_ascii=False)
+            except:
+                pass
+
         if enb_cmd:
             self.CCRQT.setText(cfg.get('command_qemu', ''))
             return
@@ -1077,6 +1661,22 @@ class QG(QTabWidget):
                     self.V.addItem(vga)
             self.V.setCurrentText(vga)
             
+        # Machine Type
+        mt = cfg.get('machine_type', '')
+        if mt:
+            if self.MT.findText(mt) == -1:
+                self.MT.addItem(mt)
+            self.MT.setCurrentText(mt)
+            
+        # Accel
+        acc = cfg.get('accel', '')
+        if acc:
+            if self.ACC.findText(acc) == -1:
+                self.ACC.addItem(acc)
+            self.ACC.setCurrentText(acc)
+            
+
+            
         # Audio
         audio = cfg.get('audio', '')
         if audio:
@@ -1109,6 +1709,12 @@ class QG(QTabWidget):
         else:
             self.CFDA.setChecked(False)
             self.LEDA.setText('')
+            
+        # BIOS & Boot
+        self.CB_BIOS.setChecked(cfg.get('bios_enable', False))
+        self.LE_BIOS.setText(cfg.get('bios_path', ''))
+        self.BOOT_ORDER.setCurrentText(cfg.get('boot_order', 'Default'))
+        self.BOOT_MENU.setChecked(cfg.get('boot_menu', False))
             
         fdb = cfg.get('fdb', '')
         if fdb:
@@ -1186,6 +1792,16 @@ class QG(QTabWidget):
             self.DSNTR.setCurrentText(daemon_current)
         check_advanced_tab = cfg.get('check_advanced_tab', False)
         self.CAD.setChecked(check_advanced_tab)
+
+        # Shared Folder
+        self.CB_SF.setChecked(cfg.get('shared_folder_enable', False))
+        self.LE_SF_Path.setText(cfg.get('shared_folder_path', ''))
+        self.LE_SF_Tag.setText(cfg.get('shared_folder_tag', 'shared'))
+        self.update_sf_ui()
+
+        # Guest Agent
+        self.CB_GuestAgent.setChecked(cfg.get('guest_agent_enable', False))
+
 
 
     def _ui_profile_add(self):
@@ -1385,7 +2001,7 @@ class QG(QTabWidget):
             load_config.run_daemon_storage_direct(get_config_path(), name_ds)
             self.update_daemon_list_kill()
             self.update_DSNTR()
-            QMessageBox.information(self, "Info", f"Đã chạy daemon: {name_ds}")
+            QMessageBox.information(self, "Thông báo", f"Đã chạy daemon: {name_ds}")
 
     def click_kill_daemon(self):
         key = self.CDPDS2.currentText()
@@ -1393,7 +2009,7 @@ class QG(QTabWidget):
              return
         load_config.kill_daemon_storage_direct(get_config_path(), key)
         self.update_daemon_list_kill()
-        QMessageBox.information(self, "Info", f"Đã kill daemon: {key}")
+        QMessageBox.information(self, "Thông báo", f"Đã dừng daemon: {key}")
         try:
             with open(get_config_path(), 'r', encoding="utf-8") as f:
                 data = json.load(f)
@@ -1413,6 +2029,86 @@ class QG(QTabWidget):
     def update_iso_enable(self, checked):
         self.LEI.setEnabled(checked)
         self.bi.setEnabled(checked)
+
+    def check_daemon_status(self):
+        self.table_daemon_status.setRowCount(0)
+        self.btn_refresh_daemon.setText("Đang kiểm tra...")
+        self.btn_refresh_daemon.setEnabled(False)
+        
+        # Read caches
+        try:
+            with open(get_config_path(), 'r', encoding="utf-8") as f:
+                data = json.load(f)
+            caches = data.get("caches", {})
+        except:
+            caches = {}
+
+        if not caches:
+            self.btn_refresh_daemon.setText("Cập nhật trạng thái")
+            self.btn_refresh_daemon.setEnabled(True)
+            return
+
+        import csv
+        
+        row = 0
+        for key, pid in caches.items():
+            # Key format usually 'Name:PID' but pid value is also stored
+            # Let's trust the key for name if possible, but the 'pid' value is the OS PID
+            
+            proc_name = key.split(":")[0] if ":" in key else key
+            pid_str = str(pid)
+
+            status = "Stopped"
+            time_run = "N/A"
+            
+            # Check using tasklist
+            # tasklist /FI "PID eq 1234" /FO CSV /NH
+            cmd = f'tasklist /FI "PID eq {pid_str}" /FO CSV /NH'
+            try:
+                startupinfo = subprocess.STARTUPINFO()
+                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                
+                output = subprocess.check_output(cmd, startupinfo=startupinfo).decode("utf-8", errors="ignore")
+                
+                # Check if PID is in output
+                if f'"{pid_str}"' in output:
+                    status = "Running"
+                    # Not easy to get start time from tasklist without verbose or wmic
+                    # Let's try wmic for start time if running
+                    # wmic process where ProcessId=1234 get CreationDate
+                    try: 
+                        cmd_wmic = f'wmic process where ProcessId={pid_str} get CreationDate'
+                        out_wmic = subprocess.check_output(cmd_wmic, startupinfo=startupinfo).decode("utf-8", errors="ignore")
+                        # Output like: CreationDate \n 202310...
+                        dates = [line.strip() for line in out_wmic.splitlines() if line.strip() and "CreationDate" not in line]
+                        if dates:
+                            # Parse generic WMI date format YYYYMMDDHHMMSS.mmmmm
+                            d = dates[0].split('.')[0]
+                            if len(d) == 14:
+                                dt = datetime.strptime(d, "%Y%m%d%H%M%S")
+                                time_run = dt.strftime("%H:%M:%S %d/%m")
+                    except:
+                        pass
+                else:
+                    status = "Stopped (Not Found)"
+            except:
+                status = "Error Check"
+
+            self.table_daemon_status.insertRow(row)
+            self.table_daemon_status.setItem(row, 0, QTableWidgetItem(proc_name))
+            self.table_daemon_status.setItem(row, 1, QTableWidgetItem(pid_str))
+            
+            item_status = QTableWidgetItem(status)
+            if "Running" in status:
+                item_status.setForeground(QColor("green"))
+            else:
+                item_status.setForeground(QColor("red"))
+            self.table_daemon_status.setItem(row, 2, item_status)
+            self.table_daemon_status.setItem(row, 3, QTableWidgetItem(time_run))
+            row += 1
+            
+        self.btn_refresh_daemon.setText("Cập nhật trạng thái")
+        self.btn_refresh_daemon.setEnabled(True)
 
     def closeEvent(self, event):
         load_config.kill_all_daemons(get_config_path())

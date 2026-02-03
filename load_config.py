@@ -32,10 +32,75 @@ def build_qemu_cmd(cfg: dict, data: dict = None):
     arch = cfg.get("arch", "x86_64")
     exe_path = find_qemu_system(arch)
     cmd = [str(exe_path)]
+    path_json = Path(__file__).parent / "config_VQEMU.json"
 
     cmd_part = ["arch", "ram", "smp", "cpu", "vga", "audio", "cdrom", "hda", "hdb", "hdc", "hdd", "fda", "fdb", "fdc", "fdd", "net_model", "portfwd", "exe"]
     val_part = [cfg.get(part, "") for part in cmd_part]
     result_part = []
+
+    # Machine Type
+    machine_type = cfg.get("machine_type", "")
+    if machine_type and machine_type != "none":
+        result_part.extend(["-machine", str(machine_type)])
+
+    # Accelerator
+    accel = cfg.get("accel", "")
+    if accel and accel != "off":
+         result_part.extend(["-accel", str(accel)])
+
+
+
+    # Custom BIOS
+    if cfg.get("bios_enable") and cfg.get("bios_path"):
+        if cfg.get("bios_path") != "":
+            result_part.extend(["-bios", str(cfg.get("bios_path"))])
+
+    # Boot Order
+    boot_order = cfg.get("boot_order", "")
+    if "-boot" in boot_order:
+        try:
+            import re
+            match = re.search(r'\(-boot\s+(.*?)\)', boot_order)
+            if match:
+                order = match.group(1).replace(" ", "")
+                result_part.extend(["-boot", f"order={order}"])
+        except:
+            pass
+    
+    if cfg.get("boot_menu"):
+        # Check if we already have a -boot argument to append menu=on
+        found_boot = False
+        for i in range(len(result_part)):
+            if result_part[i] == "-boot" and i + 1 < len(result_part):
+                if "order=" in result_part[i+1]:
+                    result_part[i+1] += ",menu=on"
+                    found_boot = True
+                    break
+        if not found_boot:
+             result_part.extend(["-boot", "menu=on"])
+
+    # Shared Folder
+    if cfg.get("shared_folder_enable") and cfg.get("shared_folder_path"):
+        path = cfg.get("shared_folder_path")
+        tag = cfg.get("shared_folder_tag", "shared")
+        # -virtfs local,path=path,mount_tag=tag,security_model=none
+        result_part.extend(["-virtfs", f"local,path={path},mount_tag={tag},security_model=none"])
+
+    # Guest Agent (Feature 10)
+    if cfg.get("guest_agent_enable"):
+        # QEMU Guest Agent
+        # Use named pipe for Windows host
+        pipe_name = "qga" 
+        result_part.extend(["-chardev", f"socket,path=\\\\.\\pipe\\{pipe_name},server,nowait,id=qga0"])
+        result_part.extend(["-device", "virtio-serial"])
+        result_part.extend(["-device", "virtserialport,chardev=qga0,name=org.qemu.guest_agent.0"])
+        # Hint for clipboard: Ideally requires spice-vdagent running in guest and spicevmc chardev, 
+        # but spicevmc requires -spice. We only add QGA here to avoid breaking boot without -spice.
+        # If user wants clipboard, they might need to ensure valid display/agent setup.
+        # However, adding the device for spice (without chardev) is harmless? 
+        # -device virtserialport,chardev=spicechannel0,name=com.redhat.spice.0 -> needs chardev
+        # So we skip it to be safe.
+
 
     for i in range(len(cmd_part)):
         if cmd_part[i] == "arch":
@@ -54,7 +119,7 @@ def build_qemu_cmd(cfg: dict, data: dict = None):
             else:
                 result_part.extend(["-vga", str(val_part[i])])
         if cmd_part[i] == "audio":
-            if val_part[i] == "":
+            if val_part[i] == "" or val_part[i] == "none":
                 continue
             else:
                 result_part.extend(["-device", str(val_part[i])])
@@ -169,6 +234,19 @@ def build_qemu_cmd(cfg: dict, data: dict = None):
                         part_args = part.split()
                     result_part.extend(part_args)
 
+
+
+    # Add USB Passthrough parts
+    usb_passthrough = cfg.get("usb_passthrough", [])
+    if usb_passthrough:
+        # Enable XHCI controller
+        result_part.extend(["-device", "qemu-xhci,id=xhci"])
+        for dev in usb_passthrough:
+            vid = dev.get("vendorid")
+            pid = dev.get("productid")
+            if vid and pid:
+                result_part.extend(["-device", f"usb-host,bus=xhci.0,vendorid={vid},productid={pid}"])
+
     if cfg.get("enb_command_qemu"):
         cmd.clear()
         import shlex
@@ -220,20 +298,39 @@ def run_qemu_direct(config_path):
     
     log.log("👉 Lệnh QEMU được tạo:")
     log.log(" ".join(cmd))
-    log.log("🚀 QEMU started!")
+    log.log("🚀 QEMU đã bắt đầu!")
     
+    import threading
+
+    def monitor_process(proc):
+        try:
+            for line in proc.stdout:
+                if line:
+                    log.log(f"[QEMU] {line.strip()}")
+            proc.wait()
+            log.log(f"QEMU đã thoát với mã {proc.returncode}")
+        except Exception as e:
+            log.error(f"Lỗi giám sát tiến trình: {e}")
+
     try:
-        log.log(">>> Running QEMU command...")
-        # Capture output to diagnose errors
-        result = subprocess.run(cmd, check=True, capture_output=True, text=True, encoding="utf-8", errors="replace")
-        log.log("QEMU Output:\n" + result.stdout)
-        log.log("QEMU chạy thành công!")
-    except subprocess.CalledProcessError as e:
-        log.error(f"Khi chạy QEMU (Exit Code {e.returncode}):")
-        log.error(f"STDOUT: {e.stdout}")
-        log.error(f"STDERR: {e.stderr}")
+        log.log(">>> Đang chạy lệnh QEMU (Nền)...")
+        # Use Popen to allow real-time logging and non-blocking UI
+        proc = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT, # Merge stderr to stdout
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0
+        )
+        
+        # Start monitoring thread
+        t = threading.Thread(target=monitor_process, args=(proc,), daemon=True)
+        t.start()
+        
     except Exception as e:
-        log.error(f"Khi chạy QEMU (Lỗi khác): {e}")
+        log.error(f"Khi chạy QEMU (Lỗi khởi tạo): {e}")
 
 def run_daemon_storage_direct(config_path, name_ds):
     """Chạy daemon storage với name_ds được chỉ định trong config."""
@@ -288,14 +385,14 @@ def run_daemon_storage_direct(config_path, name_ds):
         try:
             time.sleep(1)
             if proc.poll() is not None:
-                log.error(f"Daemon process exited immediately with code {proc.returncode}")
+                log.error(f"Daemon đã thoát ngay lập tức với mã {proc.returncode}")
                 return
         except Exception:
             pass
             
         pid = proc.pid
         data["config_DS"][name_ds]["pid"] = pid
-        log.log(f"Daemon started with PID: {pid}")
+        log.log(f"Daemon đã bắt đầu với PID: {pid}")
 
         if "caches" not in data:
             data["caches"] = {}
@@ -333,7 +430,7 @@ def kill_daemon_storage_direct(config_path, cache_key):
     name_ds = info.get("name") 
 
     if pid:
-        log.step(f"Kill process {pid} ({name_ds})")
+        log.step(f"Dừng tiến trình {pid} ({name_ds})")
         try:
              # Windows kill force
             subprocess.run(f"taskkill /F /PID {pid}", shell=True)
@@ -375,7 +472,7 @@ def kill_all_daemons(config_path):
         pid = info.get("pid")
         name_ds = info.get("name")
         if pid:
-            log.log(f"Killing {name_ds} (PID: {pid})...")
+            log.log(f"Đang dừng {name_ds} (PID: {pid})...")
             try:
                 subprocess.run(f"taskkill /F /PID {pid}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             except Exception:
@@ -397,7 +494,7 @@ def main():
     print(">>> sys.argv:", sys.argv)
 
     if len(sys.argv) < 2:
-        print("Usage: python load_config.py <config.json>")
+        print("Cách dùng: python load_config.py <config.json>")
         sys.exit(1)
 
     config_path = sys.argv[1]

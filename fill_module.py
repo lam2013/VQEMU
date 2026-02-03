@@ -1,53 +1,46 @@
 import re
 
 raw_text = """
-name "e1000", bus PCI, alias "e1000-82540em", desc "Intel Gigabit Ethernet"
-name "e1000-82544gc", bus PCI, desc "Intel Gigabit Ethernet"
-name "e1000-82545em", bus PCI, desc "Intel Gigabit Ethernet"
-name "i82550", bus PCI, desc "Intel i82550 Ethernet"
-name "i82551", bus PCI, desc "Intel i82551 Ethernet"
-name "i82557a", bus PCI, desc "Intel i82557A Ethernet"
-name "i82557b", bus PCI, desc "Intel i82557B Ethernet"
-name "i82557c", bus PCI, desc "Intel i82557C Ethernet"
-name "i82558a", bus PCI, desc "Intel i82558A Ethernet"
-name "i82558b", bus PCI, desc "Intel i82558B Ethernet"
-name "i82559a", bus PCI, desc "Intel i82559A Ethernet"
-name "i82559b", bus PCI, desc "Intel i82559B Ethernet"
-name "i82559c", bus PCI, desc "Intel i82559C Ethernet"
-name "i82559er", bus PCI, desc "Intel i82559ER Ethernet"
-name "i82562", bus PCI, desc "Intel i82562 Ethernet"
-name "i82801", bus PCI, desc "Intel i82801 Ethernet"
-name "ne2k_pci", bus PCI
-name "pcnet", bus PCI
-name "rtl8139", bus PCI
-name "tulip", bus PCI
-name "usb-net", bus usb-bus
-name "virtio-net-device", bus virtio-bus
-name "virtio-net-pci", bus PCI, alias "virtio-net"
-name "virtio-net-pci-non-transitional", bus PCI
-name "virtio-net-pci-transitional", bus PCI
-name "vmxnet3", bus PCI, desc "VMWare Paravirtualized Ethernet v3"
+kc705                kc705 EVB (dc232b)
+kc705-nommu          kc705 noMMU EVB (de212)
+lx200                lx200 EVB (dc232b)
+lx200-nommu          lx200 noMMU EVB (de212)
+lx60                 lx60 EVB (dc232b)
+lx60-nommu           lx60 noMMU EVB (de212)
+ml605                ml605 EVB (dc232b)
+ml605-nommu          ml605 noMMU EVB (de212)
+none                 empty machine
+sim                  sim machine (dc232b) (default)
+virt                 virt machine (dc232b)
 """
-
+no_none = True
+HNC = False
 # 1️⃣ Tách từng dòng, bỏ trống và comment
-if "name " in raw_text:
-    names = re.findall(r'name\s+"([^"]+)"', raw_text)
-    formatted = ", ".join(f'"{n}"' for n in names)
-    print(f"[{formatted}],")
+if HNC == True:
+    if "name " in raw_text:
+        names = re.findall(r'name\s+"([^"]+)"', raw_text)
+        formatted = ", ".join(f'"{n}"' for n in names)
+        if no_none == False:
+            result = ["none"]
+            for name in names:
+                result.append(name)
+            print(f"{result},")
+        else:
+            print(f"[{formatted}],")
 else:
-    lines = raw_text.splitlines()
-    cpu_names = []
-    for line in lines:
-        line = line.strip()
-        if not line:
-            continue
-    # 2️⃣ Lấy cụm đầu tiên trước dấu space hoặc '#'
-    match = re.match(r'^"?([A-Za-z0-9._+-]+)"?', line)
-    if match:
-        name = match.group(1)
-        if name not in cpu_names:
-            cpu_names.append(name)
+    def extract_machine_names(output):
+        machines = []
+        lines = output.strip().split('\n')
+        for line in lines:
+            if not line.strip():
+                continue
+            # Split by whitespace, take the first element
+            parts = line.split()
+            if parts:
+                machines.append(parts[0])
+        return machines
 
-    # 3️⃣ Xuất ra dạng list Python
-    formatted = ", ".join(f'"{n}"' for n in cpu_names)
-    print(f"[{formatted}],")
+    # Run and print
+    names = extract_machine_names(raw_text)
+    print("Filtered Machine List:")
+    print(f"{names},")
