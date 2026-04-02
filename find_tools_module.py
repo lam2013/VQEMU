@@ -18,9 +18,17 @@ def find_qemu_img(start_file=__file__, max_up=6):
     for root in roots:
         qemu_dir = root / "qemu"
         if qemu_dir.exists():
+            # Check directly in qemu folder
+            candidate = qemu_dir / exe_name
+            if candidate.exists():
+                return candidate
+            
+            # Check in qemu/build
             candidate = qemu_dir / "build" / exe_name
             if candidate.exists():
                 return candidate
+            
+            # Check in qemu/qemu-*/build
             for sub in sorted(qemu_dir.iterdir(), reverse=True):
                 if sub.is_dir() and sub.name.startswith("qemu-"):
                     candidate = sub / "build" / exe_name
@@ -47,9 +55,17 @@ def find_qemu_system(arch="x86_64", start_file=__file__, max_up=6):
     for root in roots:
         qemu_dir = root / "qemu"
         if qemu_dir.exists():
+            # Check directly in qemu folder
+            candidate = qemu_dir / exe_name
+            if candidate.exists():
+                return candidate
+
+            # Check in qemu/build
             candidate = qemu_dir / "build" / exe_name
             if candidate.exists():
                 return candidate
+            
+            # Check in qemu/qemu-*/build
             for sub in sorted(qemu_dir.iterdir(), reverse=True):
                 if sub.is_dir() and sub.name.startswith("qemu-"):
                     candidate = sub / "build" / exe_name
@@ -76,9 +92,17 @@ def find_qemu_storage_daemon(start_file=__file__, max_up=6):
     for root in roots:
         qemu_dir = root / "qemu"
         if qemu_dir.exists():
+            # Check directly in qemu folder
+            candidate = qemu_dir / exe_name
+            if candidate.exists():
+                return candidate
+
+            # Check in qemu/build
             candidate = qemu_dir / "build" / exe_name
             if candidate.exists():
                 return candidate
+            
+            # Check in qemu/qemu-*/build
             for sub in sorted(qemu_dir.iterdir(), reverse=True):
                 if sub.is_dir() and sub.name.startswith("qemu-"):
                     candidate = sub / "build" / exe_name

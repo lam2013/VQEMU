@@ -1,4 +1,5 @@
-﻿import ctypes
+
+import ctypes
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -8,6 +9,7 @@ import os
 import re
 import json
 import shutil
+import tempfile
 from find_tools_module import *
 from pathlib import Path
 import sys, io
@@ -15,15 +17,19 @@ import threading
 from qemu_advanced_module import *
 import load_config
 
-# VNcore lab 2025 (alias of Nguyễn Trường Lâm)
-
-print("VNcore lab 2025 (alias of Nguyễn Trường Lâm)")
-
 try:
     if sys.stdout and hasattr(sys.stdout, "buffer"):
-        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+        if getattr(sys.stdout, "encoding", "").lower().replace("-", "") != "utf8":
+            _old_stdout = sys.stdout
+            sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace", line_buffering=True)
+            _old_stdout.detach()  # Detach without closing the underlying buffer
+
     if sys.stderr and hasattr(sys.stderr, "buffer"):
-        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8")
+        if getattr(sys.stderr, "encoding", "").lower().replace("-", "") != "utf8":
+            _old_stderr = sys.stderr
+            sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace", line_buffering=True)
+            _old_stderr.detach()  # Detach without closing the underlying buffer
+
 except Exception:
     pass
 
@@ -40,8 +46,40 @@ def force_delete_file_as_admin(file_path):
         return False
 
 def get_config_path():
-    base_path = Path(__file__).resolve().parent
-    return base_path / "config_VQEMU.json"
+    def writable_base(path):
+        try:
+            path.mkdir(parents=True, exist_ok=True)
+            test_file = path / ".vqemu_write_test"
+            with open(test_file, "w", encoding="utf-8") as f:
+                f.write("\n")
+            test_file.unlink()
+            return True
+        except Exception:
+            return False
+
+    candidates = []
+    if sys.platform == "win32":
+        localappdata = os.environ.get('LOCALAPPDATA')
+        appdata = os.environ.get('APPDATA')
+        if localappdata:
+            candidates.append(Path(localappdata) / "VQEMU")
+        if appdata and appdata != localappdata:
+            candidates.append(Path(appdata) / "VQEMU")
+        candidates.append(Path.home() / "AppData" / "Local" / "VQEMU")
+        candidates.append(Path.home() / ".vqemu")
+    else:
+        candidates.append(Path.home() / ".vqemu")
+
+    for base_path in candidates:
+        if writable_base(base_path):
+            return base_path / "config_VQEMU.json"
+
+    fallback = Path(tempfile.gettempdir()) / "VQEMU"
+    try:
+        fallback.mkdir(parents=True, exist_ok=True)
+    except Exception:
+        pass
+    return fallback / "config_VQEMU.json"
 
 def create_json():
     path = get_config_path()
@@ -211,7 +249,12 @@ class LogViewerDialog(QDialog):
         self.timer.start(100) # Refresh every 2 seconds
 
     def get_latest_log(self):
-        log_dir = Path(__file__).resolve().parent / "logs"
+        if sys.platform == "win32":
+            app_data = os.environ.get('LOCALAPPDATA') or os.environ.get('APPDATA') or os.path.expanduser('~')
+            log_dir = Path(app_data) / "VQEMU" / "logs"
+        else:
+            log_dir = Path.home() / ".vqemu" / "logs"
+            
         if not log_dir.exists():
             return None
         logs = sorted(log_dir.glob("*.log"), key=os.path.getmtime, reverse=True)
@@ -228,7 +271,12 @@ class LogViewerDialog(QDialog):
             except Exception as e:
                 self.text_edit.setPlainText(f"Error reading log: {e}")
         else:
-            self.text_edit.setPlainText(f"No log file found in {Path(__file__).resolve().parent / 'logs'}")
+            if sys.platform == "win32":
+                app_data = os.environ.get('LOCALAPPDATA') or os.environ.get('APPDATA') or os.path.expanduser('~')
+                log_dir = Path(app_data) / "VQEMU" / "logs"
+            else:
+                log_dir = Path.home() / ".vqemu" / "logs"
+            self.text_edit.setPlainText(f"No log file found in {log_dir}")
 
     def save_log(self):
         file_path, _ = QFileDialog.getSaveFileName(self, "Lưu File Log", "", "Log Files (*.log);;Text Files (*.txt)")
@@ -453,11 +501,18 @@ class QG(QTabWidget):
                 font-size: 15px;
             }
             QGroupBox {
-                border: none;
+                border: 2px solid #3b4252;
                 border-radius: 8px;
-                margin-top: 10px;
+                margin-top: 20px;
                 background: #2c313c;
                 font-weight: bold;
+                font-size: 18px;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                subcontrol-position: top left;
+                padding: 0 10px;
+                color: #cacdcf;
             }
             QPushButton {
                 background: #3b4252;
@@ -473,11 +528,13 @@ class QG(QTabWidget):
                 background: #23272e;
                 border: 1px solid #444;
                 border-radius: 6px;
-                padding: 4px;
+                padding: 6px;
                 color: #e0e0e0;
+                min-height: 28px;
             }
             QLabel {
                 font-weight: bold;
+                margin-right: 5px;
             }
         """)
         self.is_loading = False
@@ -509,15 +566,19 @@ class QG(QTabWidget):
 
     def update_system_qemu(self):
         try:
-            if self.AQEW.isChecked():
-                self.K.clear()
-                self.K.addItems(sorted(list(QEMU_SYSTEM_W.keys())))
-            else:
-                self.K.clear()
-                self.K.addItems(sorted(list(QEMU_SYSTEMS.keys())))
-        except:
-                self.K.clear
-                self.K.addItems([])
+            self.K.blockSignals(True)
+            current_idx = self.K.currentIndex()
+            add_w = self.AQEW.isChecked()
+            for i in range(self.K.count()):
+                text = self.K.itemText(i)
+                if add_w and not text.endswith("w"):
+                    self.K.setItemText(i, text + "w")
+                elif not add_w and text.endswith("w"):
+                    self.K.setItemText(i, text[:-1])
+            self.K.setCurrentIndex(current_idx)
+            self.K.blockSignals(False)
+        except Exception:
+            self.K.blockSignals(False)
 
     def get_qemu_exe(self):
         arch = self.K.currentText()
@@ -601,8 +662,10 @@ class QG(QTabWidget):
             json.dump(data, f, ensure_ascii=False, indent=4)
 
     def init_tabs(self):
-        vm_tab = QWidget()
-        vm_layout = QVBoxLayout(vm_tab)
+        vm_scroll = QScrollArea()
+        vm_scroll.setWidgetResizable(True)
+        vm_content = QWidget()
+        vm_layout = QVBoxLayout(vm_content)
         self.CCRQ = QCheckBox("tùy chọn lệnh chạy", self)
         self.CCRQ.setEnabled(True)
         self.CCRQ.setChecked(False)
@@ -653,12 +716,11 @@ class QG(QTabWidget):
         layout_vm.addWidget(QLabel("Âm thanh:"), 6, 0)
         self.A = QComboBox()
         self.update_audio_list()
-        self.K.currentIndexChanged.connect(self.update_audio_list)
+        
         layout_vm.addWidget(self.A, 6, 1)
 
         self.MT = QComboBox()
         self.update_machine_type()
-        self.K.currentIndexChanged.connect(self.update_machine_type)
         layout_vm.addWidget(QLabel("machine type:"), 7,0)
         layout_vm.addWidget(self.MT, 7,1)
 
@@ -681,6 +743,14 @@ class QG(QTabWidget):
         layout_vm.addWidget(acc_widget, 8, 1)
 
         self.ACC.currentIndexChanged.connect(self.validate_accelerator)
+
+        self.WDD = QComboBox()
+        
+        layout_vm.addWidget(QLabel("Watchdog:"), 9, 0)
+        layout_vm.addWidget(self.WDD, 9, 1)
+        self.K.currentIndexChanged.connect(self.update_watchdog_list)
+        self.AQEW.toggled.connect(self.update_watchdog_list)
+        
 
         self.group_vm = group_vm
         vm_layout.addWidget(group_vm)
@@ -705,11 +775,14 @@ class QG(QTabWidget):
         
         vm_layout.addWidget(self.CCRQT)
         vm_layout.addLayout(run_layout)
-        self.addTab(vm_tab, "Máy ảo")
+        vm_scroll.setWidget(vm_content)
+        self.addTab(vm_scroll, "Máy ảo")
 
 
-        self.daemon_storage_tab = QWidget()
-        daemon_storage_layout = QVBoxLayout(self.daemon_storage_tab)
+        self.daemon_storage_scroll = QScrollArea()
+        self.daemon_storage_scroll.setWidgetResizable(True)
+        self.daemon_storage_content = QWidget()
+        daemon_storage_layout = QVBoxLayout(self.daemon_storage_content)
         self.CDT = QCheckBox("dùng daemon storage")
         group_DT = QGroupBox("Cấu hình daemon storage")
         layout_DT = QGridLayout(group_DT)
@@ -772,12 +845,14 @@ class QG(QTabWidget):
         
         self.btn_refresh_daemon = QPushButton("Cập nhật trạng thái")
         layout_DT.addWidget(self.btn_refresh_daemon, 10, 0)
-        layout_DT.addLayout(mini_layout_1, 7, 0)
         daemon_storage_layout.addWidget(group_DT)
-        self.addTab(self.daemon_storage_tab, "Daemon storage")
+        self.daemon_storage_scroll.setWidget(self.daemon_storage_content)
+        self.addTab(self.daemon_storage_scroll, "Daemon storage")
 
-        self.disk_tab = QWidget()
-        disk_layout = QVBoxLayout(self.disk_tab)
+        self.disk_scroll = QScrollArea()
+        self.disk_scroll.setWidgetResizable(True)
+        self.disk_content = QWidget()
+        disk_layout = QVBoxLayout(self.disk_content)
         group_disk = QGroupBox("Quản lý ổ đĩa")
         layout_disk = QGridLayout(group_disk)
         layout_disk.addWidget(QLabel("HDA:"), 0, 0)
@@ -798,7 +873,8 @@ class QG(QTabWidget):
         self.CLD = QPushButton("Xóa danh sách ổ đĩa")
         layout_disk.addWidget(self.CLD, 5, 0, 1, 2)
         disk_layout.addWidget(group_disk)
-        self.addTab(self.disk_tab, "Ổ đĩa")
+        self.disk_scroll.setWidget(self.disk_content)
+        self.addTab(self.disk_scroll, "Ổ đĩa")
         check_list_disk = []
         for i in load_disk_path_json_file():
             check_list_disk.append(str(i))
@@ -825,8 +901,10 @@ class QG(QTabWidget):
                 self.HDD.addItem(str(i))
         
 
-        self.boot_tab = QWidget()
-        boot_layout = QVBoxLayout(self.boot_tab)
+        self.boot_scroll = QScrollArea()
+        self.boot_scroll.setWidgetResizable(True)
+        self.boot_content = QWidget()
+        boot_layout = QVBoxLayout(self.boot_content)
         group_boot = QGroupBox("Khởi động")
         layout_boot = QGridLayout(group_boot)
         self.CBI = QCheckBox("Dùng ISO")
@@ -893,13 +971,16 @@ class QG(QTabWidget):
         self.BIOS.clicked.connect(self.browse_bios)
 
         boot_layout.addWidget(group_boot)
-        self.addTab(self.boot_tab, "Khởi động")
+        self.boot_scroll.setWidget(self.boot_content)
+        self.addTab(self.boot_scroll, "Khởi động")
 
         self.CBI.toggled.connect(self.update_iso_enable)
         self.update_iso_enable(self.CBI.isChecked())
 
-        self.net_tab = QWidget()
-        net_layout = QVBoxLayout(self.net_tab)
+        self.net_scroll = QScrollArea()
+        self.net_scroll.setWidgetResizable(True)
+        self.net_content = QWidget()
+        net_layout = QVBoxLayout(self.net_content)
         group_net = QGroupBox("Mạng")
         layout_net = QGridLayout(group_net)
         self.CN = QCheckBox("Bật mạng")
@@ -921,7 +1002,8 @@ class QG(QTabWidget):
         layout_net.addWidget(self.CPF, 3, 0)
         layout_net.addWidget(self.PF, 3, 1)
         net_layout.addWidget(group_net)
-        self.addTab(self.net_tab, "Mạng")
+        self.net_scroll.setWidget(self.net_content)
+        self.addTab(self.net_scroll, "Mạng")
         self.update_arch_dependent_widgets()
 
         adco_scroll = QScrollArea()
@@ -976,15 +1058,74 @@ class QG(QTabWidget):
         self.CB_GuestAgent.setChecked(False)
         self.CB_GuestAgent.setToolTip("Hỗ trợ QEMU Guest Agent để giao tiếp với Host.\nCần cài đặt driver virtio-serial và agent trong máy ảo.\nLệnh kích hoạt: -device virtio-serial -device virtserialport,chardev=qga0,name=org.qemu.guest_agent.0...")
         layout_ga.addWidget(self.CB_GuestAgent, 0, 0)
-        
+
         adco_layout.addWidget(group_ga)
 
+        # Feature 11: -readconfig
+        group_rc = QGroupBox("Read Config")
+        layout_rc = QGridLayout(group_rc)
+        self.CB_RC = QCheckBox("Bật readconfig")
+        self.CB_RC.setChecked(False)
+        self.path_rc = QPlainTextEdit()
+        self.path_rc.setPlaceholderText("Đường dẫn file config")
+        self.path_rc.setEnabled(False)
+        self.CB_RC.toggled.connect(self.update_readconfig_ui)
+        layout_rc.addWidget(self.CB_RC, 0, 0)
+        layout_rc.addWidget(self.path_rc, 0, 1)
+
+        # Feature 12: -sandbox
+        group_sb = QGroupBox("Sandbox")
+        layout_sb = QGridLayout(group_sb)
+        self.CB_SB = QCheckBox("Bật sandbox (lưu ý: sandbox chí hỗ trợ cho linux)")
+        self.CB_SB.setChecked(False)
+        layout_sb.addWidget(self.CB_SB)
+        self.SB_seccomp_mode = QComboBox()
+        self.SB_seccomp_mode.addItems(["on", "off"])
+        self.SB_seccomp_mode.setEnabled(False)
+        layout_sb.addWidget(QLabel("seccomp mode: "))
+        layout_sb.addWidget(self.SB_seccomp_mode)
+        self.SB_obsolete = QComboBox()
+        self.SB_obsolete.addItems(["allow", "deny", "none"])
+        self.SB_obsolete.setEnabled(False)
+        layout_sb.addWidget(QLabel("obsolete:"))
+        layout_sb.addWidget(self.SB_obsolete)
+        self.SB_elevateprivileges = QComboBox()
+        self.SB_elevateprivileges.addItems(["allow", "deny", "children", "none"])
+        self.SB_elevateprivileges.setEnabled(False)
+        layout_sb.addWidget(QLabel("elevateprivileges:"))
+        layout_sb.addWidget(self.SB_elevateprivileges)
+        self.SB_spawn = QComboBox()
+        self.SB_spawn.addItems(["allow", "deny", "none"])
+        self.SB_spawn.setEnabled(False)
+        layout_sb.addWidget(QLabel("spawn: "))
+        layout_sb.addWidget(self.SB_spawn)
+        self.SB_resourcecontrol = QComboBox()
+        self.SB_resourcecontrol.addItems(["allow", "deny", "none"])
+        self.SB_resourcecontrol.setEnabled(False)
+        layout_sb.addWidget(QLabel("resourcecontrol: "))
+        layout_sb.addWidget(self.SB_resourcecontrol)
+        
+        adco_layout.addWidget(group_rc)
+
+        # Feature 14: -watchdog-action
+        wac_group = QGroupBox("Watchdog Action")
+        wac_layout = QGridLayout(wac_group)
+        self.WAC = QComboBox()
+        self.WAC.addItems(["reset","shutdown","poweroff","inject-nmi","pause","debug","none"])
+        wac_layout.addWidget(QLabel("watchdog action: "))
+        wac_layout.addWidget(self.WAC)
+        adco_layout.addWidget(wac_group)
+
+        adco_layout.addWidget(group_sb)
+        self.CB_SB.toggled.connect(self.update_ui_SB)
         
         adco_scroll.setWidget(adco_content)
         self.addTab(adco_scroll, "Cấu hình nâng cao")
 
-        prof_tab = QWidget()
-        prof_layout = QVBoxLayout(prof_tab)
+        self.prof_scroll = QScrollArea()
+        self.prof_scroll.setWidgetResizable(True)
+        self.prof_content = QWidget()
+        prof_layout = QVBoxLayout(self.prof_content)
         group_prof = QGroupBox("Profiles / Cấu hình")
         layout_prof = QGridLayout(group_prof)
         self.profile_list = QListWidget()
@@ -998,7 +1139,8 @@ class QG(QTabWidget):
         layout_prof.addWidget(self.btn_prof_delete, 2, 2)
         layout_prof.addWidget(self.btn_prof_rename, 3, 2)
         prof_layout.addWidget(group_prof)
-        self.addTab(prof_tab, "Cấu hình")
+        self.prof_scroll.setWidget(self.prof_content)
+        self.addTab(self.prof_scroll, "Cấu hình")
 
         self.btn_prof_add.clicked.connect(self._ui_profile_add)
         self.btn_prof_load.clicked.connect(self._ui_profile_load)
@@ -1050,6 +1192,111 @@ class QG(QTabWidget):
         self.connect_snapshot_signals()
         self.update_disk_list()
         self.update_daemon_list()
+        self.KeyPressEvent()
+
+    def update_readconfig_ui(self):
+        checked = self.CB_RC.isChecked()
+        self.path_rc.setEnabled(checked)
+
+    def KeyPressEvent(self):
+        # Thiết lập các phím tắt (Shortcuts)
+        self.shortcuts = []
+        
+        shortcut_run = QShortcut(QKeySequence("F5"), self)
+        shortcut_run.activated.connect(self.run_qemu)
+        self.shortcuts.append(shortcut_run)
+
+        shortcut_run_ctrl = QShortcut(QKeySequence("Ctrl+R"), self)
+        shortcut_run_ctrl.activated.connect(self.run_qemu)
+        self.shortcuts.append(shortcut_run_ctrl)
+
+        shortcut_save = QShortcut(QKeySequence("Ctrl+S"), self)
+        shortcut_save.activated.connect(self.save_snapshot)
+        self.shortcuts.append(shortcut_save)
+
+        shortcut_iso = QShortcut(QKeySequence("Ctrl+O"), self)
+        shortcut_iso.activated.connect(self.BI)
+        self.shortcuts.append(shortcut_iso)
+
+        shortcut_disk = QShortcut(QKeySequence("Ctrl+D"), self)
+        shortcut_disk.activated.connect(self.open_disk_dialog)
+        self.shortcuts.append(shortcut_disk)
+
+        shortcut_usb = QShortcut(QKeySequence("Ctrl+U"), self)
+        shortcut_usb.activated.connect(self.open_usb_manager)
+        self.shortcuts.append(shortcut_usb)
+
+        shortcut_log = QShortcut(QKeySequence("Ctrl+L"), self)
+        shortcut_log.activated.connect(self.open_log_viewer)
+        self.shortcuts.append(shortcut_log)
+
+        shortcut_profile = QShortcut(QKeySequence("Ctrl+M"), self)
+        shortcut_profile.activated.connect(self._ui_profile_add)
+        self.shortcuts.append(shortcut_profile)
+
+        shortcut_close = QShortcut(QKeySequence("Alt+F4"), self)
+        shortcut_close.activated.connect(self.close)
+        self.shortcuts.append(shortcut_close)
+
+        shortcut_move_tab_to_right = QShortcut(QKeySequence("Ctrl+Right"), self)
+        shortcut_move_tab_to_right.activated.connect(self.move_tab_to_right)
+        self.shortcuts.append(shortcut_move_tab_to_right)
+
+        shortcut_move_tab_to_left = QShortcut(QKeySequence("Ctrl+Left"), self)
+        shortcut_move_tab_to_left.activated.connect(self.move_tab_to_left)
+        self.shortcuts.append(shortcut_move_tab_to_left)
+
+    def keyPressEvent(self, event):
+        # Xử lý phím Escape để đóng ứng dụng hoặc các hành động cụ thể
+        if event.key() == Qt.Key_Escape:
+            self.close()
+        
+        else:
+            super().keyPressEvent(event)
+
+    def update_ui_SB(self):
+        # Feature 12: -sandbox
+        checked = self.CB_SB.isChecked()
+        self.SB_obsolete.setEnabled(checked)
+        self.SB_elevateprivileges.setEnabled(checked)
+        self.SB_spawn.setEnabled(checked)
+        self.SB_resourcecontrol.setEnabled(checked)
+        self.SB_seccomp_mode.setEnabled(checked)
+
+    def update_watchdog_list(self):
+        if self.AQEW.isChecked():
+            self.WDD.clear()
+            self.WDD.addItems(sorted(list(QEMU_SYSTEM_WATCHDOG_W.get(self.K.currentText(), []))))
+        else:
+            self.WDD.clear()
+            self.WDD.addItems(sorted(list(QEMU_SYSTEM_WATCHDOG.get(self.K.currentText(), []))))
+
+    def setup_WDD(self):
+        try:
+            with open(get_config_path(), "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except:
+            data = {}
+        if self.AQEW.isChecked():
+            self.WDD.clear()
+            self.WDD.addItems(sorted(list(QEMU_SYSTEM_WATCHDOG_W.get(self.K.currentText(), []))))
+            if "watchdog" in data:
+                self.WDD.setCurrentText(data["watchdog"])
+        else:
+            self.WDD.clear()
+            self.WDD.addItems(sorted(list(QEMU_SYSTEM_WATCHDOG.get(self.K.currentText(), []))))
+            if "watchdog" in data:
+                self.WDD.setCurrentText(data["watchdog"])
+
+    def move_tab_to_right(self):
+        current_index = self.currentIndex()
+        next_index = (current_index + 1) % self.count()
+        self.setCurrentIndex(next_index)
+
+    def move_tab_to_left(self):
+        current_index = self.currentIndex()
+        prev_index = (current_index - 1 + self.count()) % self.count()
+        self.setCurrentIndex(prev_index)
 
     def browse_bios(self):
         filename, _ = QFileDialog.getOpenFileName(self, "Chọn File BIOS", "", "Pulse Files (*.bin *.rom *.fd);;All Files (*.*)")
@@ -1070,7 +1317,8 @@ class QG(QTabWidget):
         self.CCRQ.toggled.connect(self.save_snapshot)
         self.CCRQT.textChanged.connect(self.save_snapshot)
         self.AQEW.toggled.connect(self.save_snapshot)
-        
+        self.WDD.currentIndexChanged.connect(self.save_snapshot)
+
         # Disk Tab
         self.HDA.currentIndexChanged.connect(self.save_snapshot)
         self.HDB.currentIndexChanged.connect(self.save_snapshot)
@@ -1125,6 +1373,20 @@ class QG(QTabWidget):
         # Guest Agent
         self.CB_GuestAgent.toggled.connect(self.save_snapshot)
 
+        #readconfig
+        self.CB_RC.toggled.connect(self.save_snapshot)
+        self.path_rc.textChanged.connect(self.save_snapshot)
+
+        #sandbox
+        self.CB_SB.toggled.connect(self.save_snapshot)
+        self.SB_resourcecontrol.currentIndexChanged.connect(self.save_snapshot)
+        self.SB_obsolete.currentIndexChanged.connect(self.save_snapshot)
+        self.SB_elevateprivileges.currentIndexChanged.connect(self.save_snapshot)
+        self.SB_spawn.currentIndexChanged.connect(self.save_snapshot)
+        self.SB_seccomp_mode.currentIndexChanged.connect(self.save_snapshot)
+
+        #watchdog action
+        self.WAC.currentIndexChanged.connect(self.save_snapshot)
 
     def save_snapshot(self):
         if self.is_loading:
@@ -1272,10 +1534,10 @@ class QG(QTabWidget):
         self.CCRQ.setEnabled(True)
             
         # Other Tabs
-        self.disk_tab.setEnabled(not checked)
-        self.boot_tab.setEnabled(not checked)
-        self.net_tab.setEnabled(not checked)
-        self.daemon_storage_tab.setEnabled(not checked)
+        self.disk_scroll.setEnabled(not checked)
+        self.boot_scroll.setEnabled(not checked)
+        self.net_scroll.setEnabled(not checked)
+        self.daemon_storage_scroll.setEnabled(not checked)
 
     def update_daemon_list(self):
         # We need fresh config here to reset it
@@ -1371,6 +1633,8 @@ class QG(QTabWidget):
         else:
             self.V.addItems(["none", "std", "cirrus", "vmware", "qxl", "virtio"])
         self.update_net_list_I()
+        self.update_audio_list()
+        self.update_machine_type()
 
     def profiles_dir(self):
         return get_config_path()
@@ -1514,7 +1778,19 @@ class QG(QTabWidget):
                     "bios_path": self.LE_BIOS.text().strip() if self.CB_BIOS.isChecked() else "",
                     "boot_order": self.BOOT_ORDER.currentText(),
                     "boot_menu": self.BOOT_MENU.isChecked(),
-                    "guest_agent_enable": self.CB_GuestAgent.isChecked()
+                    "guest_agent_enable": self.CB_GuestAgent.isChecked(),
+                    "readconfig_enable": self.CB_RC.isChecked(),
+                    "readconfig_path": self.path_rc.toPlainText(),
+                    "sandbox": {
+                        "check": self.CB_SB.isChecked(),
+                        "obsolete": self.SB_obsolete.currentText(),
+                        "elevateprivileges": self.SB_elevateprivileges.currentText(),
+                        "spawn": self.SB_spawn.currentText(),
+                        "resourcecontrol": self.SB_resourcecontrol.currentText(),
+                        "seccomp mode": self.SB_seccomp_mode.currentText(),
+                    },
+                    "watchdog": self.WDD.currentText(),
+                    "watchdog-action": self.WAC.currentText(),
                 }
                 
                 # Use in-memory list if available, else load from file
@@ -1675,6 +1951,12 @@ class QG(QTabWidget):
                 self.ACC.addItem(acc)
             self.ACC.setCurrentText(acc)
             
+        # Watchdog
+        watchdog = cfg.get('watchdog', '')
+        if watchdog:
+            if self.WDD.findText(watchdog) == -1:
+                self.setup_WDD()
+            self.WDD.setCurrentText(watchdog)
 
             
         # Audio
@@ -1801,6 +2083,34 @@ class QG(QTabWidget):
 
         # Guest Agent
         self.CB_GuestAgent.setChecked(cfg.get('guest_agent_enable', False))
+
+        # readconfig
+        self.CB_RC.setChecked(cfg.get('readconfig_enable', False))
+        self.path_rc.setPlainText(cfg.get('readconfig_path', ''))
+
+        # sandbox
+        sandbox_cfg = cfg.get('sandbox', {})
+        self.CB_SB.setChecked(sandbox_cfg.get('check', False))
+
+        # watchdog
+        WAC_cfg = cfg.get('watchdog-action', '')
+        if WAC_cfg:
+            if self.WAC.findText(WAC_cfg) == -1:
+                self.WAC.addItem(WAC_cfg)
+            self.WAC.setCurrentText(WAC_cfg)
+        
+        # Helper function to safely set combobox text
+        def set_combobox_text(combobox, text):
+            if text:
+                if combobox.findText(text) == -1:
+                    combobox.addItem(text)
+                combobox.setCurrentText(text)
+
+        set_combobox_text(self.SB_obsolete, sandbox_cfg.get('obsolete', ''))
+        set_combobox_text(self.SB_elevateprivileges, sandbox_cfg.get('elevateprivileges', ''))
+        set_combobox_text(self.SB_spawn, sandbox_cfg.get('spawn', ''))
+        set_combobox_text(self.SB_resourcecontrol, sandbox_cfg.get('resourcecontrol', ''))
+        set_combobox_text(self.SB_seccomp_mode, sandbox_cfg.get('seccomp mode', ''))
 
 
 
@@ -1944,9 +2254,13 @@ class QG(QTabWidget):
                 # Ensure forward slashes for QEMU options to avoid escaping issues on Windows
                 addr_nbd = addr_nbd_path.as_posix()
                 disk_path = self.HD.currentText() if self.HD.currentText() != "none" else ""
-                path_DS = Path(__file__).resolve().parent / "qemu" / "qemu-storage-daemon.exe"
+                path_DS = find_qemu_storage_daemon()
+                if not path_DS:
+                    QMessageBox.critical(self, "Lỗi", "Không tìm thấy qemu-storage-daemon. Hãy cài đặt QEMU.")
+                    return None
+                
                 # qemu-storage-daemon.exe is the standard name
-                cmd_ds = f"{path_DS} --nbd-server addr.type=inet,addr.host=127.0.0.1,addr.port=1000{idds} --blockdev driver=file,node-name=d{idds},filename={disk_path} --export type=nbd,id=ex0,node-name=d{idds},writable=on"
+                cmd_ds = f'"{path_DS}" --nbd-server addr.type=inet,addr.host=127.0.0.1,addr.port=1000{idds} --blockdev driver=file,node-name=d{idds},filename="{disk_path}" --export type=nbd,id=ex0,node-name=d{idds},writable=on'
                 part_cmd_run_qemu = f"-blockdev export=d{idds},driver=nbd,server.type=inet,server.host=127.0.0.1,node-name=nbd{idds},server.port=1000{idds}"
                 
                 with open(get_config_path(), "r", encoding="utf-8") as f:
@@ -2310,6 +2624,16 @@ class DL(QDialog):
         except Exception as e:
             QMessageBox.critical(self, "Lỗi", f"Không tạo được ổ đĩa:\n{e}")
 
+    def KeyPressEvent(self, event):
+        key_code = event.key()
+        if key_code == Qt.Key_Right:
+            self.disk_list.setCurrentIndex(self.disk_list.currentIndex() + 1)
+        elif key_code == Qt.Key_Left:
+            self.disk_list.setCurrentIndex(self.disk_list.currentIndex() - 1)
+        elif key_code in (Qt.Key_Alt + Qt.Key_F4):
+            self.close()
+
+
     def delete_disk(self):
         disk_path = self.disk_list.currentText()
         if not disk_path:
@@ -2381,10 +2705,17 @@ def is_admin():
         return False
 
 if __name__ == "__main__":
-    create_json()
-    app = QApplication(sys.argv)
-    qg = QG()
-    qg.show()
-    sys.exit(app.exec_())
-#the command:pyinstaller --onedir --noconfirm --add-data "load_config.py;." --add-data "qemu;qemu" --add-data "log_module.py;." --add-data "find_tools_module.py;." --add-data "qemu_advanced_module.py;." run.py
+    import traceback
+    
+    try:
+        create_json()
+        print("VNcore lab 2025 (alias of Nguyễn Trường Lâm)")
+        app = QApplication(sys.argv)
+        qg = QG()
+        qg.show()
+        sys.exit(app.exec_())
+    except Exception as e:
+        traceback.print_exc()
+        input("Press Enter to exit...")
+#the command:pyinstaller --onedir --noconfirm --icon="icon_VQEMU.ico" --add-data "load_config.py;." --add-data "qemu;qemu" --add-data "log_module.py;." --add-data "find_tools_module.py;." --add-data "qemu_advanced_module.py;." run.py
 # 2025 Vncore lab (alias of Nguyễn Trường Lâm)

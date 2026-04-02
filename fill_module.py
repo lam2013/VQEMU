@@ -1,20 +1,10 @@
 import re
 
 raw_text = """
-kc705                kc705 EVB (dc232b)
-kc705-nommu          kc705 noMMU EVB (de212)
-lx200                lx200 EVB (dc232b)
-lx200-nommu          lx200 noMMU EVB (de212)
-lx60                 lx60 EVB (dc232b)
-lx60-nommu           lx60 noMMU EVB (de212)
-ml605                ml605 EVB (dc232b)
-ml605-nommu          ml605 noMMU EVB (de212)
-none                 empty machine
-sim                  sim machine (dc232b) (default)
-virt                 virt machine (dc232b)
+name "diag288", desc "diag288 device for s390x platform"
 """
-no_none = True
-HNC = False
+no_none = False
+HNC = True
 # 1️⃣ Tách từng dòng, bỏ trống và comment
 if HNC == True:
     if "name " in raw_text:

@@ -11,6 +11,20 @@ import signal
 import time
 log = Logger()
 
+def get_config_path():
+    if sys.platform == "win32":
+        app_data = os.environ.get('LOCALAPPDATA') or os.environ.get('APPDATA') or os.path.expanduser('~')
+        base_path = Path(app_data) / "VQEMU"
+    else:
+        base_path = Path.home() / ".vqemu"
+        
+    try:
+        base_path.mkdir(parents=True, exist_ok=True)
+    except Exception:
+        pass
+        
+    return base_path / "config_VQEMU.json"
+
 
 def load_config(config_path: str):
     """Đọc file JSON cấu hình."""
@@ -31,8 +45,10 @@ def build_qemu_cmd(cfg: dict, data: dict = None):
     """Ghép lệnh QEMU từ config."""
     arch = cfg.get("arch", "x86_64")
     exe_path = find_qemu_system(arch)
+    if not exe_path:
+        raise FileNotFoundError(f"Không tìm thấy QEMU cho kiến trúc {arch}. Hãy cài đặt QEMU.")
     cmd = [str(exe_path)]
-    path_json = Path(__file__).parent / "config_VQEMU.json"
+    path_json = get_config_path()
 
     cmd_part = ["arch", "ram", "smp", "cpu", "vga", "audio", "cdrom", "hda", "hdb", "hdc", "hdd", "fda", "fdb", "fdc", "fdd", "net_model", "portfwd", "exe"]
     val_part = [cfg.get(part, "") for part in cmd_part]
@@ -198,7 +214,7 @@ def build_qemu_cmd(cfg: dict, data: dict = None):
         config_DS = data.get("config_DS", {})
         # User requirement: add lines for running daemon processes
         for key, info in caches.items():
-            path_json = Path(__file__).parent / "config_VQEMU.json"
+            path_json = get_config_path()
             with open(path_json, "r", encoding="utf-8") as f:
                 data = json.load(f)
             name = data.get("config", {}).get("daemon_current", "")
@@ -256,7 +272,36 @@ def build_qemu_cmd(cfg: dict, data: dict = None):
         except:
             cmd.extend(custom_cmd.split())
         return cmd
+
+    # Feature 11: -readconfig
+    if cfg.get("readconfig_enable") and cfg.get("readconfig_path"):
+        result_part.extend(["-readconfig", str(cfg.get("readconfig_path"))])
     
+    # Feature 12: -sandbox
+    sandbox_cfg = cfg.get("sandbox", {})
+    string_sanbox = ""
+    if sandbox_cfg.get("check", ''):
+        string_sandbox += "-sandbox on"
+        if sandbox_cfg.get("obsolete", '') != "none":
+            string_sandbox += f",obsolete={sandbox_cfg.get("obsolete", '')}"
+        if sandbox_cfg.get("elevateprivileges", '') != "none":
+            string_sandbox += f",elevateprivileges={sandbox_cfg.get("elevateprivileges", '')}"
+        if sandbox_cfg.get("spawn", '') != "none":
+            string_sandbox += f",spawn={sandbox_cfg.get("spawn", '')}"
+        if sandbox_cfg.get("resourcecontrol", '') != "none":
+            string_sandbox += f",resourcecontrol={sandbox_cfg.get("resourcecontrol", '')}"
+        if sandbox_cfg.get("seccomp mode", '') != "off":
+            string_sandbox += f",strict=yes"
+        cmd += string_sandbox
+
+    # Feature 13: watchdog
+    watchdog = cfg.get("watchdog", "")
+    if watchdog != "none":
+        cmd += ["-device", str(watchdog)]
+        # Feature 14: Watchdog-action
+        watchdog_action = cfg.get("watchdog-action", "")
+        cmd += ["-watchdog-action", str(watchdog_action)]
+
     # Prepend the executable
     with open(path_json, 'r', encoding="utf-8") as f:
         data = json.load(f)
@@ -379,7 +424,7 @@ def run_daemon_storage_direct(config_path, name_ds):
         # Chạy background
         proc = subprocess.Popen(args, close_fds = False if sys.platform == "win32" else True, creationflags=subprocess.CREATE_NO_WINDOW if sys.platform=='win32' else 0)
         
-        path_config = Path(__file__).resolve().parent / "config_VQEMU.json"
+        path_config = get_config_path()
         
         # Check if process crashed immediately
         try:
