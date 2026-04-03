@@ -50,8 +50,8 @@ tính năng:
 +Guest Agent Integration (Hỗ trợ QEMU Guest Agent để Shutdown/Reboot máy ảo an toàn, đồng bộ clipboard Host-Guest)
 
 những tính năng mới:
-+thêm -readconfig để đọc config file: done
-+thêm -sandbox để chạy qemu trong sandbox: done
++thêm -readconfig để đọc config file
++thêm -sandbox để chạy qemu trong sandbox
 +thêm -watchdog-action để set watchdog action
 +thêm watchdog driver
 
