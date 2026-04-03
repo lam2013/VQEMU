@@ -38,8 +38,6 @@ tính năng:
 +daemon storage
 +cải tiến wifi
 +system w
-
-những tính năng mới:
 +update card sound (Thêm danh sách sound card đa dạng: intel-hda, ac97, es1370, sb16, hda-duplex...)
 +update card IO daemon storage (Tối ưu hóa quản lý tiến trình daemon, thêm tùy chọn cache mode và aio)
 +Log Viewer (Tab vm_tab: View Log, Save Log, Clear Log button)
@@ -50,6 +48,12 @@ những tính năng mới:
 +Performance & Acceleration (tùy chọn bật do user quyết định WHPX/HAXM/Hyper-V, nhận biết win nào có thể bật WHPX/HAXM/Hyper-V và cảnh báo những win không thể bật)
 +check qemu daemon có đang chạy không, nêu các thông tin về PID, thời gian chạy, tên gì
 +Guest Agent Integration (Hỗ trợ QEMU Guest Agent để Shutdown/Reboot máy ảo an toàn, đồng bộ clipboard Host-Guest)
+
+những tính năng mới:
++thêm -readconfig để đọc config file: done
++thêm -sandbox để chạy qemu trong sandbox: done
++thêm -watchdog-action để set watchdog action
++thêm watchdog driver
 
 cách chạy:
 1. chạy thủ công(nếu bạn biết sơ về command):
